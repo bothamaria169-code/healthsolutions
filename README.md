@@ -17,9 +17,9 @@ No Composer, no build step. PHPMailer is bundled in `lib/`.
 ## Local setup (XAMPP)
 
 ```bash
-mysql -u root -e "CREATE DATABASE pholahea_database CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root --default-character-set=utf8mb4 pholahea_database < database/database.sql
-mysql -u root --default-character-set=utf8mb4 pholahea_database < database/seed.sql
+mysql -u root -e "CREATE DATABASE pholahealthsolut_database CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -u root --default-character-set=utf8mb4 pholahealthsolut_database < database/database.sql
+mysql -u root --default-character-set=utf8mb4 pholahealthsolut_database < database/seed.sql
 cp config/secrets.example.php config/secrets.php   # then fill it in
 ```
 

@@ -66,7 +66,7 @@ function setup_tasks(): array
     $cron = SITE_URL . '/scripts/cron.php?key=' . CRON_KEY;
     $tasks = [
         ['hosting-db', 'Hosting', 'Create the live database and user in cPanel', 'you',
-            'cPanel → <b>MySQL® Databases</b>: database <code>pholahea_database</code>, user <code>database_nexus</code>, then <b>Add User To Database</b> with ALL PRIVILEGES. (cPanel may add your account prefix — if it does, update <code>config/secrets.php</code> to match.)', null],
+            'cPanel → <b>MySQL® Databases</b>: database <code>pholahealthsolut_database</code>, user <code>database_nexus</code>, then <b>Add User To Database</b> with ALL PRIVILEGES. (cPanel may add your account prefix — if it does, update <code>config/secrets.php</code> to match.)', null],
         ['hosting-import', 'Hosting', 'Import the database', 'you',
             'cPanel → <b>phpMyAdmin</b> → choose the database → <b>Import</b> → <code>database/database.sql</code>, then <code>database/seed.sql</code>.', null],
         ['hosting-secrets', 'Hosting', 'Upload config/secrets.php to the server', 'you',

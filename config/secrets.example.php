@@ -4,12 +4,12 @@
 return [
     // Live database (cPanel → MySQL Databases)
     'db_host' => 'localhost',
-    'db_name' => 'pholahea_database',
+    'db_name' => 'pholahealthsolut_database',
     'db_user' => 'database_nexus',
     'db_pass' => 'CHANGE_ME',
 
     // Local XAMPP database
-    'local_db_name' => 'pholahea_database',
+    'local_db_name' => 'pholahealthsolut_database',
     'local_db_user' => 'root',
     'local_db_pass' => '',
 

@@ -15,7 +15,7 @@ final class Database
                 PDO::ATTR_EMULATE_PREPARES   => false,
                 PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
             ];
-            // cPanel prefixes database users with the account name ("pholahea_"),
+            // cPanel prefixes database users with the account name ("pholahealthsolut_"),
             // so if the user as written is refused, try it with the database's prefix.
             $users  = [DB_USER];
             $prefix = strstr(DB_NAME, '_', true);

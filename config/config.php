@@ -60,12 +60,12 @@ $secret  = fn(string $key, string $default = '') => (string) ($secrets[$key] ?? 
 // ── Database ─────────────────────────────────────────────────────────────
 if (IS_PRODUCTION) {
     define('DB_HOST', $secret('db_host', 'localhost'));
-    define('DB_NAME', $secret('db_name', 'pholahea_database'));
+    define('DB_NAME', $secret('db_name', 'pholahealthsolut_database'));
     define('DB_USER', $secret('db_user', 'database_nexus'));
     define('DB_PASS', $secret('db_pass'));
 } else {
     define('DB_HOST', $secret('local_db_host', 'localhost'));
-    define('DB_NAME', $secret('local_db_name', 'pholahea_database'));
+    define('DB_NAME', $secret('local_db_name', 'pholahealthsolut_database'));
     define('DB_USER', $secret('local_db_user', 'root'));
     define('DB_PASS', $secret('local_db_pass'));
 }

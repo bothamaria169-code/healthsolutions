@@ -4,8 +4,8 @@ The same steps live in the admin under **Setup checklist**, where you can tick t
 
 ## 1. Database (cPanel → MySQL® Databases)
 
-1. Create database `pholahea_database` and user `database_nexus` with the password you were given.
-   cPanel may add your account prefix (e.g. `pholahea_database_nexus`) — if so, use the full
+1. Create database `pholahealthsolut_database` and user `database_nexus` with the password you were given.
+   cPanel may add your account prefix (e.g. `pholahealthsolut_database_nexus`) — if so, use the full
    names in `config/secrets.php`.
 2. **Add User To Database** → ALL PRIVILEGES.
 3. cPanel → **phpMyAdmin** → select the database → **Import** `database/database.sql`, then
