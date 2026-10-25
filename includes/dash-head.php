@@ -57,6 +57,7 @@ $nav = match ($dash_role) {
         ],
         'Admin' => [
             ['users',    'users.php',    'fa-users',   'Accounts', null],
+            ['mailbox',  'mailbox.php',  'fa-envelope-open-text', 'Mailbox', null],
             ['messages', 'messages.php', 'fa-inbox',   'Messages', $stats['unread_msgs'] ?? 0],
             ['settings', 'settings.php', 'fa-sliders', 'Settings', null],
             ['account',  'account.php',  'fa-user-shield', 'My account', null],

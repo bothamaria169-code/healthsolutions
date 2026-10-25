@@ -18,6 +18,8 @@ require_once __DIR__ . '/../classes/Health.php';
 require_once __DIR__ . '/../classes/Groq.php';
 require_once __DIR__ . '/../classes/ImageKit.php';
 require_once __DIR__ . '/../classes/SocialPoster.php';
+require_once __DIR__ . '/../classes/ContentEngine.php';
+require_once __DIR__ . '/../classes/Imap.php';
 
 // ── One-time messages across a redirect ──────────────────────────────────
 /** Queues a message for the next page view. $type: success | danger | warn | info */

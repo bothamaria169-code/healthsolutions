@@ -95,6 +95,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf((string) ($_POST['csrf_
             }
             $json(['ok' => $allOk, 'message' => implode("\n", $lines), 'video' => $mp4['url']]);
 
+        case 'content':
+            foreach (['auto_articles', 'auto_reels', 'email_articles'] as $k) {
+                set_setting($k, !empty($_POST[$k]) ? '1' : '0');
+            }
+            set_setting('articles_per_day', (string) max(1, min(4, (int) ($_POST['articles_per_day'] ?? 1))));
+            set_setting('reels_per_day', (string) max(1, min(12, (int) ($_POST['reels_per_day'] ?? 6))));
+            $start = max(5, min(20, (int) ($_POST['content_start_hour'] ?? 8)));
+            set_setting('content_start_hour', (string) $start);
+            set_setting('content_end_hour', (string) max($start + 1, min(23, (int) ($_POST['content_end_hour'] ?? 20))));
+            flash('success', 'Automatic content saved. The cron job does the rest.');
+            back('content');
+
+        case 'article_now':
+            set_time_limit(300);
+            flash('info', e(ContentEngine::article()));
+            back('content');
+
+        case 'reel_now':
+            set_time_limit(600);
+            $p = $repo->getById((int) ($_POST['product_id'] ?? 0));
+            flash('info', e(ContentEngine::reel($p ?: null)));
+            back('content');
+
         case 'disconnect':
             SocialPoster::disconnect();
             flash('success', 'Disconnected from Facebook and Instagram.');
@@ -338,6 +361,28 @@ $extra_js = [asset('assets/js/reel-maker.js')];
       <script type="application/json" id="reelData"><?= json_encode($reelData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?></script>
     </div>
 
+    <!-- Automatic content -->
+    <form method="post" class="card-fc card-fc--pad mb-3" id="content">
+      <?= csrf_field() ?><input type="hidden" name="action" value="content">
+      <h2 style="font-size:1.1rem">Automatic content</h2>
+      <p style="font-size:.86rem;color:var(--text-2)">Needs Groq (articles), ImageKit (reels) and the cron job from <a href="reminders.php">Reminders</a>. Posts are spread evenly between the hours below.</p>
+      <div class="d-flex flex-column gap-2 mb-3" style="font-size:.9rem">
+        <label><input type="checkbox" name="auto_articles" value="1" <?= get_setting('auto_articles', '0') === '1' ? 'checked' : '' ?>> Write and publish
+          <input class="input-fc d-inline-block" type="number" min="1" max="4" name="articles_per_day" value="<?= (int) get_setting('articles_per_day', '1') ?>" style="width:70px;padding:.3rem .5rem"> article(s) a day with products, and share them</label>
+        <label><input type="checkbox" name="email_articles" value="1" <?= get_setting('email_articles', '0') === '1' ? 'checked' : '' ?>> Also email each new article to newsletter subscribers</label>
+        <label><input type="checkbox" name="auto_reels" value="1" <?= get_setting('auto_reels', '0') === '1' ? 'checked' : '' ?>> Post
+          <input class="input-fc d-inline-block" type="number" min="1" max="12" name="reels_per_day" value="<?= (int) get_setting('reels_per_day', '6') ?>" style="width:70px;padding:.3rem .5rem"> product reels a day</label>
+        <span>Between
+          <select class="input-fc d-inline-block" name="content_start_hour" style="width:95px;padding:.3rem .5rem"><?php for ($h = 5; $h <= 20; $h++): ?><option value="<?= $h ?>" <?= (int) get_setting('content_start_hour', '8') === $h ? 'selected' : '' ?>><?= sprintf('%02d:00', $h) ?></option><?php endfor; ?></select>
+          and <select class="input-fc d-inline-block" name="content_end_hour" style="width:95px;padding:.3rem .5rem"><?php for ($h = 6; $h <= 23; $h++): ?><option value="<?= $h ?>" <?= (int) get_setting('content_end_hour', '20') === $h ? 'selected' : '' ?>><?= sprintf('%02d:00', $h) ?></option><?php endfor; ?></select></span>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="btn-fc btn-fc--sm">Save</button>
+        <button class="btn-fc btn-fc--ghost btn-fc--sm" name="action" value="article_now" onclick="return confirm('Write and publish an article now?')"><i class="fa-solid fa-newspaper"></i> Article now</button>
+        <button class="btn-fc btn-fc--ghost btn-fc--sm" name="action" value="reel_now" onclick="return confirm('Build and post a reel now? It takes 1-3 minutes.')"><i class="fa-solid fa-film"></i> Reel now</button>
+      </div>
+    </form>
+
     <form method="post" class="card-fc card-fc--pad mb-3" id="auto">
       <?= csrf_field() ?><input type="hidden" name="action" value="auto">
       <h2 style="font-size:1.1rem">Daily automatic post</h2>
@@ -357,7 +402,7 @@ $extra_js = [asset('assets/js/reel-maker.js')];
       <table class="table-fc"><tbody>
         <?php foreach ($posts as $p): ?>
           <tr><td style="font-size:.82rem;white-space:nowrap"><?= date('j M H:i', strtotime($p['created_at'])) ?></td>
-            <td><i class="fa-brands fa-<?= $p['platform'] === 'instagram' ? 'instagram' : 'facebook' ?>"></i> <?= e((string) $p['product']) ?><?= ($p['media_type'] ?? '') === 'reel' ? ' <span class="pill pill--muted">reel</span>' : '' ?>
+            <td><i class="fa-brands fa-<?= $p['platform'] === 'instagram' ? 'instagram' : 'facebook' ?>"></i> <?= e((string) $p['product']) ?><?= in_array($p['media_type'] ?? '', ['reel', 'article'], true) ? ' <span class="pill pill--muted">' . e($p['media_type']) . '</span>' : '' ?>
               <?php if ($p['error']): ?><div style="font-size:.75rem;color:var(--danger)"><?= e($p['error']) ?></div><?php endif; ?></td>
             <td><span class="pill pill--<?= $p['status'] === 'posted' ? 'ok' : 'danger' ?>"><?= $p['status'] ?></span></td></tr>
         <?php endforeach; ?></tbody></table>

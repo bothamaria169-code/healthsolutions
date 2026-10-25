@@ -61,7 +61,8 @@ $unread = (int) db()->query('SELECT COUNT(*) FROM contact_messages WHERE is_read
       </div>
       <div class="d-flex gap-1">
         <a class="btn-fc btn-fc--sm btn-fc--light"
-           href="mailto:<?= e($m['email']) ?>?subject=<?= urlencode('Re: ' . ($m['subject'] ?: 'Your Phola enquiry')) ?>">
+           href="mailbox.php?<?= e(http_build_query(['to' => $m['email'], 'subject' => 'Re: ' . ($m['subject'] ?: 'Your Phola enquiry'),
+               'quote' => $m['name'] . ' wrote:' . "\n" . mb_substr((string) ($m['message'] ?? ''), 0, 1500)])) ?>">
           <i class="fa-solid fa-reply"></i> Reply
         </a>
         <form method="post">

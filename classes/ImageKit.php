@@ -113,11 +113,12 @@ final class ImageKit
      *
      * @return array{ok: bool, url: string, error: string}
      */
-    public static function reelUrl(string $fileUrl, int $seconds = 120): array
+    public static function reelUrl(string $fileUrl, int $seconds = 120, string $layers = ''): array
     {
         $path = (string) parse_url($fileUrl, PHP_URL_PATH);
         $base = preg_match('/\.(mp4|mov)$/i', $path) ? $fileUrl : rtrim($fileUrl, '/') . '/ik-video.mp4';
-        $url  = self::withTransform($base, self::REEL_TR);
+        // Optional photo/text layers first, then the MP4 encode as the last step of the chain.
+        $url  = self::withTransform($base, ($layers !== '' ? $layers . ':' : '') . self::REEL_TR);
         $until = time() + $seconds;
         do {
             $ch = curl_init($url);

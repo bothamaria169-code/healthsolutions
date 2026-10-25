@@ -15,7 +15,7 @@ declare(strict_types=1);
 // Each step runs once, in order; the number reached is kept in settings as
 // `schema_version`. Steps only ever add (tables, columns, rows), so running a
 // new deploy against the live database is always safe.
-const PHOLA_SCHEMA_VERSION = 8;
+const PHOLA_SCHEMA_VERSION = 9;
 
 function phola_migrate(): void
 {
@@ -242,6 +242,15 @@ function phola_migrate(): void
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
             $addCol('social_posts', 'media_type', "VARCHAR(10) NOT NULL DEFAULT 'photo'");
             $addCol('social_posts', 'media_url', 'VARCHAR(600) DEFAULT NULL');
+        }
+        if ($current < 9) {
+            // Articles written by the content engine list the products they mention.
+            $addCol('blogs', 'auto_generated', 'TINYINT(1) NOT NULL DEFAULT 0');
+            $addCol('blogs', 'category_hint', 'INT UNSIGNED DEFAULT NULL');
+            $addCol('blogs', 'product_ids', 'VARCHAR(120) DEFAULT NULL');
+            foreach (['articles_per_day' => '1', 'reels_per_day' => '6', 'content_start_hour' => '8', 'content_end_hour' => '20'] as $k => $v) {
+                if (get_setting($k) === null) { set_setting($k, $v); }
+            }
         }
         set_setting('schema_version', (string) PHOLA_SCHEMA_VERSION);
     } catch (Throwable $e) {

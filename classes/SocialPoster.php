@@ -198,7 +198,7 @@ final class SocialPoster
     }
 
     /** @return array{ok: bool, id: string, error: string} */
-    public static function publish(string $platform, array $product, string $caption): array
+    public static function publish(string $platform, array $product, string $caption, string $type = 'photo'): array
     {
         $c = self::config();
         $photo = self::photoUrl($product);
@@ -211,7 +211,18 @@ final class SocialPoster
         } else {
             $result = self::publishInstagram($c, $photo, mb_substr($caption, 0, 2100));
         }
-        self::log($platform, (int) $product['id'], $result, $caption, 'photo', $photo);
+        self::log($platform, (int) $product['id'], $result, $caption, $type, $photo);
+        return $result;
+    }
+
+    /** A Facebook Page link post (Facebook draws the preview from the page's og: tags). Used for articles. */
+    public static function publishLink(array $product, string $link, string $message): array
+    {
+        $c = self::config();
+        $result = self::connected('facebook')
+            ? self::post(self::GRAPH . $c['page_id'] . '/feed', ['link' => $link, 'message' => $message, 'access_token' => $c['token']])
+            : ['ok' => false, 'id' => '', 'error' => 'Facebook Page is not connected.'];
+        self::log('facebook', (int) $product['id'], $result, $message, 'article', $link);
         return $result;
     }
 

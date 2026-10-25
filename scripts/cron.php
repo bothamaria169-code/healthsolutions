@@ -27,7 +27,8 @@ $lock = fopen(sys_get_temp_dir() . '/phola-cron-' . md5(__DIR__) . '.lock', 'c')
 if (!$lock || !flock($lock, LOCK_EX | LOCK_NB)) {
     exit("Another run is still going.\n");
 }
-set_time_limit(240);
+// Reels wait for ImageKit and Instagram to process the video, which can take a few minutes.
+set_time_limit(600);
 
 $started = microtime(true);
 $r = Health::sendDueReminders();
@@ -44,6 +45,26 @@ try {
     echo 'quotes: ' . json_encode(send_daily_quotes()) . "\n";
 } catch (Throwable $e) {
     echo 'quotes: error ' . $e->getMessage() . "\n";
+}
+
+try {
+    echo 'content: ' . json_encode(ContentEngine::run(), JSON_UNESCAPED_UNICODE) . "
+";
+} catch (Throwable $e) {
+    echo 'content: error ' . $e->getMessage() . "
+";
+}
+
+// Newsletters that are sending go out 40 at a time, so nobody has to keep the send page open.
+try {
+    foreach (db()->query("SELECT id FROM newsletter_campaigns WHERE status = 'sending'")->fetchAll(PDO::FETCH_COLUMN) as $cid) {
+        NewsletterService::sendBatch((int) $cid, 40);
+        echo "newsletter #{$cid}: " . json_encode(NewsletterService::progress((int) $cid, true)) . "
+";
+    }
+} catch (Throwable $e) {
+    echo 'newsletter: error ' . $e->getMessage() . "
+";
 }
 
 // Health news every 3 hours.
