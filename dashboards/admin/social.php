@@ -36,7 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf((string) ($_POST['csrf_
             back('groq');
 
         case 'meta':
-            set_setting('meta_app_id', preg_replace('/\D/', '', (string) ($_POST['meta_app_id'] ?? '')) ?? '');
+            // An App ID is 15-16 digits and nothing else: catch the secret or config ID pasted in the wrong box.
+            $appId = trim((string) ($_POST['meta_app_id'] ?? ''));
+            if (!preg_match('/^\d{14,17}$/', $appId)) {
+                flash('danger', 'That App ID does not look right. Copy the App ID (only digits, e.g. 1663372335417057) from App settings → Basic.');
+                back('meta');
+            }
+            set_setting('meta_app_id', $appId);
             $secret = trim((string) ($_POST['meta_app_secret'] ?? ''));
             if ($secret !== '' && !str_starts_with($secret, '••')) {
                 set_setting('meta_app_secret', $secret);
