@@ -136,12 +136,12 @@
 .ph-need span img { height: 16px; width: auto; max-width: 80px; object-fit: contain; }
 
 @media (max-width: 991px) {
-  .news-layout { grid-template-columns: 1fr; }
+  .news-layout { grid-template-columns: minmax(0, 1fr); }
   .news-side { position: static; }
-  .diet__grid { grid-template-columns: 1fr; }
+  .diet__grid { grid-template-columns: minmax(0, 1fr); }
   .deliv-grid, .hub-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 575px) {
-  .deliv-grid, .hub-grid { grid-template-columns: 1fr; }
+  .deliv-grid, .hub-grid { grid-template-columns: minmax(0, 1fr); }
   .deliv-pick { grid-template-columns: 1fr 1fr; }
 }

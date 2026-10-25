@@ -107,7 +107,7 @@
 .adh-bars__col span { font-size: .64rem; color: var(--text-3); font-weight: 700; }
 
 .sev-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
-@media (max-width: 575px) { .sev-options { grid-template-columns: 1fr; } }
+@media (max-width: 575px) { .sev-options { grid-template-columns: minmax(0, 1fr); } }
 .sev-options label { cursor: pointer; }
 .sev-options input { position: absolute; opacity: 0; pointer-events: none; }
 .sev-options .sev {

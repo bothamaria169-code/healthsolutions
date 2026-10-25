@@ -481,7 +481,7 @@ body.is-gated, body.nl-open { overflow: hidden; }
 @media (max-width: 767.98px) {
   .nl-gate { align-items: flex-end; padding: 0; }
   .nl-gate__panel {
-    grid-template-columns: 1fr; max-width: none;
+    grid-template-columns: minmax(0, 1fr); max-width: none;
     border-radius: var(--r-xl) var(--r-xl) 0 0; margin: auto 0 0;
     max-height: 100dvh; overflow-y: auto;
   }
@@ -594,7 +594,7 @@ body.is-gated, body.nl-open { overflow: hidden; }
 .nl-preview__loading[hidden] { display: none; }
 
 @media (max-width: 1199.98px) {
-  .nl-compose { grid-template-columns: 1fr; }
+  .nl-compose { grid-template-columns: minmax(0, 1fr); }
   .nl-compose__preview { position: static; }
   .nl-preview__frame { max-height: none; }
 }
@@ -637,5 +637,5 @@ body.is-gated, body.nl-open { overflow: hidden; }
 .nl-source-bar > b { float: right; }
 
 @media (max-width: 767.98px) {
-  .nl-modes { grid-template-columns: 1fr; }
+  .nl-modes { grid-template-columns: minmax(0, 1fr); }
 }

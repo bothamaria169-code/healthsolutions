@@ -216,7 +216,7 @@ final class NewsletterService
      * customers are never asked to subscribe just to reach their account.
      */
     private const GATE_EXEMPT = [
-        'privacy.php', 'terms.php', 'refund-policy.php', 'reseller-programme.php', 'contact.php',
+        'privacy.php', 'terms.php', 'refund-policy.php', 'delivery.php', 'contact.php',
         'invoice.php', 'serve-pop.php', 'order-confirmation.php',
         'modules/auth/', 'modules/newsletter/',
     ];

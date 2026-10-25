@@ -6,6 +6,8 @@
    Loaded after phola.css; uses the tokens in theme.css.
    ============================================================================ */
 :root { --lime: #8CC63F; --lime-dark: #74AD2C; --forest: #0F3D24; --header-h: 78px; }
+/* Never let a page scroll sideways on a phone (clip, unlike hidden, keeps the sticky header working). */
+html, body { overflow-x: clip; }
 
 /* Header */
 .announce { background: var(--lime); color: var(--forest); font-weight: 700; }
@@ -160,13 +162,13 @@ h1 em, h2 em { font-style: italic; color: var(--lime); }
 .social-row a[aria-disabled="true"] { display: none; }
 
 @media (max-width: 991px) {
-  .ph-hero__grid { grid-template-columns: 1fr; }
+  .ph-hero__grid { grid-template-columns: minmax(0, 1fr); }
   .ph-promise__grid { grid-template-columns: repeat(2, 1fr); }
-  .ph-bento, .ph-steps { grid-template-columns: 1fr; }
+  .ph-bento, .ph-steps { grid-template-columns: minmax(0, 1fr); }
   .brand__logo { height: 48px; }
 }
 @media (max-width: 575px) {
-  .ph-promise__grid { grid-template-columns: 1fr; }
+  .ph-promise__grid { grid-template-columns: minmax(0, 1fr); }
   .ph-hero__cta .btn-fc { width: 100%; justify-content: center; }
   .ph-window__tag { font-size: .78rem; }
   .ph-join__form .btn-fc { width: 100%; justify-content: center; }

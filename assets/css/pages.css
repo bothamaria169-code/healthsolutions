@@ -411,7 +411,7 @@
 .policy-company { font-size: .8rem; line-height: 1.7; color: var(--text-3); text-align: center; padding: .5rem 0 1rem; }
 
 @media (max-width: 991.98px) {
-  .policy-layout { grid-template-columns: 1fr; }
+  .policy-layout { grid-template-columns: minmax(0, 1fr); }
   .policy-toc { display: none; }
 }
 @media (max-width: 575.98px) {

@@ -12,7 +12,9 @@ $body_class       = $body_class       ?? '';
 $og_image         = $og_image         ?? SITE_URL . '/assets/img/stock/shieldwell.jpg';
 $extra_css        = $extra_css        ?? [];
 $json_ld          = $json_ld          ?? [];
-$canonical        = $canonical        ?? SITE_URL . ($_SERVER['REQUEST_URI'] ?? '/');
+// REQUEST_URI already starts with any sub-folder, so join it to the scheme + host
+// only (SITE_URL would add the folder twice when the site lives in one).
+$canonical        = $canonical        ?? preg_replace('~^(https?://[^/]+).*$~', '$1', SITE_URL) . ($_SERVER['REQUEST_URI'] ?? '/');
 
 // Newsletter sign-up gate: 'locked', 'popup' or null. Locked also freezes page scroll
 // from the first paint, before any script has run.

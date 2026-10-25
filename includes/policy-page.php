@@ -22,7 +22,7 @@ $policyTabs = [
     'returns'  => ['refund-policy.php',       'fa-rotate-left',   'Returns policy'],
     'privacy'  => ['privacy.php',             'fa-user-shield',   'Privacy policy'],
     'terms'    => ['terms.php',               'fa-file-contract', 'Terms & conditions'],
-    'reseller' => ['reseller-programme.php',  'fa-handshake',     'Reseller programme'],
+    'delivery' => ['delivery.php',            'fa-truck-fast',    'Delivery'],
 ];
 
 $company = [

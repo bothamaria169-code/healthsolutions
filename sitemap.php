@@ -95,7 +95,7 @@ include __DIR__ . '/includes/header.php';
           <a href="<?= SITE_URL ?>/terms.php">Terms</a>
           <a href="<?= SITE_URL ?>/privacy.php">Privacy</a>
           <a href="<?= SITE_URL ?>/refund-policy.php">Returns &amp; refunds</a>
-          <a href="<?= SITE_URL ?>/reseller-programme.php">Reseller programme</a>
+          <a href="<?= SITE_URL ?>/delivery.php">Delivery</a>
         </div>
       </div>
 
