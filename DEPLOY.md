@@ -13,7 +13,7 @@ The same steps live in the admin under **Setup checklist**, where you can tick t
 
 ## 2. Code from GitHub
 
-Repository: <https://github.com/bothamaria169-code/healthsolutions>
+Repository: <https://github.com/bothamaria169-code/pholahealthsolutions>
 
 **Option A — cPanel Git™ Version Control (recommended)**
 
@@ -22,8 +22,8 @@ Repository: <https://github.com/bothamaria169-code/healthsolutions>
 > If that happens: remove the repository in cPanel and clone into a new, empty folder name.
 
 1. cPanel → **Git™ Version Control** → **Create**.
-2. Clone URL `https://github.com/bothamaria169-code/healthsolutions.git`,
-   repository path `/home/USER/repositories/healthsolutions`, name `healthsolutions`.
+2. Clone URL `https://github.com/bothamaria169-code/pholahealthsolutions.git`,
+   repository path `/home/pholahealthsolut/repositories/pholahealthsolutions`, name `pholahealthsolutions`.
 3. Open `.cpanel.yml` and check the cPanel username in `DEPLOYPATH` matches yours.
 4. **Manage → Pull or Deploy → Deploy HEAD Commit.** Repeat **Update from Remote → Deploy HEAD
    Commit** after every change pushed to GitHub.
