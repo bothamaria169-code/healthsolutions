@@ -30,6 +30,12 @@ include __DIR__ . '/includes/header.php';
 
 <div class="section">
   <div class="container">
+    <a class="ph-band d-flex mb-4" href="<?= SITE_URL ?>/exercise-plans.php" style="padding:1.2rem 1.5rem">
+      <div><span class="ph-kicker"><i class="fa-solid fa-person-running"></i> Diet + movement</span>
+        <h2 style="font-size:1.3rem;margin:.3rem 0 0">Pair your diet plan with an exercise plan for your age</h2></div>
+      <span class="btn-fc ph-btn-lime">See exercise plans <i class="fa-solid fa-arrow-right"></i></span>
+    </a>
+
     <div class="alert-fc alert-fc--info mb-4"><i class="fa-solid fa-circle-info"></i>
       <span>These plans are general guidance, not a prescription. Your clinic or a registered dietitian may give you different targets — always follow theirs, especially for kidney disease and during cancer treatment.</span>
     </div>

@@ -21,9 +21,9 @@ include __DIR__ . '/includes/header.php';
 
 <nav class="ph-rail" aria-label="Delivery methods" style="position:sticky;top:var(--header-h);z-index:5">
   <div class="container ph-rail__row">
-    <a href="#courier-guy" class="ph-need"><span><i class="fa-solid fa-truck-fast"></i></span><b>The Courier Guy — South Africa</b></a>
+    <a href="#courier-guy" class="ph-need"><span><?php if ($logo = delivery_logo('tcg_door')): ?><img src="<?= e($logo) ?>" alt=""><?php else: ?><i class="fa-solid fa-truck-fast"></i><?php endif; ?></span><b>The Courier Guy — South Africa</b></a>
     <a href="#sadc" class="ph-need"><span><i class="fa-solid fa-bus"></i></span><b>SADC bus &amp; taxi depots</b></a>
-    <a href="#dhl" class="ph-need"><span><i class="fa-solid fa-plane-departure"></i></span><b>DHL — worldwide</b></a>
+    <a href="#dhl" class="ph-need"><span><?php if ($logo = delivery_logo('dhl_intl')): ?><img src="<?= e($logo) ?>" alt=""><?php else: ?><i class="fa-solid fa-plane-departure"></i><?php endif; ?></span><b>DHL — worldwide</b></a>
     <a href="#faq" class="ph-need"><span><i class="fa-solid fa-circle-question"></i></span><b>Questions</b></a>
   </div>
 </nav>
@@ -33,11 +33,11 @@ include __DIR__ . '/includes/header.php';
 
     <!-- ── The Courier Guy ─────────────────────────────────────────── -->
     <section class="dv-sec" id="courier-guy">
-      <div class="ph-head"><div><span class="eyebrow">South Africa</span><h2>The Courier Guy</h2>
+      <div class="ph-head"><div><span class="eyebrow">South Africa</span><h2 class="dv-brand"><?php if ($logo = delivery_logo('tcg_door')): ?><img src="<?= e($logo) ?>" alt="The Courier Guy"><?php endif; ?>The Courier Guy</h2>
         <p class="lede mb-0">One of South Africa's biggest courier networks, with thousands of lockers, pick-up points and kiosks. Choose the option that suits you best.</p></div></div>
 
       <div class="deliv-grid">
-        <?php foreach ($options as $o): if ($o['region'] !== 'za') continue; ?>
+        <?php foreach ($options as $k => $o): if ($o['region'] !== 'za') continue; ?>
         <div class="deliv-card">
           <i class="fa-solid <?= e($o['icon']) ?>"></i>
           <h3><?= e($o['label']) ?></h3>
@@ -90,7 +90,7 @@ include __DIR__ . '/includes/header.php';
 
     <!-- ── DHL ─────────────────────────────────────────────────────── -->
     <section class="dv-sec" id="dhl">
-      <div class="ph-head"><div><span class="eyebrow">Rest of the world</span><h2>DHL Express</h2>
+      <div class="ph-head"><div><span class="eyebrow">Rest of the world</span><h2 class="dv-brand"><?php if ($logo = delivery_logo('dhl_intl')): ?><img src="<?= e($logo) ?>" alt="DHL"><?php endif; ?>DHL Express</h2>
         <p class="lede mb-0">For customers abroad — the UK, Europe, the USA, Australia, the rest of Africa — we ship door-to-door with DHL Express, tracked the whole way.</p></div></div>
 
       <ol class="dv-steps">

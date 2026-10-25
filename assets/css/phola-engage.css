@@ -112,7 +112,37 @@ body { top: 0 !important; }
 .event__body p { color: var(--text-2); font-size: .92rem; }
 .event__form { display: grid; gap: .5rem; }
 
+/* ── Exercise plans ───────────────────────────────────────────────────── */
+.age-finder { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; }
+.age-finder > i { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--leaf-wash); color: var(--leaf); font-size: 1.2rem; }
+.age-finder label { flex: 1 1 240px; margin: 0; color: var(--text-2); }
+.age-finder .input-fc { width: 110px; }
+.ex-targets { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.3rem; }
+.ex-targets span { display: inline-flex; gap: .45rem; align-items: center; padding: .45rem .9rem; border-radius: var(--r-pill); background: color-mix(in srgb, var(--c) 10%, #fff); color: var(--forest); font-weight: 700; font-size: .84rem; }
+.ex-targets i { color: var(--c); }
+.ex-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 1.5rem; }
+.ex-week { list-style: none; padding: 0; margin: 0; display: grid; gap: .45rem; }
+.ex-week label { display: flex; gap: .8rem; align-items: center; padding: .7rem .9rem; background: var(--paper); border-radius: var(--r); cursor: pointer; margin: 0; transition: var(--t-fast); }
+.ex-week input { width: 20px; height: 20px; accent-color: var(--leaf); flex-shrink: 0; }
+.ex-week b { display: block; color: var(--forest); font-size: .92rem; }
+.ex-week small { display: block; color: var(--text-2); font-size: .82rem; }
+.ex-week label:has(input:checked) { background: var(--leaf-wash); }
+.ex-week label:has(input:checked) b { text-decoration: line-through; text-decoration-color: var(--leaf); }
+.ex-day { flex: 0 0 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--c); color: #fff; font-weight: 800; font-size: .8rem; }
+.ex-count { font-size: .82rem; font-weight: 800; color: var(--leaf); }
+.ex-moves { display: grid; gap: .5rem; }
+.ex-moves div { display: grid; grid-template-columns: 30px 1fr; column-gap: .7rem; align-items: center; padding: .7rem .9rem; border: 1px solid var(--line); border-radius: var(--r); }
+.ex-moves span { grid-row: span 2; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--forest); color: var(--lime); font-weight: 800; font-size: .8rem; }
+.ex-moves b { color: var(--forest); font-size: .9rem; }
+.ex-moves small { color: var(--text-2); font-size: .8rem; }
+.ex-conds { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+.ex-cond { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 1.2rem 1.3rem; }
+.ex-cond h3 { font-family: var(--font-sans); font-size: 1.02rem; font-weight: 800; display: flex; gap: .5rem; align-items: center; }
+.ex-cond h3 i { color: var(--leaf); }
+.ex-cond p { font-size: .87rem; color: var(--text-2); margin: 0 0 .5rem; }
+
 @media (max-width: 991px) {
+  .ex-grid { grid-template-columns: 1fr; }
   .cond-grid, .story, .event { grid-template-columns: 1fr; }
   .cond-facts { grid-template-columns: 1fr 1fr; }
   .event__date { flex-direction: row; gap: .6rem; align-items: baseline; justify-content: center; }

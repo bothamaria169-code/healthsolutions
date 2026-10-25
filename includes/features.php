@@ -206,6 +206,22 @@ function delivery_options(): array
     ];
 }
 
+/**
+ * The carrier's logo for a delivery option, or null (then the icon is shown).
+ * Logo files live in assets/img/partners/: tcg.* for The Courier Guy (also the
+ * Pudo lockers), dhl.* for DHL. SADC bus/taxi has no single carrier.
+ */
+function delivery_logo(string $method): ?string
+{
+    $brand = str_starts_with($method, 'tcg_') ? 'tcg' : (str_starts_with($method, 'dhl') ? 'dhl' : null);
+    if (!$brand) { return null; }
+    foreach (['svg', 'png', 'webp', 'jpg'] as $ext) {
+        $file = 'assets/img/partners/' . $brand . '.' . $ext;
+        if (is_file(__DIR__ . '/../' . $file)) { return SITE_URL . '/' . $file; }
+    }
+    return null;
+}
+
 /** Delivery is always confirmed on WhatsApp, so there is no fee to add up on the website. */
 function delivery_fee(string $method, float $subtotal): ?float
 {

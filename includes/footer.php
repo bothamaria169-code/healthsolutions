@@ -44,6 +44,7 @@ $wa       = get_setting('contact_whatsapp', '');
           <a href="<?= SITE_URL ?>/about.php">About us</a>
           <a href="<?= SITE_URL ?>/modules/blog/index.php">Guides &amp; advice</a>
           <a href="<?= SITE_URL ?>/condition.php">Health conditions</a>
+          <a href="<?= SITE_URL ?>/exercise-plans.php">Exercise plans</a>
           <a href="<?= SITE_URL ?>/health-tools.php">Health calculators</a>
           <a href="<?= SITE_URL ?>/ask.php">Ask a pharmacist</a>
           <a href="<?= SITE_URL ?>/events.php">Health talks</a>

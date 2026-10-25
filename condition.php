@@ -101,6 +101,12 @@ include __DIR__ . '/includes/header.php';
           <p style="font-size:.9rem">Use our free calculator — it takes 10 seconds.</p>
         </a>
 
+        <a class="card-fc card-fc--pad mb-3 d-block" href="<?= SITE_URL ?>/exercise-plans.php#conditions">
+          <span class="eyebrow">Exercise</span>
+          <b style="display:block;color:var(--forest)">Exercising safely with <?= e(strtolower($h['name'])) ?></b>
+          <span class="ph-link mt-1">Exercise plans by age <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+
         <div class="card-fc card-fc--pad mb-3">
           <span class="eyebrow">Ask a pharmacist</span>
           <?php foreach ($questions as $q): ?>

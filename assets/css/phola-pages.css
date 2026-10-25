@@ -117,6 +117,10 @@
 .dv-faq summary { font-weight: 800; color: var(--forest); cursor: pointer; }
 .dv-faq p { margin: .6rem 0 0; color: var(--text-2); font-size: .92rem; }
 .deliv-opt__box em { color: var(--text-3); font-weight: 700; font-size: .75rem; }
+.deliv-logo { height: 26px; width: auto; max-width: 110px; object-fit: contain; object-position: left; margin-bottom: .35rem; }
+.dv-brand { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+.dv-brand img { height: 42px; width: auto; max-width: 200px; object-fit: contain; }
+.ph-need span img { width: 26px; height: 26px; object-fit: contain; }
 
 @media (max-width: 991px) {
   .news-layout { grid-template-columns: 1fr; }

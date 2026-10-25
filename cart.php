@@ -96,7 +96,7 @@ include __DIR__ . '/includes/header.php';
                 <input type="radio" name="delivery" value="<?= e($key) ?>" <?= $first ? 'checked' : '' ?>
                        data-field="<?= e($o['field']) ?>" data-region="<?= e($o['region']) ?>">
                 <span class="deliv-opt__box">
-                  <i class="fa-solid <?= e($o['icon']) ?>"></i>
+                  <?php if ($logo = delivery_logo($key)): ?><img class="deliv-logo" src="<?= e($logo) ?>" alt="<?= e($o['by']) ?>"><?php else: ?><i class="fa-solid <?= e($o['icon']) ?>"></i><?php endif; ?>
                   <b><?= e($o['label']) ?></b>
                   <small><?= e($o['by']) ?></small>
                   <em><?= e($o['time']) ?></em>

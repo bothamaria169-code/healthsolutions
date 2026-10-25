@@ -247,8 +247,8 @@ include __DIR__ . '/includes/header.php';
       <a class="hub-tile" href="<?= SITE_URL ?>/health-tools.php" data-reveal><i class="fa-solid fa-calculator"></i><b>Health calculators</b><span>BMI, blood sugar, blood pressure and "when will my pack run out".</span></a>
       <a class="hub-tile" href="<?= SITE_URL ?>/ask.php" data-reveal><i class="fa-solid fa-user-doctor"></i><b>Ask a pharmacist</b><span>Send us your question — free, private and answered in plain language.</span></a>
       <a class="hub-tile" href="<?= SITE_URL ?>/events.php" data-reveal><i class="fa-solid fa-calendar-days"></i><b>Health talks</b><span>Free WhatsApp and online talks with our team. Bring your questions.</span></a>
-      <a class="hub-tile" href="<?= SITE_URL ?>/health-news.php" data-reveal><i class="fa-solid fa-newspaper"></i><b>Health news</b><span>Fresh headlines from South Africa and the world, updated through the day.</span></a>
       <a class="hub-tile" href="<?= SITE_URL ?>/modules/auth/register.php" data-reveal><i class="fa-solid fa-calendar-check"></i><b>Free tracker</b><span>Sign up with Google or Facebook: daily quote, dose reminders and refill dates.</span></a>
+      <a class="hub-tile" href="<?= SITE_URL ?>/exercise-plans.php" data-reveal><i class="fa-solid fa-person-running"></i><b>Exercise plans</b><span>A simple week of movement for children, adults and seniors — no gym needed.</span></a>
       <a class="hub-tile" href="<?= SITE_URL ?>/clinic-finder.php" data-reveal><i class="fa-solid fa-location-dot"></i><b>Clinic finder</b><span>Clinics and pharmacies near you, in South Africa and across SADC.</span></a>
     </div>
   </div>

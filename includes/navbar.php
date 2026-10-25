@@ -90,10 +90,11 @@ $announcement   = get_setting('announcement', '');
       </div>
 
       <div class="nav-dd">
-        <a href="<?= SITE_URL ?>/condition.php" class="<?= $active(in_array($current, ['condition', 'diet-plans', 'health-tools', 'ask', 'events', 'stories', 'clinic-finder', 'health-news'], true)) ?>">Health hub <i class="fa-solid fa-chevron-down ms-1" style="font-size:.6rem"></i></a>
+        <a href="<?= SITE_URL ?>/condition.php" class="<?= $active(in_array($current, ['condition', 'diet-plans', 'exercise-plans', 'health-tools', 'ask', 'events', 'stories', 'clinic-finder', 'health-news'], true)) ?>">Health hub <i class="fa-solid fa-chevron-down ms-1" style="font-size:.6rem"></i></a>
         <div class="nav-dd__menu">
             <a href="<?= SITE_URL ?>/condition.php"><i class="fa-solid fa-book-medical"></i><span><b>Conditions</b><small>Diabetes, BP, HIV, TB and more</small></span></a>
             <a href="<?= SITE_URL ?>/diet-plans.php"><i class="fa-solid fa-carrot"></i><span><b>Diet plans</b><small>Meal plans for chronic conditions</small></span></a>
+            <a href="<?= SITE_URL ?>/exercise-plans.php"><i class="fa-solid fa-person-running"></i><span><b>Exercise plans</b><small>Weekly plans for every age</small></span></a>
             <a href="<?= SITE_URL ?>/health-tools.php"><i class="fa-solid fa-calculator"></i><span><b>Health calculators</b><small>BMI, sugar, blood pressure</small></span></a>
             <a href="<?= SITE_URL ?>/ask.php"><i class="fa-solid fa-user-doctor"></i><span><b>Ask a pharmacist</b><small>Free questions, answered</small></span></a>
             <a href="<?= SITE_URL ?>/events.php"><i class="fa-solid fa-calendar-days"></i><span><b>Health talks</b><small>Free WhatsApp & online talks</small></span></a>
@@ -185,6 +186,7 @@ $announcement   = get_setting('announcement', '');
     <a href="<?= SITE_URL ?>/dashboards/customer/index.php" class="<?= $active($inDir('customer')) ?>">Patient portal</a>
     <a href="<?= SITE_URL ?>/cart.php"       class="<?= $active($current === 'cart') ?>">Basket</a>
     <a href="<?= SITE_URL ?>/diet-plans.php" class="<?= $active($current === 'diet-plans') ?>">Diet plans</a>
+    <a href="<?= SITE_URL ?>/exercise-plans.php" class="<?= $active($current === 'exercise-plans') ?>">Exercise plans</a>
     <a href="<?= SITE_URL ?>/health-news.php" class="<?= $active($current === 'health-news') ?>">Health news</a>
     <a href="<?= SITE_URL ?>/modules/blog/index.php" class="<?= $active($inDir('blog')) ?>">Learn</a>
     <a href="<?= SITE_URL ?>/condition.php" class="<?= $active($current === 'condition') ?>">Conditions</a>

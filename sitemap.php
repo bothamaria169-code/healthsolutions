@@ -20,6 +20,7 @@ $statics = [
     ['/health-tools.php', '0.8', 'monthly'],
     ['/condition.php', '0.8', 'weekly'],
     ['/diet-plans.php', '0.8', 'monthly'],
+    ['/exercise-plans.php', '0.8', 'monthly'],
     ['/ask.php', '0.8', 'daily'],
     ['/health-news.php', '0.7', 'daily'],
     ['/events.php', '0.6', 'weekly'],
