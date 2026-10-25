@@ -16,6 +16,7 @@ require_once __DIR__ . '/../classes/NewsletterTemplates.php';
 require_once __DIR__ . '/../classes/ShopAssistant.php';
 require_once __DIR__ . '/../classes/Health.php';
 require_once __DIR__ . '/../classes/Groq.php';
+require_once __DIR__ . '/../classes/ImageKit.php';
 require_once __DIR__ . '/../classes/SocialPoster.php';
 
 // ── One-time messages across a redirect ──────────────────────────────────

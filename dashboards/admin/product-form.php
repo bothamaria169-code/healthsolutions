@@ -90,25 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// ── Variant add/remove ───────────────────────────────────────────────────
-if ($id && $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['variant_action']) && verify_csrf((string) ($_POST['csrf_token'] ?? ''))) {
-    if ($_POST['variant_action'] === 'add' && !empty($_POST['option_value'])) {
-        $repo->addVariant([
-            'product_id'       => $id,
-            'option_label'     => sanitize((string) ($_POST['option_label'] ?? 'Option')),
-            'option_value'     => sanitize((string) $_POST['option_value']),
-            'swatch_hex'       => sanitize((string) ($_POST['swatch_hex'] ?? '')) ?: null,
-            'additional_price' => (float) ($_POST['additional_price'] ?? 0),
-            'stock_qty'        => (int) ($_POST['variant_stock'] ?? 0),
-            'sku'              => sanitize((string) ($_POST['variant_sku'] ?? '')) ?: null,
-        ]);
-        $flash = 'Option added.';
-    } elseif ($_POST['variant_action'] === 'delete') {
-        $repo->deleteVariant((int) $_POST['variant_id']);
-        $flash = 'Option removed.';
-    }
-}
-
 // ── Gallery add/remove ───────────────────────────────────────────────────
 // Separate from the main save handler above: the featured image is one file
 // on the product row, but a gallery is N rows in product_gallery, so it
@@ -156,7 +137,6 @@ if ($id && $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['gallery_actio
     }
 }
 
-$variants = $id ? $repo->getVariants($id) : [];
 $gallery  = $id ? $repo->getGallery($id) : [];
 $v = fn(string $k, $default = '') => e((string) ($product[$k] ?? $default));
 
@@ -280,71 +260,6 @@ $preview    = $product ? Pricing::margin($product, null) : null;
 
       <?php if (!$isNew): ?>
       <div class="card-fc card-fc--pad">
-        <h2 style="font-size:1.05rem">Options <span class="text-muted-3" style="font-size:.8rem;font-weight:400">(flavours, scents, sizes)</span></h2>
-        <p class="text-muted-2" style="font-size:.85rem">
-          Adding an option makes this a variable product — shoppers must choose one before it goes in the basket.
-        </p>
-
-        <?php if ($variants): ?>
-        <div class="table-wrap mb-3">
-          <table class="table-fc">
-            <thead><tr><th>Label</th><th>Value</th><th class="text-end">+Price</th><th class="text-center">Stock</th><th>SKU</th><th style="width:1%"></th></tr></thead>
-            <tbody>
-            <?php foreach ($variants as $vr): ?>
-              <tr>
-                <td><?= e($vr['option_label']) ?></td>
-                <td>
-                  <?php if ($vr['swatch_hex']): ?><span class="variant-swatch d-inline-block me-1" style="background:<?= e($vr['swatch_hex']) ?>"></span><?php endif; ?>
-                  <b><?= e($vr['option_value']) ?></b>
-                </td>
-                <td class="text-end"><?= (float) $vr['additional_price'] > 0 ? format_price((float) $vr['additional_price']) : '—' ?></td>
-                <td class="text-center"><?= (int) $vr['stock_qty'] ?></td>
-                <td style="font-family:var(--font-mono);font-size:.76rem"><?= e((string) $vr['sku']) ?></td>
-                <td>
-                  <form method="post" onsubmit="return confirm('Remove this option?')">
-                    <?= csrf_field() ?>
-                    <input type="hidden" name="variant_action" value="delete">
-                    <input type="hidden" name="variant_id" value="<?= (int) $vr['id'] ?>">
-                    <button class="btn-fc btn-fc--sm btn-fc--light" style="color:var(--coral)" type="submit"><i class="fa-solid fa-trash-can"></i></button>
-                  </form>
-                </td>
-              </tr>
-            <?php endforeach; ?>
-            </tbody>
-          </table>
-        </div>
-        <?php endif; ?>
-
-        <form method="post" class="row g-2 align-items-end">
-          <?= csrf_field() ?>
-          <input type="hidden" name="variant_action" value="add">
-          <div class="col-md-2 field mb-0">
-            <label for="option_label">Label</label>
-            <input class="input-fc" type="text" id="option_label" name="option_label" value="Flavour" placeholder="Flavour">
-          </div>
-          <div class="col-md-3 field mb-0">
-            <label for="option_value">Value</label>
-            <input class="input-fc" type="text" id="option_value" name="option_value" placeholder="Berry Blast" required>
-          </div>
-          <div class="col-md-2 field mb-0">
-            <label for="swatch_hex">Swatch</label>
-            <input class="input-fc" type="color" id="swatch_hex" name="swatch_hex" value="#2E8B3E" style="padding:.3rem;height:44px">
-          </div>
-          <div class="col-md-2 field mb-0">
-            <label for="additional_price">+Price</label>
-            <input class="input-fc" type="number" step="0.01" id="additional_price" name="additional_price" value="0">
-          </div>
-          <div class="col-md-1 field mb-0">
-            <label for="variant_stock">Stock</label>
-            <input class="input-fc" type="number" id="variant_stock" name="variant_stock" value="0">
-          </div>
-          <div class="col-md-2">
-            <button class="btn-fc btn-fc--block btn-fc--sm" type="submit"><i class="fa-solid fa-plus"></i> Add</button>
-          </div>
-        </form>
-      </div>
-
-      <div class="card-fc card-fc--pad mt-3">
         <h2 style="font-size:1.05rem">Gallery <span class="text-muted-3" style="font-size:.8rem;font-weight:400">(extra photos shown on the product page)</span></h2>
         <p class="text-muted-2" style="font-size:.85rem">
           The Image panel on the right is the one card/thumbnail image. Anything added here shows in the photo strip

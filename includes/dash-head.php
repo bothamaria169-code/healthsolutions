@@ -44,6 +44,7 @@ $nav = match ($dash_role) {
         ],
         'Marketing' => [
             ['social',     'social.php',     'fa-wand-magic-sparkles', 'AI & social media', null],
+            ['home-slider', 'home-slider.php', 'fa-display',    'Home slider', null],
             ['banners',    'banners.php',    'fa-images',       'Banners',     null],
             ['blog',       'blog.php',       'fa-newspaper',    'Articles',    null],
             ['news',       'news.php',       'fa-rss',          'Health news', null],

@@ -17,8 +17,18 @@ $posts        = get_blogs([], 1, 3)['items'];
 $productCount = (int) db()->query("SELECT COUNT(*) FROM products WHERE status='published'")->fetchColumn();
 $waDisplay    = Health::displayPhone(whatsapp_number());
 
-// Shop-window slides: featured products that have a wide in-store photo.
-$slides = array_values(array_filter($featured, fn($p) => !empty($p['header_image'])));
+// Shop-window slides: the ones picked in Admin -> Home slider, else featured products with a wide photo.
+$slides = [];
+foreach (db()->query("SELECT product_id, image FROM home_slides WHERE status = 'published' ORDER BY sort_order, id")->fetchAll() as $hs) {
+    $p = $repo->getById((int) $hs['product_id']);
+    if ($p && $p['status'] === 'published') {
+        $p['header_image'] = $hs['image'] ?: ($p['header_image'] ?: $p['featured_image']);
+        $slides[] = $p;
+    }
+}
+if (!$slides) {
+    $slides = array_values(array_filter($featured, fn($p) => !empty($p['header_image'])));
+}
 // Two big category tiles for the spotlight row, the rest go in the rail.
 $spot = array_slice(array_values(array_filter($categories, fn($c) => (int) $c['product_count'] > 0)), 0, 2);
 

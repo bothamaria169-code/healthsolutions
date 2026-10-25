@@ -15,7 +15,7 @@ declare(strict_types=1);
 // Each step runs once, in order; the number reached is kept in settings as
 // `schema_version`. Steps only ever add (tables, columns, rows), so running a
 // new deploy against the live database is always safe.
-const PHOLA_SCHEMA_VERSION = 7;
+const PHOLA_SCHEMA_VERSION = 8;
 
 function phola_migrate(): void
 {
@@ -218,6 +218,30 @@ function phola_migrate(): void
             // The four starter quotes were placeholders: hide them so only real customers show.
             $pdo->exec("UPDATE testimonials SET status = 'draft'
                         WHERE name IN ('Thandi M.','Sipho K.','Lerato D.','Johan P.') AND avatar IS NULL");
+        }
+        if ($current < 8) {
+            // Home page hero slider, picked from the product feed in Admin -> Home slider.
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `home_slides` (
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `product_id` INT UNSIGNED NOT NULL,
+                `image` VARCHAR(500) DEFAULT NULL,
+                `status` ENUM('published','draft') NOT NULL DEFAULT 'published',
+                `sort_order` INT NOT NULL DEFAULT 0,
+                `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+            // Copies of our photos and reels on ImageKit, so Meta fetches them from a fast public CDN.
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `imagekit_files` (
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `local_path` VARCHAR(500) NOT NULL,
+                `local_mtime` INT UNSIGNED NOT NULL DEFAULT 0,
+                `file_id` VARCHAR(80) NOT NULL,
+                `url` VARCHAR(600) NOT NULL,
+                `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`), KEY `idx_path` (`local_path`(191))
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+            $addCol('social_posts', 'media_type', "VARCHAR(10) NOT NULL DEFAULT 'photo'");
+            $addCol('social_posts', 'media_url', 'VARCHAR(600) DEFAULT NULL');
         }
         set_setting('schema_version', (string) PHOLA_SCHEMA_VERSION);
     } catch (Throwable $e) {
