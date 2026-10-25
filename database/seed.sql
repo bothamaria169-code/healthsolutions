@@ -36,7 +36,7 @@ INSERT INTO `categories` (`id`,`name`,`slug`,`icon`,`blurb`,`image`,`sort_order`
 (10,'Skin & Body Care','skin-body','fa-spa','Creams and gels for skin, feet and joints.','assets/img/products/27.jpg',10)
 ON DUPLICATE KEY UPDATE `name`=VALUES(`name`);
 
--- Product photos: NN.jpg = wide shop header, NNb.jpg = pack shot. Products 24-33 have no pack shot yet,
+-- Product photos: NN.jpg = wide shop header, NNb.jpg = pack shot. Products 25-33 have no pack shot yet,
 -- so featured_image is NULL and the site shows its 'photo coming soon' placeholder.
 -- Prices are starting points: confirm them in Admin -> Products before launch.
 INSERT INTO `products`
@@ -99,7 +99,7 @@ Helps clear airways
 Boosts natural defences','Take two capsules daily with food.','simple',380.00,NULL,'60 capsules','PHL-23','in_stock',50,'assets/img/products/23b.jpg','assets/img/products/23.jpg',1,0,0,0,'published','lungs,herbal,respiratory'),
 (24,7,1,'NAD+ Resveratrol 1000 mg','nad-resveratrol-1000mg','NAD+ with resveratrol for cellular energy, antioxidant support and healthy ageing.','<p>NAD+ with resveratrol for cellular energy, antioxidant support and healthy ageing.</p><p><b>This is a supplement, not a medicine.</b> It does not diagnose, treat, cure or prevent any disease and never replaces treatment prescribed by your doctor or clinic. Keep taking your prescribed medication and tell your clinic you are using it.</p>','Supports cellular energy
 Powerful antioxidant
-Healthy ageing support','Take two capsules daily.','simple',590.00,NULL,'60 capsules','PHL-24','in_stock',50,NULL,'assets/img/products/24.jpg',0,0,0,1,'published','nad,resveratrol,ageing'),
+Healthy ageing support','Take two capsules daily.','simple',590.00,NULL,'60 capsules','PHL-24','in_stock',50,'assets/img/products/24b.jpg','assets/img/products/24.jpg',0,0,0,1,'published','nad,resveratrol,ageing'),
 (25,7,1,'Phola Magnesium Brain Focus','magnesium-brain-focus','Our high-absorption magnesium formula for focus, memory, clarity and mental performance.','<p>Our high-absorption magnesium formula for focus, memory, clarity and mental performance.</p><p><b>This is a supplement, not a medicine.</b> It does not diagnose, treat, cure or prevent any disease and never replaces treatment prescribed by your doctor or clinic. Keep taking your prescribed medication and tell your clinic you are using it.</p>','High-absorption magnesium
 Focus, memory and clarity
 Supports mental performance','Take two capsules daily, one in the morning and one in the evening.','simple',320.00,NULL,'60 capsules','PHL-25','in_stock',50,NULL,'assets/img/products/25.jpg',1,0,0,1,'published','magnesium,brain,focus,phola'),
@@ -124,7 +124,10 @@ Veggie capsules','Take one capsule daily.','simple',220.00,NULL,'30 capsules','P
 (32,5,3,'Misoprostol Tablets 200 mcg','misoprostol-200mcg','Prescription-only medicine.','<p><b>Prescription item — not currently for sale.</b> This product is saved as a draft until Phola has the licence, prescription process and proof of genuine supply that South African law requires.</p>',NULL,NULL,'simple',0.00,NULL,'Tablets','PHL-32','out_of_stock',0,NULL,'assets/img/products/32.jpg',0,0,0,0,'draft','rx'),
 (33,10,3,'SootheStep Relieving Topical Gel','soothestep-gel','A cooling, soothing gel for swollen feet and ankles, with aloe vera and arnica.','<p>A cooling, soothing gel for swollen feet and ankles, with aloe vera and arnica.</p><p><b>This is a supplement, not a medicine.</b> It does not diagnose, treat, cure or prevent any disease and never replaces treatment prescribed by your doctor or clinic. Keep taking your prescribed medication and tell your clinic you are using it.</p>','Cooling and soothing
 Aloe vera and arnica
-For swollen feet and ankles','Massage gently into feet and ankles up to three times a day. Not for broken skin.','simple',190.00,NULL,'100 ml','PHL-33','in_stock',50,NULL,'assets/img/products/33.jpg',0,0,0,1,'published','feet,gel,swelling,arnica')
+For swollen feet and ankles','Massage gently into feet and ankles up to three times a day. Not for broken skin.','simple',190.00,NULL,'100 ml','PHL-33','in_stock',50,NULL,'assets/img/products/33.jpg',0,0,0,1,'published','feet,gel,swelling,arnica'),
+(34,8,3,'Purely Lung Assistance Respiratory Support','purely-lung-assistance','Purely Nutraceuticals Lung Assistance: a herbal respiratory support formula for lung health and easier breathing.','<p>Purely Nutraceuticals Lung Assistance: a herbal respiratory support formula for lung health and easier breathing.</p><p><b>This is a supplement, not a medicine.</b> It does not diagnose, treat, cure or prevent any disease and never replaces treatment prescribed by your doctor or clinic. Keep taking your prescribed medication and tell your clinic you are using it.</p>','Supports lung health and breathing
+Herbal respiratory formula
+60 capsules','Take two capsules daily with food, or as directed on the label.','simple',420.00,NULL,'60 capsules','PHL-34','in_stock',50,'assets/img/products/34b.jpg',NULL,0,0,0,1,'published','lungs,respiratory,herbal,breathing')
 ON DUPLICATE KEY UPDATE `name`=VALUES(`name`);
 
 -- The wide shop photo is also the second gallery image on every product page.

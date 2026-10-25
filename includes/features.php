@@ -15,7 +15,7 @@ declare(strict_types=1);
 // Each step runs once, in order; the number reached is kept in settings as
 // `schema_version`. Steps only ever add (tables, columns, rows), so running a
 // new deploy against the live database is always safe.
-const PHOLA_SCHEMA_VERSION = 3;
+const PHOLA_SCHEMA_VERSION = 4;
 
 function phola_migrate(): void
 {
@@ -173,10 +173,134 @@ function phola_migrate(): void
                 if (get_setting($k) === null) { set_setting($k, $v); }
             }
         }
+        if ($current < 4) {
+            // A live database that only had database.sql imported gets the starter
+            // catalogue, the admin account and the demo patient from seed.sql.
+            phola_seed_starter_data($pdo);
+            // Product 24 got its own pack shot.
+            $pdo->exec("UPDATE products SET featured_image = 'assets/img/products/24b.jpg'
+                        WHERE slug = 'nad-resveratrol-1000mg' AND (featured_image IS NULL OR featured_image = '')");
+            // New listing from the product photos (also in seed.sql as id 34).
+            $pdo->exec("INSERT IGNORE INTO products
+                (category_id, brand_id, name, slug, short_desc, description, benefits, usage_notes, type, retail_price, pack_size, sku, stock_status, stock_qty, featured_image, is_new, status, tags)
+                SELECT 8, 3, 'Purely Lung Assistance Respiratory Support', 'purely-lung-assistance',
+                       'Purely Nutraceuticals Lung Assistance: a herbal respiratory support formula for lung health and easier breathing.',
+                       '<p>Purely Nutraceuticals Lung Assistance: a herbal respiratory support formula for lung health and easier breathing.</p><p><b>This is a supplement, not a medicine.</b> It does not diagnose, treat, cure or prevent any disease and never replaces treatment prescribed by your doctor or clinic. Keep taking your prescribed medication and tell your clinic you are using it.</p>',
+                       'Supports lung health and breathing\nHerbal respiratory formula\n60 capsules',
+                       'Take two capsules daily with food, or as directed on the label.',
+                       'simple', 420.00, '60 capsules', 'PHL-34', 'in_stock', 50, 'assets/img/products/34b.jpg', 1, 'published', 'lungs,respiratory,herbal,breathing'
+                FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM products WHERE slug = 'purely-lung-assistance')
+                  AND EXISTS (SELECT 1 FROM categories WHERE id = 8) AND EXISTS (SELECT 1 FROM brands WHERE id = 3)");
+        }
         set_setting('schema_version', (string) PHOLA_SCHEMA_VERSION);
     } catch (Throwable $e) {
         error_log('Phola migration failed: ' . $e->getMessage());
     }
+}
+
+/**
+ * Runs database/seed.sql when the database has no admin account or no products,
+ * i.e. seed.sql was never imported in phpMyAdmin. Rows that already exist are
+ * kept: keyed tables use ON DUPLICATE KEY / INSERT IGNORE, and the unkeyed
+ * content tables are only filled while they are still empty.
+ */
+function phola_seed_starter_data(PDO $pdo): void
+{
+    $admins   = (int) $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'admin'")->fetchColumn();
+    $products = (int) $pdo->query('SELECT COUNT(*) FROM products')->fetchColumn();
+    $file     = __DIR__ . '/../database/seed.sql';
+    if (($admins > 0 && $products > 0) || !is_file($file)) {
+        return;
+    }
+    $onlyIfEmpty = ['testimonials', 'faqs', 'product_gallery', 'side_effects'];
+    $seededProducts = $products === 0;
+
+    foreach (sql_statements((string) file_get_contents($file)) as $sql) {
+        if (preg_match('/^UPDATE\s+`?products`?/i', $sql)) {
+            if (!$seededProducts) { continue; }  // made-up sales counts only for a fresh catalogue
+        } elseif (preg_match('/^INSERT\s+(?:IGNORE\s+)?INTO\s+`?(\w+)`?/i', $sql, $m)) {
+            if (in_array($m[1], $onlyIfEmpty, true) && (int) $pdo->query("SELECT COUNT(*) FROM `{$m[1]}`")->fetchColumn() > 0) {
+                continue;
+            }
+            $sql = preg_replace('/^INSERT\s+INTO/i', 'INSERT IGNORE INTO', $sql);
+        } elseif (!preg_match('/^SET\s/i', $sql)) {
+            continue;
+        }
+        try {
+            $pdo->exec($sql);
+        } catch (Throwable $e) {
+            error_log('Phola seed statement skipped: ' . $e->getMessage());
+        }
+    }
+}
+
+/** Splits an SQL dump into statements, ignoring semicolons inside quotes and -- comments. */
+function sql_statements(string $sql): array
+{
+    $out = [];
+    $buf = '';
+    $quote = null;
+    $len = strlen($sql);
+    for ($i = 0; $i < $len; $i++) {
+        $c = $sql[$i];
+        if ($quote !== null) {
+            $buf .= $c;
+            if ($c === '\\' && $i + 1 < $len) {
+                $buf .= $sql[++$i];
+            } elseif ($c === $quote) {
+                if ($i + 1 < $len && $sql[$i + 1] === $quote) {
+                    $buf .= $sql[++$i];  // '' inside a string
+                } else {
+                    $quote = null;
+                }
+            }
+        } elseif ($c === "'" || $c === '"' || $c === '`') {
+            $quote = $c;
+            $buf .= $c;
+        } elseif ($c === '-' && substr($sql, $i, 3) === '-- ') {
+            $nl = strpos($sql, "\n", $i);
+            $i = $nl === false ? $len : $nl;
+            $buf .= "\n";
+        } elseif ($c === ';') {
+            if (trim($buf) !== '') { $out[] = trim($buf); }
+            $buf = '';
+        } else {
+            $buf .= $c;
+        }
+    }
+    if (trim($buf) !== '') { $out[] = trim($buf); }
+    return $out;
+}
+
+/**
+ * Lets the owner get into the admin without email or phpMyAdmin: put
+ * 'admin_password' => '…' in config/secrets.php and open the staff sign-in page.
+ * The admin account (ADMIN_EMAIL) is created, or its password set to that value,
+ * once per new value, so changing the password in the admin later still sticks.
+ */
+function phola_apply_admin_password(): void
+{
+    if (ADMIN_SETUP_PASSWORD === '') {
+        return;
+    }
+    $mark = hash('sha256', ADMIN_EMAIL . '|' . ADMIN_SETUP_PASSWORD . '|' . JWT_SECRET);
+    if (get_setting('admin_password_applied') === $mark) {
+        return;
+    }
+    $hash = password_hash(ADMIN_SETUP_PASSWORD, PASSWORD_DEFAULT);
+    $id = db()->prepare('SELECT id FROM users WHERE email = :e LIMIT 1');
+    $id->execute([':e' => ADMIN_EMAIL]);
+    $id = $id->fetchColumn();
+    if ($id) {
+        db()->prepare("UPDATE users SET password = :p, role = 'admin', is_active = 1 WHERE id = :id")
+            ->execute([':p' => $hash, ':id' => $id]);
+    } else {
+        db()->prepare("INSERT INTO users (name, email, password, role, is_active, reminders_enabled) VALUES ('Phola Admin', :e, :p, 'admin', 1, 0)")
+            ->execute([':e' => ADMIN_EMAIL, ':p' => $hash]);
+    }
+    set_setting('admin_password_applied', $mark);
+    // Clear any lock-out from earlier wrong guesses.
+    unset($_SESSION['_rl_login_' . md5(ADMIN_EMAIL)]);
 }
 
 // ── Delivery ─────────────────────────────────────────────────────────────

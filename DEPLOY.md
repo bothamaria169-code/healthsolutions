@@ -9,7 +9,8 @@ The same steps live in the admin under **Setup checklist**, where you can tick t
    names in `config/secrets.php`.
 2. **Add User To Database** → ALL PRIVILEGES.
 3. cPanel → **phpMyAdmin** → select the database → **Import** `database/database.sql`, then
-   `database/seed.sql`.
+   `database/seed.sql`. If you only imported `database.sql`, the site loads the starter catalogue,
+   the admin account and the demo patient from `seed.sql` by itself on the first page view.
 
 ## 2. Code from GitHub
 
@@ -61,6 +62,9 @@ free URL-cron service instead.
 ## 6. In the admin
 
 1. Sign in at `/modules/auth/login.php?mode=staff` and change the admin password.
+   Can't sign in? Add `'admin_password' => 'a-new-password',` to `public_html/config/secrets.php`,
+   open the staff sign-in page once, and sign in with that password. That sets the `admin_email`
+   account's password, and creates the account if it is missing. Delete the line again afterwards.
 2. **Reminders → Send a test email** to confirm the mailbox works.
 3. **AI & social media**: paste the Groq API key; create the Meta app and **Connect with Facebook**.
 4. **Products**: check prices and photos. **Patients**: delete the demo patient.

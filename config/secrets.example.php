@@ -20,6 +20,11 @@ return [
     'smtp_pass'   => 'CHANGE_ME',
     'admin_email' => 'info@pholahealthsolutions.co.za',
 
+    // Locked out of the admin? Set a password here, then open the staff sign-in
+    // page: the admin_email account gets this password (and is created if missing).
+    // Applied once per new value; delete the line again after you sign in.
+    'admin_password' => '',
+
     // Random values: keep them, or every patient is signed out
     'jwt_secret'      => 'make-a-long-random-string',
     'reminder_secret' => 'make-a-long-random-string',

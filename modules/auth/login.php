@@ -13,6 +13,10 @@ $errors   = [];
 $email    = '';
 $phone    = '';
 
+if ($mode === 'staff') {
+    phola_apply_admin_password();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = null;
     if (!verify_csrf((string) ($_POST['csrf_token'] ?? ''))) {

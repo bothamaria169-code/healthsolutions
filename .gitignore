@@ -19,4 +19,4 @@ Thumbs.db
 
 # Original full-size product photos (97 MB). The site uses the optimised
 # copies in assets/img/products/, which are in git.
-products/
+/products/

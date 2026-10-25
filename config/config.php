@@ -102,6 +102,8 @@ define('SMTP_USER', $secret('smtp_user', 'info@pholahealthsolutions.co.za'));
 define('SMTP_PASS', $secret('smtp_pass'));
 define('SMTP_FROM_NAME', SITE_NAME);
 define('ADMIN_EMAIL', $secret('admin_email', 'info@pholahealthsolutions.co.za'));
+// Optional: sets the ADMIN_EMAIL account's password (see phola_apply_admin_password()).
+define('ADMIN_SETUP_PASSWORD', $secret('admin_password'));
 
 // ── Groq (AI writing) — the key can also be saved in Admin → AI & social ─
 define('GROQ_API_KEY', $secret('groq_api_key'));
