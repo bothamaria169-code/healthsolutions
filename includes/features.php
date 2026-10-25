@@ -15,7 +15,7 @@ declare(strict_types=1);
 // Each step runs once, in order; the number reached is kept in settings as
 // `schema_version`. Steps only ever add (tables, columns, rows), so running a
 // new deploy against the live database is always safe.
-const PHOLA_SCHEMA_VERSION = 2;
+const PHOLA_SCHEMA_VERSION = 3;
 
 function phola_migrate(): void
 {
@@ -106,6 +106,72 @@ function phola_migrate(): void
         if ($current < 2) {
             $pdo->exec("DELETE FROM settings WHERE key_name IN ('tcg_door_fee','tcg_locker_fee','tcg_point_fee','tcg_kiosk_fee','sadc_fee_note')");
             set_setting('announcement', 'Courier Guy delivery nationwide: door, locker, pick-up point or kiosk · SADC via bus & taxi depots · DHL worldwide · WhatsApp +27 63 043 7385');
+        }
+        if ($current < 3) {
+            // Refer-a-friend + rewards points
+            $addCol('users', 'referral_code', 'VARCHAR(12) DEFAULT NULL');
+            $addCol('users', 'referred_by', 'INT UNSIGNED DEFAULT NULL');
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `points_ledger` (
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `user_id` INT UNSIGNED NOT NULL,
+                `points` INT NOT NULL,
+                `reason` VARCHAR(160) NOT NULL,
+                `enquiry_id` INT UNSIGNED DEFAULT NULL,
+                `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`), KEY `idx_user` (`user_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+            // Orders: confirmation page, banking details, proof of payment, gifts, points
+            foreach ([
+                'email' => 'VARCHAR(180) DEFAULT NULL', 'token' => 'CHAR(32) DEFAULT NULL', 'recipient' => 'TEXT DEFAULT NULL',
+                'points_redeemed' => 'INT NOT NULL DEFAULT 0', 'sold_processed' => 'TINYINT(1) NOT NULL DEFAULT 0',
+                'delivery_fee' => 'DECIMAL(10,2) DEFAULT NULL', 'bank_requested_at' => 'DATETIME DEFAULT NULL',
+                'pop_file' => 'VARCHAR(255) DEFAULT NULL', 'pop_uploaded_at' => 'DATETIME DEFAULT NULL',
+            ] as $col => $def) {
+                $addCol('enquiries', $col, $def);
+            }
+            // Patient stories live with the testimonials
+            $addCol('testimonials', 'story', 'LONGTEXT DEFAULT NULL');
+            $addCol('testimonials', 'video_url', 'VARCHAR(300) DEFAULT NULL');
+            $addCol('testimonials', 'condition_tag', 'VARCHAR(60) DEFAULT NULL');
+            // Ask a pharmacist
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `questions` (
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(120) DEFAULT NULL,
+                `email` VARCHAR(180) DEFAULT NULL,
+                `condition_tag` VARCHAR(60) DEFAULT NULL,
+                `question` TEXT NOT NULL,
+                `answer` TEXT DEFAULT NULL,
+                `slug` VARCHAR(200) DEFAULT NULL,
+                `status` ENUM('pending','published','hidden') NOT NULL DEFAULT 'pending',
+                `answered_at` DATETIME DEFAULT NULL,
+                `views` INT UNSIGNED NOT NULL DEFAULT 0,
+                `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`), UNIQUE KEY `uq_slug` (`slug`), KEY `idx_status` (`status`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+            // Health talks (WhatsApp group talks, webinars, in-person days)
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `events` (
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `title` VARCHAR(200) NOT NULL,
+                `starts_at` DATETIME NOT NULL,
+                `channel` VARCHAR(40) NOT NULL DEFAULT 'WhatsApp group',
+                `join_link` VARCHAR(400) DEFAULT NULL,
+                `description` TEXT DEFAULT NULL,
+                `status` ENUM('published','draft') NOT NULL DEFAULT 'published',
+                `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`), KEY `idx_start` (`starts_at`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `event_rsvps` (
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `event_id` INT UNSIGNED NOT NULL,
+                `name` VARCHAR(120) NOT NULL,
+                `phone` VARCHAR(20) DEFAULT NULL,
+                `email` VARCHAR(180) DEFAULT NULL,
+                `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`), KEY `idx_event` (`event_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+            foreach (['points_per_r10' => '1', 'point_value_cents' => '10', 'referral_points' => '200', 'signup_points' => '50', 'min_redeem_points' => '100'] as $k => $v) {
+                if (get_setting($k) === null) { set_setting($k, $v); }
+            }
         }
         set_setting('schema_version', (string) PHOLA_SCHEMA_VERSION);
     } catch (Throwable $e) {
@@ -244,6 +310,10 @@ function import_health_news(): array
                     if (isset($media->content)) { $img = (string) $media->content->attributes()->url; }
                     elseif (isset($media->thumbnail)) { $img = (string) $media->thumbnail->attributes()->url; }
                     elseif (isset($it->enclosure) && str_starts_with((string) $it->enclosure['type'], 'image')) { $img = (string) $it->enclosure['url']; }
+                    if (!$img) {
+                        $html = (string) ($it->children('http://purl.org/rss/1.0/modules/content/')->encoded ?? '') . $desc;
+                        if (preg_match('~<img[^>]+src=["\'](https://[^"\']+)~i', $html, $m)) { $img = html_entity_decode($m[1]); }
+                    }
                     $date = (string) ($it->pubDate ?? $it->published ?? $it->updated ?? '');
                     $ts = $date !== '' ? strtotime($date) : false;
                     $ins->execute([
@@ -259,10 +329,67 @@ function import_health_news(): array
             ->execute([':e' => $error, ':id' => $src['id']]);
         if ($error) { $errors[] = $src['name'] . ': ' . $error; }
     }
+    news_fill_images();
     // Keep the table small: news older than 90 days is dropped.
     db()->exec('DELETE FROM health_news WHERE published_at < NOW() - INTERVAL 90 DAY');
     set_setting('rss_last_run', date('Y-m-d H:i:s'));
     return ['added' => $added, 'errors' => $errors];
+}
+
+/**
+ * Most feeds don't include a picture, but almost every news page has an
+ * og:image for social sharing. Look it up for a handful of recent stories per
+ * run. image = '' marks "looked, none found" so a page is only fetched once.
+ */
+function news_fill_images(int $limit = 15): int
+{
+    $rows = db()->query("SELECT id, url FROM health_news WHERE image IS NULL ORDER BY published_at DESC LIMIT " . $limit)->fetchAll();
+    $found = 0;
+    $upd = db()->prepare('UPDATE health_news SET image = :i WHERE id = :id');
+    foreach ($rows as $r) {
+        $img = '';
+        $html = http_get((string) $r['url'], 8);
+        if ($html !== null) {
+            $head = substr($html, 0, 200000);
+            if (preg_match('~<meta[^>]+(?:property|name)=["\'](?:og:image|twitter:image)(?::src)?["\'][^>]*content=["\']([^"\']+)~i', $head, $m)
+                || preg_match('~<meta[^>]+content=["\']([^"\']+)["\'][^>]*(?:property|name)=["\'](?:og:image|twitter:image)~i', $head, $m)) {
+                $img = html_entity_decode(trim($m[1]), ENT_QUOTES, 'UTF-8');
+                if (str_starts_with($img, '//')) { $img = 'https:' . $img; }
+                if (!preg_match('~^https://~i', $img)) { $img = ''; }
+            }
+        }
+        $upd->execute([':i' => mb_substr($img, 0, 700), ':id' => $r['id']]);
+        if ($img !== '') { $found++; }
+    }
+    return $found;
+}
+
+/** The picture for a news card: the story's own, or a topic photo of ours. */
+function news_image(array $n): string
+{
+    if (!empty($n['image'])) {
+        return (string) $n['image'];
+    }
+    $text = strtolower(' ' . $n['title'] . ' ' . ($n['summary'] ?? '') . ' ');
+    foreach ([
+        'glucobalance.jpg' => ['diabet', 'insulin', 'glucose', 'blood sugar'],
+        'bp-check.jpg'     => ['blood pressure', 'hypertension', 'stroke', 'heart', 'cardio'],
+        'patient-care.jpg' => ['hiv', 'aids', 'antiretroviral', 'tuberculosis', ' tb '],
+        'healthy-food.jpg' => ['diet', 'food', 'nutrition', 'obesity', 'weight', 'eat'],
+        'fitness.jpg'      => ['exercise', 'physical activity', 'walking', 'fitness'],
+        'senior-care.jpg'  => ['dementia', 'alzheimer', 'ageing', 'aging', 'older adults', 'elderly'],
+        'pharmacist.jpg'   => ['drug', 'medicine', 'medication', 'pharma', 'antibiotic', 'vaccine'],
+        'nurse.jpg'        => ['hospital', 'clinic', 'nurse', 'health worker', 'patients'],
+        'sleep-drops.jpg'  => ['sleep', 'insomnia', 'mental health', 'depression', 'anxiety', 'stress'],
+        'probiotic.jpg'    => ['gut', 'microbiome', 'bacteria'],
+        'doctor-smile.jpg' => ['cancer', 'tumour', 'tumor', 'chemo'],
+    ] as $file => $words) {
+        foreach ($words as $w) {
+            if (str_contains($text, $w)) { return SITE_URL . '/assets/img/stock/' . $file; }
+        }
+    }
+    $generic = ['hero-consult.jpg', 'pharmacy.jpg', 'nurse-bp.jpg', 'pharmacy-shopper.jpg', 'doctor-smile.jpg'];
+    return SITE_URL . '/assets/img/stock/' . $generic[crc32((string) $n['title']) % count($generic)];
 }
 
 // ── Google / Facebook sign-in ────────────────────────────────────────────
@@ -390,6 +517,7 @@ function oauth_handle(string $provider): never
         $stmt->execute([':id' => $id]);
         $user = $stmt->fetch();
         $isNew = true;
+        rewards_on_signup((int) $id);
     }
     if (empty($user['is_active'])) {
         flash('danger', 'This account is switched off. WhatsApp us for help.');

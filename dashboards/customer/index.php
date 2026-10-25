@@ -211,4 +211,80 @@ $hello = $hour < 12 ? 'Good morning' : ($hour < 17 ? 'Good afternoon' : 'Good ev
   </div>
 </div>
 
+<?php
+$last = db()->prepare('SELECT systolic, diastolic, glucose, weight_kg FROM health_readings WHERE user_id = :u ORDER BY recorded_on DESC, id DESC LIMIT 1');
+$last->execute([':u' => $uid]);
+$last = $last->fetch() ?: [];
+$share = [
+    'name'   => explode(' ', (string) $user['name'])[0],
+    'pct'    => $week['pct'],
+    'streak' => (int) $streak,
+    'bp'     => !empty($last['systolic']) ? $last['systolic'] . '/' . $last['diastolic'] : null,
+    'sugar'  => !empty($last['glucose']) ? rtrim(rtrim(number_format((float) $last['glucose'], 1), '0'), '.') : null,
+    'quote'  => daily_quote(),
+    'logo'   => SITE_URL . '/assets/img/logo/phola-mark.png',
+    'link'   => referral_link($uid),
+];
+?>
+<div class="card-fc card-fc--pad mt-3 share-card">
+  <div>
+    <span class="eyebrow">Share your progress</span>
+    <h2 style="font-size:1.2rem">Proud of your week? Show it off.</h2>
+    <p class="text-muted-2 mb-0" style="font-size:.9rem">Make a picture of your adherence and streak for WhatsApp, Facebook or Instagram — it carries your invite link, so friends who join earn you points. Readings are only included if you tick the box.</p>
+    <label class="mt-2 d-block" style="font-size:.85rem"><input type="checkbox" id="shareReadings"> Include my latest blood pressure / sugar</label>
+  </div>
+  <div class="d-flex gap-2 flex-wrap align-items-center">
+    <canvas id="shareCanvas" width="1080" height="1080" style="width:180px;height:180px;border-radius:18px;box-shadow:var(--e-2)"></canvas>
+    <div class="d-grid gap-2">
+      <button class="btn-fc" type="button" id="shareBtn"><i class="fa-solid fa-share-nodes"></i> Share picture</button>
+      <a class="btn-fc btn-fc--ghost" id="shareDl" download="my-phola-week.png"><i class="fa-solid fa-download"></i> Download</a>
+    </div>
+  </div>
+</div>
+<script>
+(() => {
+  const d = <?= json_encode($share, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+  const c = document.getElementById('shareCanvas'), x = c.getContext('2d');
+  const logo = new Image(); logo.crossOrigin = 'anonymous'; logo.src = d.logo;
+  const wrap = (text, maxW) => { const words = text.split(' '), lines = []; let l = '';
+    words.forEach((w) => { const t = l ? l + ' ' + w : w; if (x.measureText(t).width > maxW && l) { lines.push(l); l = w; } else l = t; }); lines.push(l); return lines; };
+  const draw = () => {
+    const g = x.createLinearGradient(0, 0, 1080, 1080); g.addColorStop(0, '#0F3D24'); g.addColorStop(1, '#1F6B2D');
+    x.fillStyle = g; x.fillRect(0, 0, 1080, 1080);
+    x.fillStyle = 'rgba(140,198,63,.12)'; x.beginPath(); x.arc(930, 960, 330, 0, Math.PI * 2); x.fill();
+    if (logo.complete && logo.naturalWidth) { x.save(); x.beginPath(); x.arc(150, 150, 70, 0, Math.PI * 2); x.fillStyle = '#fff'; x.fill(); x.clip(); x.drawImage(logo, 85, 85, 130, 130); x.restore(); }
+    x.fillStyle = '#fff'; x.font = '700 40px Manrope, Arial'; x.fillText('Phola Health Solutions', 250, 140);
+    x.fillStyle = '#8CC63F'; x.font = '600 30px Manrope, Arial'; x.fillText('Health & Wellness, Delivered.', 250, 185);
+    x.fillStyle = '#fff'; x.font = '600 64px Georgia, serif'; x.fillText(d.name + "'s week", 90, 340);
+    const tiles = [[d.pct === null ? '—' : d.pct + '%', 'doses taken'], [d.streak + (d.streak === 1 ? ' day' : ' days'), 'streak 🔥']];
+    if (document.getElementById('shareReadings').checked) {
+      if (d.bp) tiles.push([d.bp, 'blood pressure']);
+      if (d.sugar) tiles.push([d.sugar, 'sugar mmol/L']);
+    }
+    const w = (900 - (tiles.length - 1) * 30) / tiles.length;
+    tiles.forEach(([big, small], i) => {
+      const tx = 90 + i * (w + 30);
+      x.fillStyle = 'rgba(255,255,255,.1)'; x.beginPath(); x.roundRect(tx, 400, w, 230, 32); x.fill();
+      x.fillStyle = '#8CC63F'; x.font = `800 ${tiles.length > 2 ? 64 : 92}px Manrope, Arial`; x.fillText(big, tx + 36, 530);
+      x.fillStyle = 'rgba(238,242,247,.8)'; x.font = '600 32px Manrope, Arial'; x.fillText(small, tx + 36, 590);
+    });
+    x.fillStyle = '#fff'; x.font = 'italic 42px Georgia, serif';
+    wrap('“' + d.quote + '”', 900).slice(0, 3).forEach((l, i) => x.fillText(l, 90, 740 + i * 58));
+    x.fillStyle = '#8CC63F'; x.font = '700 32px Manrope, Arial'; x.fillText('Track yours free → pholahealthsolutions.co.za', 90, 1000);
+    document.getElementById('shareDl').href = c.toDataURL('image/png');
+  };
+  logo.onload = draw; logo.onerror = draw; document.getElementById('shareReadings').addEventListener('change', draw); draw();
+  document.getElementById('shareBtn').addEventListener('click', () => c.toBlob(async (blob) => {
+    const file = new File([blob], 'my-phola-week.png', { type: 'image/png' });
+    const text = 'My health week with Phola 💚 Join me free: ' + d.link;
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], text }); } catch (e) {}
+    } else {
+      document.getElementById('shareDl').click();
+      window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+    }
+  }));
+})();
+</script>
+
 <?php require_once __DIR__ . '/../../includes/dash-foot.php'; ?>

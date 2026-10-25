@@ -112,6 +112,18 @@ function setup_tasks(): array
             '<code>thecourierguy.co.za</code> → open an account (Pudo covers the lockers), and a <b>DHL Express</b> account at <code>mydhl.express.dhl</code> for overseas orders. The website shows no delivery prices — you quote each order on WhatsApp, including SADC bus/taxi transport.', null],
         ['testimonials', 'Store', 'Add real customer testimonials', 'you',
             '<b>Testimonials</b> → add what customers have said (with their permission), with an optional photo. Replace the four sample ones.', null],
+        ['bank', 'Store', 'Add your banking details', 'you',
+            '<b>Settings → Banking details (EFT)</b>. Customers see them on their order page when they press <b>Request banking details</b>, and you can send them on WhatsApp from any enquiry with one button.', bank_details() ? true : null],
+        ['rewards', 'Store', 'Check the rewards points rates', 'you',
+            '<b>Settings → Rewards points</b>: 1 point per R10, each point worth R0.10, 50 welcome points and 200 for a referral to start with. Points are added when you mark an order <b>Sold</b>.', null],
+        ['questions', 'Marketing', 'Answer the first "Ask a pharmacist" questions', 'you',
+            '<b>Ask a pharmacist</b> in the sidebar. Every published answer becomes its own page on Google — aim for two a week. Never advise stopping prescribed medication.', $count("SELECT COUNT(*) FROM questions WHERE status = 'published'") > 0 ? true : null],
+        ['talk', 'Marketing', 'Schedule your first free health talk', 'you',
+            '<b>Health talks</b> → add a date, choose WhatsApp group or Zoom and paste the invite link. Share the Health talks page on Facebook and in the newsletter.', $count('SELECT COUNT(*) FROM events') > 0 ? true : null],
+        ['stories', 'Marketing', 'Publish a patient story', 'you',
+            '<b>Testimonials &amp; stories</b> → add a longer story or a YouTube link (with the customer\'s permission). It appears on the Patient stories page.', $count("SELECT COUNT(*) FROM testimonials WHERE story IS NOT NULL OR video_url IS NOT NULL") > 0 ? true : null],
+        ['languages', 'Marketing', 'Check the translated pages', 'you',
+            'The language menu translates every page automatically (isiZulu, isiXhosa, Sesotho, Afrikaans, chiShona, Chichewa, Portuguese, Kiswahili, French). Machine translation is good but not perfect — ask a fluent customer to check the home page and diet plans.', null],
         ['mk-ga4', 'Marketing', 'Add Google Analytics 4', 'you',
             '<code>analytics.google.com</code> → Admin → Create property → Web stream for <code>pholahealthsolutions.co.za</code>. Paste the <b>Measurement ID</b> (G-XXXX) in <b>Settings → Marketing &amp; tracking</b>. Every page then reports visits, and WhatsApp enquiries are counted as <code>generate_lead</code> events.', $has('ga4_id') ? true : null],
         ['mk-pixel', 'Marketing', 'Add the Meta (Facebook) Pixel', 'you',
@@ -745,3 +757,4 @@ function mask_email(string $email): string
     return $domain !== '' ? $masked . '@' . $domain : $masked;
 }
 require_once __DIR__ . '/features.php';
+require_once __DIR__ . '/engagement.php';

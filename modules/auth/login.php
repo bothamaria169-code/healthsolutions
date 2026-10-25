@@ -71,7 +71,7 @@ $tabUrl = fn(string $m) => '?' . http_build_query(array_filter(['mode' => $m ===
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<?php foreach (['theme', 'components', 'layout', 'pages', 'responsive', 'phola', 'phola-store', 'phola-pages'] as $css): ?>
+<?php foreach (['theme', 'components', 'layout', 'pages', 'responsive', 'phola', 'phola-store', 'phola-pages', 'phola-engage'] as $css): ?>
 <link rel="stylesheet" href="<?= asset("assets/css/$css.css") ?>">
 <?php endforeach; ?>
 </head>

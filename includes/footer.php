@@ -43,6 +43,14 @@ $wa       = get_setting('contact_whatsapp', '');
         <div class="footer-links">
           <a href="<?= SITE_URL ?>/about.php">About us</a>
           <a href="<?= SITE_URL ?>/modules/blog/index.php">Guides &amp; advice</a>
+          <a href="<?= SITE_URL ?>/condition.php">Health conditions</a>
+          <a href="<?= SITE_URL ?>/health-tools.php">Health calculators</a>
+          <a href="<?= SITE_URL ?>/ask.php">Ask a pharmacist</a>
+          <a href="<?= SITE_URL ?>/events.php">Health talks</a>
+          <a href="<?= SITE_URL ?>/stories.php">Patient stories</a>
+          <a href="<?= SITE_URL ?>/clinic-finder.php">Clinic finder</a>
+          <a href="<?= SITE_URL ?>/delivery.php">Delivery</a>
+          <a href="<?= SITE_URL ?>/send-home.php">Send to family in SADC</a>
           <a href="<?= SITE_URL ?>/dashboards/customer/index.php">Patient portal</a>
           <a href="<?= SITE_URL ?>/faq.php">FAQ</a>
           <a href="<?= SITE_URL ?>/contact.php">Contact</a>
@@ -120,6 +128,7 @@ $wa       = get_setting('contact_whatsapp', '');
 <?php if (!empty($nl_gate)): ?>
 <script src="<?= asset('assets/js/newsletter-gate.js') ?>"></script>
 <?php endif; ?>
+<?php include __DIR__ . '/lang-script.php'; ?>
 <?php foreach ($extra_js as $src): ?>
 <script src="<?= e($src) ?>"></script>
 <?php endforeach; ?>

@@ -34,6 +34,20 @@ $groups = [
         'x_url'            => ['X (Twitter) URL', 'text'],
         'linkedin_url'     => ['LinkedIn URL', 'text'],
     ],
+    'Banking details (EFT)' => [
+        'bank_name'           => ['Bank', 'text', 'Shown to customers when they request banking details for an order.'],
+        'bank_account_holder' => ['Account holder', 'text'],
+        'bank_account_number' => ['Account number', 'text'],
+        'bank_branch_code'    => ['Branch code', 'text'],
+        'bank_account_type'   => ['Account type', 'text', 'e.g. Business cheque'],
+    ],
+    'Rewards points' => [
+        'points_per_r10'    => ['Points per R10 spent', 'number'],
+        'point_value_cents' => ['Value of one point (cents)', 'number', '10 = every point is worth R0.10, so 100 points = R10.'],
+        'signup_points'     => ['Welcome bonus (points)', 'number'],
+        'referral_points'   => ['Referral bonus (points)', 'number', "Given to the person who invited a friend, once the friend's first order is sold."],
+        'min_redeem_points' => ['Minimum points to spend', 'number'],
+    ],
     'Sign in with Google & Facebook' => [
         'google_client_id'     => ['Google Client ID', 'text', 'Google Cloud Console → APIs & Services → Credentials → OAuth client ID (Web). Authorised redirect URI: ' . SITE_URL . '/modules/auth/google.php'],
         'google_client_secret' => ['Google Client secret', 'text'],

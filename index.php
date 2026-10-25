@@ -243,9 +243,13 @@ include __DIR__ . '/includes/header.php';
     <div class="ph-head"><div><span class="eyebrow">Free health hub</span><h2>Live well with a chronic condition</h2></div></div>
     <div class="hub-grid">
       <a class="hub-tile" href="<?= SITE_URL ?>/diet-plans.php" data-reveal><i class="fa-solid fa-carrot"></i><b>Diet plans</b><span>Diabetes, blood pressure, HIV, TB, kidneys and more — with a sample day of SA meals.</span></a>
-      <a class="hub-tile" href="<?= SITE_URL ?>/modules/blog/index.php" data-reveal><i class="fa-solid fa-book-medical"></i><b>Condition guides</b><span>Plain-language articles on managing chronic conditions every day.</span></a>
+      <a class="hub-tile" href="<?= SITE_URL ?>/condition.php" data-reveal><i class="fa-solid fa-book-medical"></i><b>Condition guides</b><span>Plain-language articles on managing chronic conditions every day.</span></a>
+      <a class="hub-tile" href="<?= SITE_URL ?>/health-tools.php" data-reveal><i class="fa-solid fa-calculator"></i><b>Health calculators</b><span>BMI, blood sugar, blood pressure and "when will my pack run out".</span></a>
+      <a class="hub-tile" href="<?= SITE_URL ?>/ask.php" data-reveal><i class="fa-solid fa-user-doctor"></i><b>Ask a pharmacist</b><span>Send us your question — free, private and answered in plain language.</span></a>
+      <a class="hub-tile" href="<?= SITE_URL ?>/events.php" data-reveal><i class="fa-solid fa-calendar-days"></i><b>Health talks</b><span>Free WhatsApp and online talks with our team. Bring your questions.</span></a>
       <a class="hub-tile" href="<?= SITE_URL ?>/health-news.php" data-reveal><i class="fa-solid fa-newspaper"></i><b>Health news</b><span>Fresh headlines from South Africa and the world, updated through the day.</span></a>
       <a class="hub-tile" href="<?= SITE_URL ?>/modules/auth/register.php" data-reveal><i class="fa-solid fa-calendar-check"></i><b>Free tracker</b><span>Sign up with Google or Facebook: daily quote, dose reminders and refill dates.</span></a>
+      <a class="hub-tile" href="<?= SITE_URL ?>/clinic-finder.php" data-reveal><i class="fa-solid fa-location-dot"></i><b>Clinic finder</b><span>Clinics and pharmacies near you, in South Africa and across SADC.</span></a>
     </div>
   </div>
 </section>
@@ -275,6 +279,22 @@ include __DIR__ . '/includes/header.php';
   </div>
 </section>
 <?php endif; ?>
+
+<!-- ── Refer a friend + send home ───────────────────────────────────── -->
+<section class="section section--tight">
+  <div class="container ph-bento">
+    <a class="ph-band d-block" href="<?= SITE_URL ?>/<?= current_user() ? 'dashboards/customer/rewards.php' : 'modules/auth/register.php' ?>">
+      <span class="ph-kicker"><i class="fa-solid fa-gift"></i> Rewards</span>
+      <h2>Invite friends, earn points</h2>
+      <p>Get <?= (int) get_setting('signup_points', '50') ?> points when you sign up, points on every order, and <?= (int) get_setting('referral_points', '200') ?> points for each friend's first order.</p>
+    </a>
+    <a class="ph-band d-block" href="<?= SITE_URL ?>/send-home.php" style="background:linear-gradient(120deg,#1F6B2D,#5C8F2E)">
+      <span class="ph-kicker"><i class="fa-solid fa-bus"></i> Family back home</span>
+      <h2>Send health products to SADC</h2>
+      <p>Buy here, and we send it by bus or taxi to the depot nearest your family in Zimbabwe, Malawi, Mozambique and more.</p>
+    </a>
+  </div>
+</section>
 
 <!-- ── Newsletter + social ──────────────────────────────────────────── -->
 <section class="section">

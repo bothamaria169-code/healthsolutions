@@ -1,0 +1,124 @@
+/* ============================================================================
+   Phola Health Solutions — engagement features: health calculators, condition
+   hubs, rewards & referrals, order confirmation, Ask a pharmacist, patient
+   stories, clinic finder, health talks and the language menu.
+   Loaded after phola-pages.css; tokens from theme.css.
+   ============================================================================ */
+
+/* ── Header: Health hub dropdown + language menu ──────────────────────── */
+.nav-dd { position: relative; }
+.nav-dd__menu {
+  position: absolute; top: 100%; left: -1rem; z-index: 50; width: 560px; padding: .8rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: .2rem;
+  background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--e-3);
+  opacity: 0; visibility: hidden; transform: translateY(6px); transition: var(--t-fast);
+}
+.nav-dd:hover .nav-dd__menu, .nav-dd:focus-within .nav-dd__menu { opacity: 1; visibility: visible; transform: none; }
+.nav-dd__menu a { display: flex; gap: .7rem; align-items: center; padding: .6rem .7rem; border-radius: 12px; }
+.nav-dd__menu a:hover { background: var(--leaf-wash); }
+.nav-dd__menu i { width: 36px; height: 36px; flex-shrink: 0; border-radius: 11px; display: grid; place-items: center; background: var(--leaf-wash); color: var(--leaf); }
+.nav-dd__menu b { display: block; font-size: .88rem; color: var(--forest); }
+.nav-dd__menu small { display: block; font-size: .74rem; color: var(--text-3); font-weight: 500; }
+.lang-pick { display: inline-flex; align-items: center; gap: .35rem; padding: .3rem .4rem .3rem .7rem; border: 1px solid var(--line-strong); border-radius: var(--r-pill); background: #fff; color: var(--forest); font-size: .82rem; cursor: pointer; }
+.lang-pick select { border: 0; background: transparent; font: inherit; font-weight: 700; color: inherit; cursor: pointer; outline: 0; max-width: 120px; }
+.dash-side .lang-pick { width: 100%; }
+.dash-side .lang-pick select { flex: 1; max-width: none; }
+/* Google Translate: hide its own toolbar and tooltips — our menu replaces them. */
+.goog-te-banner-frame, iframe.skiptranslate, #goog-gt-tt, .goog-te-balloon-frame, .VIpgJd-ZVi9od-ORHb-OEVmcd { display: none !important; }
+body { top: 0 !important; }
+.goog-text-highlight { background: none !important; box-shadow: none !important; }
+
+/* ── Health calculators ───────────────────────────────────────────────── */
+.tools { display: grid; gap: 1.5rem; }
+.tool { scroll-margin-top: calc(var(--header-h) + 80px); background: var(--card); border: 1px solid var(--line); border-radius: var(--r-xl); padding: clamp(1.3rem, 3vw, 2rem); }
+.tool__intro { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.1rem; }
+.tool__intro h2 { font-size: 1.5rem; margin: 0 0 .3rem; font-weight: 600; }
+.tool__intro p { margin: 0; color: var(--text-2); max-width: 70ch; }
+.tool__icon { flex: 0 0 54px; height: 54px; border-radius: 17px; display: grid; place-items: center; background: var(--forest); color: var(--lime); font-size: 1.3rem; }
+.tool__form { display: flex; flex-wrap: wrap; gap: .8rem; align-items: flex-end; }
+.tool__form .field { margin: 0; flex: 1 1 160px; }
+.tool__out:empty { display: none; }
+.tool__res { margin-top: 1.1rem; padding: 1.1rem 1.3rem; border-radius: var(--r-lg); border-left: 6px solid; }
+.tool__res b { display: block; font-family: var(--font-display); font-size: 1.35rem; color: var(--forest); margin-bottom: .2rem; }
+.tool__res p { margin: 0; color: var(--text-2); }
+.tool__res--ok { background: var(--leaf-wash); border-color: var(--leaf); }
+.tool__res--warn { background: var(--amber-wash); border-color: var(--amber); }
+.tool__res--bad { background: var(--coral-wash); border-color: var(--coral); }
+.tool__links { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-top: .6rem; }
+.tool__ref { margin: 1rem 0 0; font-size: .8rem; color: var(--text-3); }
+
+/* ── Condition hub ────────────────────────────────────────────────────── */
+.cond-facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: .8rem; margin-bottom: 1.5rem; }
+.cond-facts div { display: flex; gap: .55rem; align-items: center; background: var(--leaf-wash); border-radius: var(--r); padding: .85rem 1rem; font-weight: 700; font-size: .88rem; color: var(--forest); }
+.cond-facts i { color: var(--leaf); }
+.cond-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 1.5rem; align-items: start; }
+.post-card--row { display: grid; grid-template-columns: 220px 1fr; }
+.post-card--row .post-card__media { height: 100%; aspect-ratio: auto; }
+
+/* ── Rewards & referrals ──────────────────────────────────────────────── */
+.reward-tile { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 1.2rem 1.3rem; display: flex; flex-direction: column; }
+.reward-tile span { font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); }
+.reward-tile b { font-family: var(--font-display); font-size: 2.2rem; color: var(--forest); line-height: 1.1; margin: .2rem 0; }
+.reward-tile small { color: var(--text-2); }
+.reward-tile--lime { background: var(--forest); border-color: var(--forest); }
+.reward-tile--lime span, .reward-tile--lime small { color: var(--on-dark-2); }
+.reward-tile--lime b { color: var(--lime); }
+.ref-box { display: flex; gap: .5rem; margin: .8rem 0 .2rem; }
+.ref-box .input-fc { flex: 1; font-weight: 700; color: var(--forest); }
+.share-card { display: flex; gap: 1.5rem; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+.share-card > div:first-child { flex: 1 1 320px; }
+
+/* ── Order confirmation ───────────────────────────────────────────────── */
+.order-step { display: flex; gap: 1rem; align-items: flex-start; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 1.3rem 1.4rem; margin-bottom: 1rem; }
+.order-step h2 { font-size: 1.2rem; margin: .15rem 0 .3rem; }
+.order-step p { color: var(--text-2); font-size: .92rem; }
+.order-step__n { flex: 0 0 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--forest); color: var(--lime); font-weight: 800; font-family: var(--font-display); font-size: 1.1rem; }
+.order-step.is-done { border-color: var(--leaf); background: linear-gradient(0deg, var(--leaf-wash), #fff 60%); }
+.order-step.is-done .order-step__n { background: var(--leaf); color: #fff; font-size: 0; }
+.order-step.is-done .order-step__n::before { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 1rem; }
+.bank-box { background: var(--paper); border: 1px dashed var(--line-strong); border-radius: var(--r); padding: .8rem 1.1rem; display: inline-block; max-width: 100%; overflow-x: auto; }
+
+/* ── Ask a pharmacist ─────────────────────────────────────────────────── */
+.qa-item { display: block; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 1.1rem 1.3rem; margin-bottom: .8rem; transition: var(--t-fast); }
+.qa-item:hover { border-color: var(--leaf); box-shadow: var(--e-2); }
+.qa-item h3 { font-family: var(--font-sans); font-size: 1.05rem; font-weight: 800; margin: .1rem 0 .35rem; }
+.qa-item p { margin: 0; color: var(--text-2); font-size: .9rem; }
+.qa-answer { background: var(--card); border: 1px solid var(--line); border-left: 6px solid var(--lime); border-radius: var(--r-lg); padding: 1.4rem 1.5rem; }
+.qa-answer__who { display: inline-flex; gap: .45rem; align-items: center; font-weight: 800; font-size: .82rem; color: var(--leaf); margin-bottom: .6rem; }
+
+/* ── Patient stories ──────────────────────────────────────────────────── */
+.story { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 1.5rem; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-xl); padding: clamp(1.2rem, 3vw, 1.8rem); margin-bottom: 1.5rem; }
+.story:not(:has(.story__media)) { grid-template-columns: 1fr; }
+.story__media { border-radius: var(--r-lg); overflow: hidden; aspect-ratio: 16 / 9; background: var(--forest); }
+.story__media iframe { width: 100%; height: 100%; border: 0; }
+.story__media--photo { aspect-ratio: 4 / 3; }
+.story__media img { width: 100%; height: 100%; object-fit: cover; }
+.story__body h2 { font-weight: 600; font-size: clamp(1.3rem, 2.4vw, 1.8rem); margin: .7rem 0; }
+.story__who { margin: 1rem 0 0; color: var(--text-2); display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+
+/* ── Clinic finder ────────────────────────────────────────────────────── */
+.finder { display: flex; flex-wrap: wrap; gap: .8rem; align-items: flex-end; }
+.finder .field { flex: 1 1 180px; }
+.finder-map { border-radius: var(--r-xl); overflow: hidden; border: 1px solid var(--line); height: clamp(320px, 55vh, 560px); background: var(--paper-2); }
+.finder-map iframe { width: 100%; height: 100%; border: 0; }
+
+/* ── Health talks ─────────────────────────────────────────────────────── */
+.event { display: grid; grid-template-columns: 96px minmax(0, 1fr) 300px; gap: 1.3rem; align-items: start; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-xl); padding: 1.4rem; margin-bottom: 1rem; }
+.event__date { background: var(--forest); color: #fff; border-radius: var(--r-lg); padding: .8rem .5rem; text-align: center; display: flex; flex-direction: column; }
+.event__date b { font-family: var(--font-display); font-size: 2.2rem; line-height: 1; color: var(--lime); }
+.event__date span { text-transform: uppercase; font-weight: 800; letter-spacing: .1em; font-size: .8rem; }
+.event__date small { color: var(--on-dark-2); margin-top: .3rem; }
+.event__body h2 { font-size: 1.35rem; margin: .2rem 0 .4rem; font-weight: 600; }
+.event__body p { color: var(--text-2); font-size: .92rem; }
+.event__form { display: grid; gap: .5rem; }
+
+@media (max-width: 991px) {
+  .cond-grid, .story, .event { grid-template-columns: 1fr; }
+  .cond-facts { grid-template-columns: 1fr 1fr; }
+  .event__date { flex-direction: row; gap: .6rem; align-items: baseline; justify-content: center; }
+}
+@media (max-width: 575px) {
+  .cond-facts { grid-template-columns: 1fr; }
+  .post-card--row { grid-template-columns: 1fr; }
+  .ref-box { flex-direction: column; }
+}

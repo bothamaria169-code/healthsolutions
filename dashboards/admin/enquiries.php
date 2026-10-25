@@ -15,20 +15,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf((string) ($_POST['csrf_
         redirect('dashboards/admin/enquiries.php');
     }
     $status = array_key_exists($_POST['status'] ?? '', ENQUIRY_STATUSES) ? $_POST['status'] : 'new';
+    $fee = trim((string) ($_POST['delivery_fee'] ?? ''));
     db_update('enquiries', $id, [
         'status'      => $status,
+        'delivery_fee' => $fee !== '' ? max(0, (float) $fee) : null,
         'admin_notes' => mb_substr(trim((string) ($_POST['admin_notes'] ?? '')), 0, 2000) ?: null,
         'phone'       => Health::normalizePhone((string) ($_POST['phone'] ?? '')) ?: null,
         'name'        => mb_substr(trim(strip_tags((string) ($_POST['name'] ?? ''))), 0, 120) ?: null,
     ]);
-    // Count a sale against the products, so best-seller rankings stay honest.
-    if ($status === 'sold' && ($_POST['was'] ?? '') !== 'sold') {
-        $row = db()->prepare('SELECT items FROM enquiries WHERE id = :id');
-        $row->execute([':id' => $id]);
-        foreach (json_decode((string) $row->fetchColumn(), true) ?: [] as $item) {
-            db()->prepare('UPDATE products SET sold_count = sold_count + :q, stock_qty = GREATEST(0, stock_qty - :q2) WHERE id = :p')
-                ->execute([':q' => (int) $item['qty'], ':q2' => (int) $item['qty'], ':p' => (int) $item['product_id']]);
-        }
+    // Sold = paid: stock, best-sellers, rewards points and the referral bonus (once only).
+    if ($status === 'sold') {
+        enquiry_mark_sold($id);
     }
     flash('success', 'Enquiry E' . $id . ' saved.' . ($status === 'sold' ? ' Now set them up as a patient so their reminders start.' : ''));
     back();
@@ -91,10 +88,30 @@ $patientFor = function (?string $phone): ?array {
               <div class="text-muted-3" style="font-size:.78rem"><?= e($d['address']) ?><?= $d['country'] !== 'South Africa' ? ', ' . e($d['country']) : '' ?></div></td>
               <td class="text-end">To quote</td></tr>
           <?php endif; ?>
-          <tr><td colspan="2"><b>Total quoted</b></td><td class="text-end money"><b><?= format_price_short((float) $open['total']) ?></b></td></tr>
+          <?php if ((int) $open['points_redeemed'] > 0): ?>
+          <tr><td colspan="2"><i class="fa-solid fa-coins text-leaf me-1"></i>Rewards points used (<?= (int) $open['points_redeemed'] ?>)</td><td class="text-end money">−<?= format_price_short(points_value((int) $open['points_redeemed'])) ?></td></tr>
+          <?php endif; ?>
+          <?php $toPay = max(0, (float) $open['total'] - points_value((int) $open['points_redeemed']) + (float) ($open['delivery_fee'] ?? 0)); ?>
+          <tr><td colspan="2"><b><?= $open['delivery_fee'] !== null ? 'Total to pay' : 'Products (delivery still to quote)' ?></b></td><td class="text-end money"><b><?= format_price_short($toPay) ?></b></td></tr>
         </tbody>
       </table>
+      <?php $recip = json_decode((string) ($open['recipient'] ?? ''), true); ?>
+      <div class="mt-3" style="font-size:.85rem">
+        <?php if ($open['email']): ?><div><i class="fa-regular fa-envelope me-1 text-leaf"></i><?= e($open['email']) ?></div><?php endif; ?>
+        <?php if ($recip): ?><div><i class="fa-solid fa-gift me-1 text-leaf"></i>For <?= e($recip['name']) ?><?= $recip['phone'] ? ' · ' . e($recip['phone']) : '' ?></div><?php endif; ?>
+        <?php if ($open['bank_requested_at']): ?><div><i class="fa-solid fa-building-columns me-1 text-leaf"></i>Banking details requested <?= date('j M H:i', strtotime($open['bank_requested_at'])) ?></div><?php endif; ?>
+        <?php if ($open['pop_file']): ?><div><i class="fa-solid fa-receipt me-1 text-leaf"></i>Proof of payment uploaded <?= date('j M H:i', strtotime($open['pop_uploaded_at'])) ?> —
+          <a class="text-leaf fw-bold" href="pop.php?id=<?= (int) $open['id'] ?>" target="_blank">open it</a></div><?php endif; ?>
+        <?php if ($open['token']): ?><div><i class="fa-solid fa-link me-1 text-leaf"></i><a class="text-leaf" href="<?= e(order_url($open)) ?>" target="_blank">Customer's order page</a></div><?php endif; ?>
+      </div>
       <div class="d-flex gap-2 flex-wrap mt-3">
+        <?php if ($open['phone'] && ($bank = bank_details())):
+          $bankMsg = 'Hi ' . ($open['name'] ? explode(' ', $open['name'])[0] : '') . ', your Phola order E' . $open['id'] . ' is confirmed. Total to pay: ' . format_price_short($toPay)
+              . ($open['delivery_fee'] === null ? ' plus delivery' : ' including delivery') . ".\n\nBank: " . $bank['name'] . "\nAccount holder: " . $bank['holder'] . "\nAccount number: " . $bank['number']
+              . ($bank['branch'] ? "\nBranch code: " . $bank['branch'] : '') . "\nReference: E" . $open['id']
+              . ($open['token'] ? "\n\nUpload your proof of payment here: " . order_url($open) : ''); ?>
+          <a class="btn-fc btn-fc--sm" target="_blank" rel="noopener" href="<?= e(wa_link($bankMsg, (string) $open['phone'])) ?>"><i class="fa-solid fa-building-columns"></i> Send banking details</a>
+        <?php endif; ?>
         <?php if ($open['phone']): ?>
           <a class="btn-fc btn-fc--whatsapp btn-fc--sm" target="_blank" rel="noopener"
              href="<?= e(wa_link('Hi ' . ($open['name'] ? explode(' ', $open['name'])[0] : '') . ', thanks for your Phola enquiry (E' . $open['id'] . '). ', (string) $open['phone'])) ?>">
@@ -120,8 +137,11 @@ $patientFor = function (?string $phone): ?array {
           <select class="input-fc" name="status">
             <?php foreach (ENQUIRY_STATUSES as $s => $tone): ?><option value="<?= $s ?>" <?= $open['status'] === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option><?php endforeach; ?>
           </select>
-          <div class="field__hint">Marking it <b>Sold</b> counts the units against stock and best-sellers.</div>
+          <div class="field__hint">Mark it <b>Sold</b> once it is paid: stock, best-sellers and the customer's rewards points update.</div>
         </div>
+        <div class="field"><label>Delivery cost quoted (R)</label>
+          <input class="input-fc" type="number" min="0" step="0.01" name="delivery_fee" value="<?= e((string) ($open['delivery_fee'] ?? '')) ?>" placeholder="e.g. 99">
+          <div class="field__hint">Shows on the customer's order page and in the banking-details message.</div></div>
         <div class="field"><label>Notes</label><textarea class="input-fc" name="admin_notes" rows="3" placeholder="Paid? Courier reference? Follow-up date?"><?= e((string) $open['admin_notes']) ?></textarea></div>
         <div class="d-flex gap-2">
           <button class="btn-fc btn-fc--sm" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save</button>

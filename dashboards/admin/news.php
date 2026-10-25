@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf((string) ($_POST['csrf_
         $flash = ['ok', $r['added'] . ' new headline(s) imported.' . ($r['errors'] ? ' Problems: ' . implode('; ', $r['errors']) : '')];
     } elseif ($action === 'add') {
         $url = trim((string) ($_POST['url'] ?? ''));
-        $name = sanitize((string) ($_POST['name'] ?? ''));
+        $name = clean_text((string) ($_POST['name'] ?? ''));
         if ($name !== '' && filter_var($url, FILTER_VALIDATE_URL) && preg_match('~^https?://~i', $url)) {
             db_insert('rss_sources', ['name' => $name, 'url' => $url]);
             $flash = ['ok', 'Feed added. Press "Import now" to fetch it.'];

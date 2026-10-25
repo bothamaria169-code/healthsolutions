@@ -89,14 +89,27 @@ $announcement   = get_setting('announcement', '');
         </div>
       </div>
 
-      <a href="<?= SITE_URL ?>/diet-plans.php" class="<?= $active($current === 'diet-plans') ?>">Diet plans</a>
-      <a href="<?= SITE_URL ?>/health-news.php" class="<?= $active($current === 'health-news') ?>">Health news</a>
+      <div class="nav-dd">
+        <a href="<?= SITE_URL ?>/condition.php" class="<?= $active(in_array($current, ['condition', 'diet-plans', 'health-tools', 'ask', 'events', 'stories', 'clinic-finder', 'health-news'], true)) ?>">Health hub <i class="fa-solid fa-chevron-down ms-1" style="font-size:.6rem"></i></a>
+        <div class="nav-dd__menu">
+            <a href="<?= SITE_URL ?>/condition.php"><i class="fa-solid fa-book-medical"></i><span><b>Conditions</b><small>Diabetes, BP, HIV, TB and more</small></span></a>
+            <a href="<?= SITE_URL ?>/diet-plans.php"><i class="fa-solid fa-carrot"></i><span><b>Diet plans</b><small>Meal plans for chronic conditions</small></span></a>
+            <a href="<?= SITE_URL ?>/health-tools.php"><i class="fa-solid fa-calculator"></i><span><b>Health calculators</b><small>BMI, sugar, blood pressure</small></span></a>
+            <a href="<?= SITE_URL ?>/ask.php"><i class="fa-solid fa-user-doctor"></i><span><b>Ask a pharmacist</b><small>Free questions, answered</small></span></a>
+            <a href="<?= SITE_URL ?>/events.php"><i class="fa-solid fa-calendar-days"></i><span><b>Health talks</b><small>Free WhatsApp & online talks</small></span></a>
+            <a href="<?= SITE_URL ?>/stories.php"><i class="fa-solid fa-comment-dots"></i><span><b>Patient stories</b><small>Real people, real routines</small></span></a>
+            <a href="<?= SITE_URL ?>/clinic-finder.php"><i class="fa-solid fa-location-dot"></i><span><b>Clinic finder</b><small>Clinics & pharmacies near you</small></span></a>
+            <a href="<?= SITE_URL ?>/health-news.php"><i class="fa-solid fa-newspaper"></i><span><b>Health news</b><small>Updated through the day</small></span></a>
+        </div>
+      </div>
       <a href="<?= SITE_URL ?>/modules/blog/index.php" class="<?= $active($inDir('blog')) ?>">Learn</a>
       <a href="<?= SITE_URL ?>/delivery.php"   class="<?= $active($current === 'delivery') ?>">Delivery</a>
+      <a href="<?= SITE_URL ?>/send-home.php"  class="<?= $active($current === 'send-home') ?>">Send home</a>
       <a href="<?= SITE_URL ?>/contact.php"    class="<?= $active($current === 'contact') ?>">Contact</a>
     </nav>
 
     <div class="header-actions">
+      <span class="d-none d-md-inline-flex"><?php $lang_id = 'langPick'; include __DIR__ . '/lang-switcher.php'; ?></span>
       <?php if ($current_user): ?>
         <div class="dd" id="accountDd">
           <button class="icon-btn" type="button" data-dd-toggle aria-label="Account menu" aria-expanded="false">
@@ -157,6 +170,7 @@ $announcement   = get_setting('announcement', '');
     <span class="brand__word">Phola<em> Health</em></span>
     <button class="icon-btn" type="button" id="drawerClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
   </div>
+  <div class="px-3 pb-2"><?php $lang_id = 'langPickMobile'; include __DIR__ . '/lang-switcher.php'; ?></div>
 
   <form class="px-3" action="<?= SITE_URL ?>/shop.php" method="get" role="search">
     <div class="position-relative">
@@ -173,7 +187,14 @@ $announcement   = get_setting('announcement', '');
     <a href="<?= SITE_URL ?>/diet-plans.php" class="<?= $active($current === 'diet-plans') ?>">Diet plans</a>
     <a href="<?= SITE_URL ?>/health-news.php" class="<?= $active($current === 'health-news') ?>">Health news</a>
     <a href="<?= SITE_URL ?>/modules/blog/index.php" class="<?= $active($inDir('blog')) ?>">Learn</a>
+    <a href="<?= SITE_URL ?>/condition.php" class="<?= $active($current === 'condition') ?>">Conditions</a>
+    <a href="<?= SITE_URL ?>/health-tools.php" class="<?= $active($current === 'health-tools') ?>">Health calculators</a>
+    <a href="<?= SITE_URL ?>/ask.php" class="<?= $active($current === 'ask') ?>">Ask a pharmacist</a>
+    <a href="<?= SITE_URL ?>/events.php" class="<?= $active($current === 'events') ?>">Health talks</a>
+    <a href="<?= SITE_URL ?>/stories.php" class="<?= $active($current === 'stories') ?>">Patient stories</a>
+    <a href="<?= SITE_URL ?>/clinic-finder.php" class="<?= $active($current === 'clinic-finder') ?>">Clinic finder</a>
     <a href="<?= SITE_URL ?>/delivery.php"   class="<?= $active($current === 'delivery') ?>">Delivery</a>
+    <a href="<?= SITE_URL ?>/send-home.php"  class="<?= $active($current === 'send-home') ?>">Send to family in SADC</a>
     <a href="<?= SITE_URL ?>/about.php"      class="<?= $active($current === 'about') ?>">About</a>
     <a href="<?= SITE_URL ?>/faq.php"        class="<?= $active($current === 'faq') ?>">FAQ</a>
     <a href="<?= SITE_URL ?>/contact.php"    class="<?= $active($current === 'contact') ?>">Contact</a>

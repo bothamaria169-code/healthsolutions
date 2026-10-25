@@ -14,5 +14,6 @@
 <?php foreach ($extra_js as $src): ?>
 <script src="<?= e($src) ?>"></script>
 <?php endforeach; ?>
+<?php include __DIR__ . '/lang-script.php'; ?>
 </body>
 </html>

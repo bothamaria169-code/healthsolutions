@@ -53,9 +53,8 @@ include __DIR__ . '/includes/header.php';
         <div class="news-grid">
           <?php foreach ($news as $n): ?>
           <a class="news-card" href="<?= e($n['url']) ?>" target="_blank" rel="noopener nofollow">
-            <?php if ($n['image']): ?>
-              <div class="news-card__img"><img src="<?= e($n['image']) ?>" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.remove()"></div>
-            <?php endif; ?>
+            <div class="news-card__img"><img src="<?= e(news_image($n)) ?>" alt="" loading="lazy" referrerpolicy="no-referrer"
+                 onerror="this.onerror=null;this.src='<?= SITE_URL ?>/assets/img/stock/pharmacy.jpg'"></div>
             <div class="news-card__body">
               <span class="news-card__src"><i class="fa-solid fa-rss"></i> <?= e((string) $n['source_name']) ?> · <?= $n['published_at'] ? date('j M', strtotime($n['published_at'])) : '' ?></span>
               <h3><?= e($n['title']) ?></h3>

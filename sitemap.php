@@ -17,6 +17,16 @@ $statics = [
     ['/price-list.php', '0.9', 'daily'],
     ['/about.php', '0.6', 'monthly'],
     ['/faq.php', '0.6', 'monthly'],
+    ['/health-tools.php', '0.8', 'monthly'],
+    ['/condition.php', '0.8', 'weekly'],
+    ['/diet-plans.php', '0.8', 'monthly'],
+    ['/ask.php', '0.8', 'daily'],
+    ['/health-news.php', '0.7', 'daily'],
+    ['/events.php', '0.6', 'weekly'],
+    ['/stories.php', '0.6', 'weekly'],
+    ['/clinic-finder.php', '0.6', 'monthly'],
+    ['/delivery.php', '0.6', 'monthly'],
+    ['/send-home.php', '0.7', 'monthly'],
     ['/contact.php', '0.6', 'monthly'],
     ['/modules/blog/index.php', '0.7', 'weekly'],
     ['/terms.php', '0.3', 'yearly'],
@@ -40,6 +50,10 @@ if (isset($_GET['xml'])) {
     foreach ($brands as $b)               { $url('/shop.php?brand=' . urlencode($b['slug']), '0.7', 'weekly'); }
     foreach ($products as $p)             { $url('/modules/shop/product.php?slug=' . urlencode($p['slug']), '0.8', 'weekly', $p['updated_at']); }
     foreach ($posts as $b)                { $url('/modules/blog/post.php?slug=' . urlencode($b['slug']), '0.6', 'monthly', $b['updated_at']); }
+    foreach (array_keys(condition_hubs()) as $c) { $url('/condition.php?c=' . urlencode($c), '0.8', 'weekly'); }
+    foreach (db()->query("SELECT slug, answered_at FROM questions WHERE status = 'published' AND slug IS NOT NULL") as $q) {
+        $url('/ask.php?q=' . urlencode($q['slug']), '0.6', 'monthly', $q['answered_at']);
+    }
 
     echo '</urlset>';
     exit;

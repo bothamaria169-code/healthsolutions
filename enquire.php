@@ -7,7 +7,8 @@ declare(strict_types=1);
  * message already typed — so a lead is never lost even if they don't press Send.
  *
  *   GET  ?product=ID[&qty=N]      one product (product cards and pages)
- *   POST from cart.php            the whole basket, with name, phone and delivery choice
+ *   POST from cart.php            the whole basket, with name, phone, email, delivery choice,
+ *                                 an optional recipient and points; ends on the order page
  */
 require_once __DIR__ . '/includes/functions.php';
 
@@ -18,6 +19,9 @@ $name  = '';
 $phone = '';
 $source = 'product';
 $delivery = null;
+$email = '';
+$recipient = null;
+$points = 0;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_csrf((string) ($_POST['csrf_token'] ?? ''))) {
@@ -26,6 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $source = 'list';
     $name   = mb_substr(trim(strip_tags((string) ($_POST['name'] ?? ''))), 0, 120);
     $phone  = Health::normalizePhone((string) ($_POST['phone'] ?? '')) ?? '';
+    $email  = safe_email((string) ($_POST['email'] ?? '')) ? trim((string) $_POST['email']) : '';
+    if (!empty($_POST['gift']) && trim((string) ($_POST['recipient_name'] ?? '')) !== '') {
+        $recipient = [
+            'name'  => mb_substr(trim(strip_tags((string) $_POST['recipient_name'])), 0, 120),
+            'phone' => mb_substr(preg_replace('/[^\d+ ]/', '', (string) ($_POST['recipient_phone'] ?? '')) ?? '', 0, 20),
+        ];
+    }
+    if ($user && !empty($_POST['use_points'])) {
+        $cap    = (int) floor(cart_subtotal() * 100 / max(1, (float) get_setting('point_value_cents', '10')));
+        $points = max(0, min((int) $_POST['use_points'], points_available((int) $user['id']), $cap));
+        if ($points < (int) get_setting('min_redeem_points', '100')) { $points = 0; }
+    }
     $method = (string) ($_POST['delivery'] ?? '');
     $opts   = delivery_options();
     if (isset($opts[$method])) {
@@ -84,6 +100,8 @@ $message = "Hi Phola, I'd like to order:\n" . implode("\n", $lines)
     . (count($items) > 1 || $delivery ? "\n\nProducts: " . format_price_short($total) : '')
     . ($delivery ? "\nDelivery: " . $delivery['label'] . ' — please quote'
         . "\nTo: " . $delivery['address'] . ($delivery['country'] !== 'South Africa' ? ', ' . $delivery['country'] : '') : '')
+    . ($recipient ? "\nFor: " . $recipient['name'] . ($recipient['phone'] !== '' ? ' (' . $recipient['phone'] . ')' : '') : '')
+    . ($points > 0 ? "\nUsing " . $points . ' rewards points (' . format_price_short(points_value($points)) . ' off)' : '')
     . ($name !== '' ? "\n\nName: " . $name : '')
     . ($phone !== '' ? "\nCell: " . Health::displayPhone($phone) : '')
     . "\nPlease confirm stock and send payment details.";
@@ -99,9 +117,20 @@ if (rate_limit('enquiry', 20, 3600) && ($_SESSION['last_enquiry'] ?? '') !== $fi
             'items'   => json_encode($items, JSON_UNESCAPED_UNICODE),
             'total'   => $grand,
             'delivery'=> $delivery ? json_encode($delivery, JSON_UNESCAPED_UNICODE) : null,
+            'email'   => $email ?: null,
+            'recipient' => $recipient ? json_encode($recipient, JSON_UNESCAPED_UNICODE) : null,
+            'points_redeemed' => $points,
+            'token'   => $token = bin2hex(random_bytes(16)),
             'source'  => $source,
         ]);
         $_SESSION['last_enquiry'] = $fingerprint;
+        if ($email !== '') {
+            $link = SITE_URL . '/order.php?ref=E' . $id . '&t=' . $token;
+            Mailer::send($email, 'We received your Phola order E' . $id,
+                email_wrap('<p>Thank you' . ($name !== '' ? ', ' . e(explode(' ', $name)[0]) : '') . '! We have your order <b>E' . $id . '</b> (' . format_price_short($total) . ').</p>'
+                    . '<p>We will confirm stock and the delivery cost on WhatsApp. Open your order to request banking details and upload your proof of payment:</p>'
+                    . '<p><a href="' . e($link) . '" style="display:inline-block;background:#2E8B3E;color:#fff;padding:11px 22px;border-radius:999px;font-weight:700;">View my order</a></p>'));
+        }
         $message .= "\n(Ref: E" . $id . ')';
     } catch (Throwable $e) {
         // Never block the customer from reaching us because the log failed.
@@ -111,5 +140,11 @@ if (rate_limit('enquiry', 20, 3600) && ($_SESSION['last_enquiry'] ?? '') !== $fi
 
 if ($source === 'list') {
     cart_clear();
+    // Basket orders land on their own confirmation page: send on WhatsApp,
+    // request banking details, upload proof of payment.
+    if (!empty($id) && !empty($token)) {
+        $_SESSION['order_message'][(int) $id] = $message;
+        redirect('order.php?ref=E' . (int) $id . '&t=' . $token);
+    }
 }
 redirect(wa_link($message));

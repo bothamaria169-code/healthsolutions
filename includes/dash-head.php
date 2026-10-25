@@ -21,7 +21,8 @@ $dash_active = $dash_active ?? '';
 $user        = require_auth($dash_role === 'admin' ? 'admin' : '');
 $isRes       = Pricing::isReseller($user);
 
-$stats = $dash_role === 'admin' ? (new OrderRepository())->stats() + Health::stats() + ['setup_left' => setup_tasks_left()] : [];
+$stats = $dash_role === 'admin' ? (new OrderRepository())->stats() + Health::stats() + ['setup_left' => setup_tasks_left(),
+    'questions_new' => (int) db()->query("SELECT COUNT(*) FROM questions WHERE status = 'pending'")->fetchColumn()] : [];
 
 $nav = match ($dash_role) {
     'admin' => [
@@ -46,7 +47,10 @@ $nav = match ($dash_role) {
             ['banners',    'banners.php',    'fa-images',       'Banners',     null],
             ['blog',       'blog.php',       'fa-newspaper',    'Articles',    null],
             ['news',       'news.php',       'fa-rss',          'Health news', null],
-            ['testimonials', 'testimonials.php', 'fa-comment-dots', 'Testimonials', null],
+            ['testimonials', 'testimonials.php', 'fa-comment-dots', 'Testimonials & stories', null],
+            ['questions',  'questions.php',  'fa-user-doctor',  'Ask a pharmacist', $stats['questions_new'] ?? 0],
+            ['events',     'events.php',     'fa-calendar-days', 'Health talks', null],
+            ['rewards',    'rewards.php',    'fa-gift',         'Rewards', null],
             ['newsletter', 'newsletter.php', 'fa-paper-plane',  'Newsletter',  null],
         ],
         'Admin' => [
@@ -64,6 +68,7 @@ $nav = match ($dash_role) {
             ['readings',     'readings.php',     'fa-chart-line',     'Readings',      null],
         ],
         'Account' => [
+            ['rewards',  'rewards.php',  'fa-gift',      'Rewards & referrals', null],
             ['wishlist', 'wishlist.php', 'fa-heart',     'Saved items', null],
             ['account',  'account.php',  'fa-user-gear', 'My details',  null],
         ],
@@ -92,6 +97,7 @@ $page_title = $page_title ?? ucfirst($dash_role) . ' dashboard — ' . SITE_NAME
 <link rel="stylesheet" href="<?= asset('assets/css/phola.css') ?>">
 <link rel="stylesheet" href="<?= asset('assets/css/phola-store.css') ?>">
 <link rel="stylesheet" href="<?= asset('assets/css/phola-pages.css') ?>">
+<link rel="stylesheet" href="<?= asset('assets/css/phola-engage.css') ?>">
 </head>
 <body>
 <div class="scrim" id="scrim"></div>
@@ -102,6 +108,7 @@ $page_title = $page_title ?? ucfirst($dash_role) . ' dashboard — ' . SITE_NAME
       <img src="<?= SITE_URL ?>/assets/img/logo/phola-mark.png" alt="" class="brand__mark">
       <span class="brand__word">Phola<em style="color:var(--leaf-light)"> Health</em></span>
     </a>
+    <?php if ($dash_role !== 'admin'): ?><div class="mb-3 px-2"><?php $lang_id = 'langPickDash'; include __DIR__ . '/lang-switcher.php'; ?></div><?php endif; ?>
 
     <?php foreach ($nav as $group => $links): ?>
       <div class="dash-side__label"><?= e($group) ?></div>

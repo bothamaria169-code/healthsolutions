@@ -12,13 +12,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf((string) ($_POST['csrf_
 
     if ($action === 'save') {
         $data = [
-            'name'       => sanitize((string) $_POST['name']),
-            'role'       => sanitize((string) ($_POST['role'] ?? '')) ?: null,
-            'location'   => sanitize((string) ($_POST['location'] ?? '')) ?: null,
-            'quote'      => sanitize((string) ($_POST['quote'] ?? '')),
+            'name'       => clean_text((string) $_POST['name']),
+            'role'       => clean_text((string) ($_POST['role'] ?? '')) ?: null,
+            'location'   => clean_text((string) ($_POST['location'] ?? '')) ?: null,
+            'quote'      => clean_text((string) ($_POST['quote'] ?? '')),
             'rating'     => max(1, min(5, (int) ($_POST['rating'] ?? 5))),
             'sort_order' => (int) ($_POST['sort_order'] ?? 0),
             'status'     => ($_POST['status'] ?? '') === 'draft' ? 'draft' : 'published',
+            // A longer "patient story" (optional) shows on the Patient stories page.
+            'story'         => trim(strip_tags((string) ($_POST['story'] ?? ''))) ?: null,
+            'video_url'     => preg_match('~^https://(www\.)?(youtube\.com|youtu\.be|facebook\.com|fb\.watch|tiktok\.com)/~i', trim((string) ($_POST['video_url'] ?? ''))) ? trim((string) $_POST['video_url']) : null,
+            'condition_tag' => array_key_exists($_POST['condition_tag'] ?? '', condition_hubs()) ? (string) $_POST['condition_tag'] : null,
         ];
         // Optional photo of the customer (or a screenshot of their WhatsApp message).
         if (!empty($_FILES['avatar']['name'])) {
@@ -59,7 +63,7 @@ if (!empty($_GET['edit'])) {
 ?>
 
 <div class="dash-head">
-  <div><h1>Testimonials</h1><p>What customers say about Phola. Published ones show on the home page (newest four, by order number).</p></div>
+  <div><h1>Testimonials &amp; patient stories</h1><p>Short quotes show on the home page (first four by order number). Add a longer story or a video link and it also appears on the <a class="text-leaf" href="<?= SITE_URL ?>/stories.php" target="_blank">Patient stories</a> page.</p></div>
 </div>
 
 <?php if ($flash): ?>
@@ -111,6 +115,15 @@ if (!empty($_GET['edit'])) {
       <div class="field"><label for="quote">What they said</label>
         <textarea class="textarea-fc" id="quote" name="quote" rows="5" required><?= e((string) ($edit['quote'] ?? '')) ?></textarea>
         <div class="field__hint">Only publish with the customer's permission. Use first name and initial.</div></div>
+      <div class="field"><label for="story">Their story <span class="text-muted-3 fw-normal">(optional, longer)</span></label>
+        <textarea class="textarea-fc" id="story" name="story" rows="6" placeholder="How they found Phola, what changed, in their words."><?= e((string) ($edit['story'] ?? '')) ?></textarea></div>
+      <div class="row g-2">
+        <div class="col-7 field"><label for="video_url">Video link <span class="text-muted-3 fw-normal">(YouTube, Facebook or TikTok)</span></label>
+          <input class="input-fc" id="video_url" name="video_url" type="url" value="<?= e((string) ($edit['video_url'] ?? '')) ?>" placeholder="https://youtu.be/…"></div>
+        <div class="col-5 field"><label for="condition_tag">Condition</label>
+          <select class="select-fc" id="condition_tag" name="condition_tag"><option value="">—</option>
+            <?php foreach (condition_hubs() as $k => $h): ?><option value="<?= e($k) ?>" <?= ($edit['condition_tag'] ?? '') === $k ? 'selected' : '' ?>><?= e($h['name']) ?></option><?php endforeach; ?></select></div>
+      </div>
       <div class="field"><label for="avatar">Photo <span class="text-muted-3 fw-normal">(optional)</span></label>
         <input class="input-fc" type="file" id="avatar" name="avatar" accept="image/jpeg,image/png,image/webp">
         <?php if (!empty($edit['avatar'])): ?><label class="mt-1" style="font-size:.82rem"><input type="checkbox" name="remove_avatar" value="1"> Remove current photo</label><?php endif; ?></div>

@@ -8,6 +8,13 @@ $subtotal = cart_subtotal();
 $options  = delivery_options();
 
 $depots    = sadc_depot_suggestions();
+// Points the customer can put towards this basket (never more than the products are worth).
+$pointsUse = 0;
+if ($viewer && $items) {
+    $avail = points_available((int) $viewer['id']);
+    $cap   = (int) floor($subtotal * 100 / max(1, (float) get_setting('point_value_cents', '10')));
+    $pointsUse = $avail >= (int) get_setting('min_redeem_points', '100') ? min($avail, $cap) : 0;
+}
 $waDisplay = Health::displayPhone(whatsapp_number());
 
 // "Add these too": best sellers that aren't in the basket yet.
@@ -79,7 +86,7 @@ include __DIR__ . '/includes/header.php';
           </div>
 
           <!-- ── Delivery ────────────────────────────────────────── -->
-          <form class="card-fc card-fc--pad mt-3" method="post" action="<?= SITE_URL ?>/enquire.php" target="_blank" id="orderForm">
+          <form class="card-fc card-fc--pad mt-3" method="post" action="<?= SITE_URL ?>/enquire.php" id="orderForm">
             <?= csrf_field() ?>
             <h2 style="font-size:1.15rem"><i class="fa-solid fa-truck-fast text-leaf me-2"></i>How should we deliver?</h2>
 
@@ -129,7 +136,29 @@ include __DIR__ . '/includes/header.php';
                 <input class="input-fc" id="enqPhone" name="phone" type="tel" inputmode="tel" placeholder="082 123 4567"
                        value="<?= e($viewer ? Health::displayPhone($viewer['phone'] ?? '') : '') ?>" autocomplete="tel" required>
               </div>
+              <div class="col-12 field">
+                <label for="enqEmail">Email <span class="text-muted-3 fw-normal">(for your banking details and order updates)</span></label>
+                <input class="input-fc" id="enqEmail" name="email" type="email" value="<?= e((string) ($viewer['email'] ?? '')) ?>" autocomplete="email" placeholder="you@email.co.za">
+              </div>
             </div>
+
+            <label class="opt-card mb-2">
+              <input type="checkbox" name="gift" value="1" id="giftToggle">
+              <span class="opt-card__blurb"><i class="fa-solid fa-gift text-leaf me-1"></i> I'm sending this to someone else (family, a friend)</span>
+            </label>
+            <div class="row g-2" id="giftFields" hidden>
+              <div class="col-md-6 field"><label for="rName">Their name</label><input class="input-fc" id="rName" name="recipient_name" maxlength="120"></div>
+              <div class="col-md-6 field"><label for="rPhone">Their cellphone</label><input class="input-fc" id="rPhone" name="recipient_phone" type="tel" maxlength="20" placeholder="+263 77 123 4567"></div>
+            </div>
+
+            <?php if ($pointsUse > 0): ?>
+            <label class="opt-card mb-0">
+              <input type="checkbox" name="use_points" value="<?= $pointsUse ?>">
+              <span class="opt-card__blurb"><i class="fa-solid fa-coins text-leaf me-1"></i> Use <b><?= number_format($pointsUse) ?> points</b> — <b><?= format_price(points_value($pointsUse)) ?> off</b> this order</span>
+            </label>
+            <?php elseif (!$viewer): ?>
+            <p class="field__hint mb-0"><i class="fa-solid fa-coins text-leaf me-1"></i><a class="text-leaf fw-bold" href="<?= SITE_URL ?>/modules/auth/login.php?redirect=cart.php">Sign in</a> to earn rewards points on this order.</p>
+            <?php endif; ?>
           </form>
         </div>
 
@@ -143,11 +172,11 @@ include __DIR__ . '/includes/header.php';
             <p class="field__hint">We confirm the delivery cost with your order before you pay. <a class="text-leaf fw-bold" href="<?= SITE_URL ?>/delivery.php" target="_blank">How delivery works</a></p>
 
             <button class="btn-fc btn-fc--whatsapp btn-fc--block btn-fc--lg" type="submit" form="orderForm">
-              <i class="fa-brands fa-whatsapp"></i> Place order on WhatsApp
+              <i class="fa-solid fa-circle-check"></i> Place my order
             </button>
             <a href="<?= SITE_URL ?>/shop.php" class="btn-fc btn-fc--light btn-fc--block mt-2">Keep shopping</a>
             <ul class="trust-mini">
-              <li><i class="fa-solid fa-lock"></i> No card details on the website</li>
+              <li><i class="fa-solid fa-building-columns"></i> Pay by EFT — request banking details after ordering</li>
               <li><i class="fa-solid fa-user-check"></i> A real person confirms every order</li>
               <li><i class="fa-solid fa-rotate-left"></i> 7-day returns on unopened items</li>
             </ul>
@@ -194,9 +223,8 @@ include __DIR__ . '/includes/header.php';
     if (o) $('country').value = o.dataset.country;
   });
   form.addEventListener('change', update);
+  $('giftToggle').addEventListener('change', (e) => { $('giftFields').hidden = !e.target.checked; $('rName').required = e.target.checked; });
   update();
-  // The basket empties once the order is sent; refresh so this tab doesn't look unsent.
-  form.addEventListener('submit', () => setTimeout(() => location.reload(), 1500));
 })();
 </script>
 <?php endif; ?>
