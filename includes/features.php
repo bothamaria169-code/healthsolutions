@@ -752,7 +752,8 @@ function oauth_buttons_html(string $redirect = ''): string
     if (oauth_enabled('google')) {
         $out .= '<a class="oauth-btn oauth-btn--google" href="' . SITE_URL . '/modules/auth/google.php' . e($q) . '"><i class="fa-brands fa-google"></i> Continue with Google</a>';
     }
-    if (oauth_enabled('facebook')) {
+    // Facebook sign-in is parked until the Meta app is set up for it: settings facebook_login = 1 brings the button back.
+    if (get_setting('facebook_login', '0') === '1' && oauth_enabled('facebook')) {
         $out .= '<a class="oauth-btn oauth-btn--facebook" href="' . SITE_URL . '/modules/auth/facebook.php' . e($q) . '"><i class="fa-brands fa-facebook-f"></i> Continue with Facebook</a>';
     }
     return $out === '' ? '' : '<div class="oauth-row">' . $out . '</div><div class="oauth-or"><span>or use your cellphone</span></div>';
