@@ -1,0 +1,7 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/pholahea/public_html/
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R assets classes config dashboards database includes lib modules scripts $DEPLOYPATH
+    - /bin/cp *.php .htaccess robots.txt $DEPLOYPATH
+    - /bin/mkdir -p ${DEPLOYPATH}uploads/products
