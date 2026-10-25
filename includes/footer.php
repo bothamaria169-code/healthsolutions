@@ -84,6 +84,7 @@ $wa       = get_setting('contact_whatsapp', '');
         <a href="<?= SITE_URL ?>/privacy.php">Privacy</a>
         <a href="<?= SITE_URL ?>/terms.php">Terms</a>
         <a href="<?= SITE_URL ?>/refund-policy.php">Returns</a>
+        <a href="<?= SITE_URL ?>/data-deletion.php">Delete your data</a>
         <a href="<?= SITE_URL ?>/sitemap.php">Sitemap</a>
       </div>
     </div>

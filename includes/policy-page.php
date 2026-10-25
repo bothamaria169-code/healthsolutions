@@ -23,6 +23,7 @@ $policyTabs = [
     'privacy'  => ['privacy.php',             'fa-user-shield',   'Privacy policy'],
     'terms'    => ['terms.php',               'fa-file-contract', 'Terms & conditions'],
     'delivery' => ['delivery.php',            'fa-truck-fast',    'Delivery'],
+    'deletion' => ['data-deletion.php',       'fa-trash-can',     'Delete your data'],
 ];
 
 $company = [
