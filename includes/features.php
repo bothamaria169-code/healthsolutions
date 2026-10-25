@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * Phola additions on top of the CureMeds codebase:
  *   - self-applying database upgrades (no SQL to import on the live server)
- *   - delivery: The Courier Guy (door, locker, pick-up point, kiosk), SADC bus/taxi depots and DHL worldwide
+ *   - delivery: The Courier Guy / Pudo from our locker (to door, locker, pick-up point or kiosk), SADC bus/taxi depots and DHL worldwide
  *   - the daily wellness quote (dashboard + optional morning email)
  *   - health-news RSS import
  *   - Google and Facebook sign-in
@@ -191,14 +191,14 @@ const SADC_COUNTRIES = ['Botswana', 'Eswatini', 'Lesotho', 'Namibia', 'Zimbabwe'
 function delivery_options(): array
 {
     return [
-        'tcg_door'   => ['label' => 'Door-to-door', 'by' => 'The Courier Guy', 'icon' => 'fa-house-chimney', 'region' => 'za', 'time' => '2–4 working days',
-                         'blurb' => 'Delivered to your home or office.', 'field' => 'Street address, suburb, city and postal code'],
-        'tcg_locker' => ['label' => 'Locker', 'by' => 'The Courier Guy · Pudo', 'icon' => 'fa-box-archive', 'region' => 'za', 'time' => '2–4 working days',
-                         'blurb' => 'Collect any time from a 24/7 smart locker near you.', 'field' => 'Locker name or code (e.g. Pudo, Engen Rivonia)'],
-        'tcg_point'  => ['label' => 'Pick-up point', 'by' => 'The Courier Guy', 'icon' => 'fa-store', 'region' => 'za', 'time' => '2–4 working days',
-                         'blurb' => 'Collect from a partner store close to home.', 'field' => 'Pick-up point name and town'],
-        'tcg_kiosk'  => ['label' => 'Kiosk', 'by' => 'The Courier Guy', 'icon' => 'fa-shop', 'region' => 'za', 'time' => '2–4 working days',
-                         'blurb' => 'Collect from a Courier Guy kiosk in a mall or garage.', 'field' => 'Kiosk name and town'],
+        'tcg_door'   => ['label' => 'Locker to door', 'by' => 'The Courier Guy · Pudo', 'icon' => 'fa-house-chimney', 'region' => 'za', 'time' => '2–4 working days',
+                         'blurb' => 'We send from our locker; the courier delivers to your home or office.', 'field' => 'Street address, suburb, city and postal code'],
+        'tcg_locker' => ['label' => 'Locker to locker', 'by' => 'The Courier Guy · Pudo', 'icon' => 'fa-box-archive', 'region' => 'za', 'time' => '2–4 working days',
+                         'blurb' => 'From our locker to a 24/7 Pudo smart locker near you — collect any time with a PIN.', 'field' => 'Your Pudo locker name or code (e.g. Engen Rivonia)'],
+        'tcg_point'  => ['label' => 'Locker to pick-up point', 'by' => 'The Courier Guy · Pudo', 'icon' => 'fa-store', 'region' => 'za', 'time' => '2–4 working days',
+                         'blurb' => 'From our locker to a partner store close to home.', 'field' => 'Pick-up point name and town'],
+        'tcg_kiosk'  => ['label' => 'Locker to kiosk', 'by' => 'The Courier Guy · Pudo', 'icon' => 'fa-shop', 'region' => 'za', 'time' => '2–4 working days',
+                         'blurb' => 'From our locker to a Courier Guy kiosk in a mall or garage.', 'field' => 'Kiosk name and town'],
         'sadc_depot' => ['label' => 'Bus / taxi depot', 'by' => 'SADC countries', 'icon' => 'fa-bus', 'region' => 'sadc', 'time' => '2–5 days',
                          'blurb' => 'Sent with a trusted cross-border bus or taxi to the depot nearest you.', 'field' => 'Nearest depot / town (e.g. Harare Roadport)'],
         'dhl_intl'   => ['label' => 'International', 'by' => 'DHL Express', 'icon' => 'fa-plane-departure', 'region' => 'intl', 'time' => '3–7 working days',

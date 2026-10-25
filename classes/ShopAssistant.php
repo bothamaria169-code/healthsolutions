@@ -119,7 +119,7 @@ final class ShopAssistant
     private static function delivery(string $q = '', ?array $user = null): array
     {
         return [
-            'reply' => "In South Africa we use The Courier Guy: door-to-door, a Pudo locker, a pick-up point or a kiosk, usually 2–4 working days. "
+            'reply' => "In South Africa we send from our Pudo locker with The Courier Guy: locker to door, locker to locker, locker to pick-up point or locker to kiosk, usually 2–4 working days. "
                      . "For SADC countries we send with a cross-border bus or taxi to your nearest depot, and DHL Express goes anywhere else. "
                      . "We confirm the delivery cost on WhatsApp with your order and send the tracking number. " . self::link('/delivery.php', 'How delivery works') . '.',
             'chips' => ['How do I order?', 'How do I pay?', 'Patient portal'],

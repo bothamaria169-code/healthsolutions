@@ -198,7 +198,7 @@ include __DIR__ . '/../../includes/header.php';
             <div><b>SADC &amp; DHL</b><span>Beyond SA</span></div>
           </div>
           <p class="margin-panel__foot">
-            Door, locker, pick-up point or kiosk in South Africa; bus or taxi depots in SADC; DHL worldwide.
+            Courier Guy / Pudo from our locker to your door, a locker, a pick-up point or a kiosk; bus or taxi depots in SADC; DHL worldwide.
             We confirm the delivery cost with you on WhatsApp before you pay. <a class="text-leaf fw-bold" href="<?= SITE_URL ?>/delivery.php">How delivery works</a>
           </p>
         </section>

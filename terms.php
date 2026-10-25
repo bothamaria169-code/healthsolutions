@@ -90,7 +90,7 @@ HTML,
 <div class="policy-table-wrap"><table class="policy-table">
   <thead><tr><th>Option</th><th>Cost</th><th>Usually takes</th></tr></thead>
   <tbody>
-    <tr><td>The Courier Guy — door, locker, pick-up point or kiosk</td><td>Confirmed on WhatsApp</td><td>2–4 working days to main centres, up to 5 elsewhere</td></tr><tr><td>SADC — bus or taxi to your nearest depot</td><td>Confirmed on WhatsApp</td><td>Usually 2–5 days</td></tr><tr><td>DHL Express — worldwide</td><td>Confirmed on WhatsApp; import duties are paid by the receiver</td><td>Usually 3–7 working days</td></tr>
+    <tr><td>The Courier Guy / Pudo — locker to door, locker to locker, locker to pick-up point or locker to kiosk</td><td>Confirmed on WhatsApp</td><td>2–4 working days to main centres, up to 5 elsewhere</td></tr><tr><td>SADC — bus or taxi to your nearest depot</td><td>Confirmed on WhatsApp</td><td>Usually 2–5 days</td></tr><tr><td>DHL Express — worldwide</td><td>Confirmed on WhatsApp; import duties are paid by the receiver</td><td>Usually 3–7 working days</td></tr>
     <tr><td>Collection from a pickup point</td><td>Shown at checkout</td><td>We tell you when it's ready</td></tr>
   </tbody>
 </table></div>

@@ -34,7 +34,18 @@ include __DIR__ . '/includes/header.php';
     <!-- ── The Courier Guy ─────────────────────────────────────────── -->
     <section class="dv-sec" id="courier-guy">
       <div class="ph-head"><div><span class="eyebrow">South Africa</span><h2 class="dv-brand"><?php if ($logo = delivery_logo('tcg_door')): ?><img src="<?= e($logo) ?>" alt="The Courier Guy"><?php endif; ?>The Courier Guy</h2>
-        <p class="lede mb-0">One of South Africa's biggest courier networks, with thousands of lockers, pick-up points and kiosks. Choose the option that suits you best.</p></div></div>
+        <p class="lede mb-0">We send every South African order from a <b>Pudo smart locker</b> near us, and The Courier Guy delivers it the way you choose: to your <b>door</b>, to a <b>locker</b>, a <b>pick-up point</b> or a <b>kiosk</b> near you.</p></div></div>
+
+      <div class="l2x" aria-label="How a parcel travels">
+        <span class="l2x__from"><i class="fa-solid fa-box-archive"></i><b>Phola's locker</b><small>We drop your parcel</small></span>
+        <i class="fa-solid fa-arrow-right l2x__arrow"></i>
+        <span class="l2x__to">
+          <span><i class="fa-solid fa-house-chimney"></i> Your door</span>
+          <span><i class="fa-solid fa-box-archive"></i> A locker</span>
+          <span><i class="fa-solid fa-store"></i> A pick-up point</span>
+          <span><i class="fa-solid fa-shop"></i> A kiosk</span>
+        </span>
+      </div>
 
       <div class="deliv-grid">
         <?php foreach ($options as $k => $o): if ($o['region'] !== 'za') continue; ?>
@@ -49,11 +60,11 @@ include __DIR__ . '/includes/header.php';
 
       <h3 class="dv-h3">How it works</h3>
       <ol class="dv-steps">
-        <li><b>Choose your option in the basket.</b> For a locker, pick-up point or kiosk, type its name or code — find the nearest one on the <a class="text-leaf fw-bold" href="https://www.thecourierguy.co.za" target="_blank" rel="noopener">Courier Guy website</a> or the Pudo app.</li>
+        <li><b>Choose your option in the basket</b> — locker to door, locker to locker, locker to pick-up point or locker to kiosk. For a locker, point or kiosk, type its name or code; find the nearest one on the <a class="text-leaf fw-bold" href="https://www.thecourierguy.co.za" target="_blank" rel="noopener">Courier Guy website</a> or the Pudo app.</li>
         <li><b>We confirm on WhatsApp.</b> We check stock, confirm the delivery cost and send payment details.</li>
-        <li><b>We pack and book the courier</b> the same or next working day once payment reflects, and send you the <b>waybill / tracking number</b> on WhatsApp.</li>
+        <li><b>We pack your order and drop it in our Pudo locker</b> the same or next working day once payment reflects, and send you the <b>waybill / tracking number</b> on WhatsApp.</li>
         <li><b>Track it</b> on thecourierguy.co.za with your waybill number. The Courier Guy also sends updates by SMS or email.</li>
-        <li><b>Receive it.</b> Door-to-door: someone signs for it at the address. Locker: you get a <b>PIN or OTP</b> by SMS to open your locker — collect within the time shown. Pick-up point or kiosk: show the SMS and your ID.</li>
+        <li><b>Receive it.</b> Locker to door: the courier hands it over at your address. Locker to locker: you get a <b>PIN or OTP</b> by SMS to open your locker — collect within the time shown. Locker to pick-up point or kiosk: show the SMS and your ID.</li>
       </ol>
       <p class="dv-note"><i class="fa-solid fa-circle-info"></i> Usually 2–4 working days to main centres and up to 5 working days to outlying areas. Make sure your cellphone number is correct — that's where the collection PIN goes.</p>
     </section>

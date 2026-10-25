@@ -118,6 +118,15 @@
 .dv-faq p { margin: .6rem 0 0; color: var(--text-2); font-size: .92rem; }
 .deliv-opt__box em { color: var(--text-3); font-weight: 700; font-size: .75rem; }
 .deliv-logo { height: 26px; width: auto; max-width: 110px; object-fit: contain; object-position: left; margin-bottom: .35rem; }
+.l2x { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin: 1.2rem 0 1.4rem; padding: 1rem 1.2rem; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); }
+.l2x__from { display: grid; grid-template-columns: auto 1fr; column-gap: .6rem; align-items: center; }
+.l2x__from i { grid-row: span 2; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--forest); color: var(--lime); font-size: 1.15rem; }
+.l2x__from b { color: var(--forest); }
+.l2x__from small { color: var(--text-3); }
+.l2x__arrow { color: var(--lime-dark); font-size: 1.3rem; }
+.l2x__to { display: flex; flex-wrap: wrap; gap: .5rem; flex: 1; }
+.l2x__to span { display: inline-flex; gap: .45rem; align-items: center; padding: .5rem .9rem; border-radius: var(--r-pill); background: var(--leaf-wash); color: var(--forest); font-weight: 700; font-size: .88rem; }
+.l2x__to i { color: var(--leaf); }
 .dv-brand { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
 .dv-brand img { height: 42px; width: auto; max-width: 200px; object-fit: contain; }
 .ph-need span:has(img) { width: auto; min-width: 64px; padding: 0 .55rem; border-radius: var(--r-pill); background: #fff; border: 1px solid var(--line); }
