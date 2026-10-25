@@ -118,11 +118,10 @@ final class ShopAssistant
 
     private static function delivery(string $q = '', ?array $user = null): array
     {
-        $flat = format_price((float) get_setting('shipping_flat_rate', '100'));
-        $free = format_price((float) get_setting('free_shipping_threshold', '1000'));
         return [
-            'reply' => "We courier anywhere in South Africa in 2–4 working days for {$flat} — free on orders over {$free}. "
-                     . "We send the tracking number on WhatsApp. Collection can be arranged on request.",
+            'reply' => "In South Africa we use The Courier Guy: door-to-door, a Pudo locker, a pick-up point or a kiosk, usually 2–4 working days. "
+                     . "For SADC countries we send with a cross-border bus or taxi to your nearest depot, and DHL Express goes anywhere else. "
+                     . "We confirm the delivery cost on WhatsApp with your order and send the tracking number. " . self::link('/delivery.php', 'How delivery works') . '.',
             'chips' => ['How do I order?', 'How do I pay?', 'Patient portal'],
         ];
     }

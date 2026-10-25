@@ -16,10 +16,6 @@ $groups = [
         'announcement'     => ['Announcement bar', 'text', 'Shown at the very top of every page. Leave empty to hide the bar.'],
         'maintenance_mode' => ['Maintenance mode', 'toggle', 'Not yet enforced by the front end — reserved.'],
     ],
-    'Pricing & delivery' => [
-        'free_shipping_threshold' => ['Free delivery from', 'number', 'Enquiry total at which courier delivery is quoted as free.'],
-        'shipping_flat_rate'      => ['Courier flat rate', 'number'],
-    ],
     'Legal details (shown on the terms, privacy and returns pages)' => [
         'company_name'        => ['Registered company name', 'text', 'The legal entity, e.g. Phola Trading (Pty) Ltd.'],
         'company_reg_no'      => ['Company registration number', 'text', 'The CIPC number, e.g. 2024/123456/07. South African law requires online shops to show it.'],
@@ -37,13 +33,6 @@ $groups = [
         'youtube_url'      => ['YouTube URL', 'text'],
         'x_url'            => ['X (Twitter) URL', 'text'],
         'linkedin_url'     => ['LinkedIn URL', 'text'],
-    ],
-    'Delivery (The Courier Guy & SADC)' => [
-        'tcg_door_fee'   => ['Door-to-door fee', 'number', 'The Courier Guy to the customer address.'],
-        'tcg_locker_fee' => ['Locker (Pudo) fee', 'number'],
-        'tcg_point_fee'  => ['Pick-up point fee', 'number'],
-        'tcg_kiosk_fee'  => ['Kiosk fee', 'number'],
-        'sadc_fee_note'  => ['SADC depot note', 'text', 'Shown in the basket for bus/taxi deliveries outside South Africa, which are quoted on WhatsApp.'],
     ],
     'Sign in with Google & Facebook' => [
         'google_client_id'     => ['Google Client ID', 'text', 'Google Cloud Console → APIs & Services → Credentials → OAuth client ID (Web). Authorised redirect URI: ' . SITE_URL . '/modules/auth/google.php'],

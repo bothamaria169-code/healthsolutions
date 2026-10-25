@@ -105,8 +105,8 @@ include __DIR__ . '/includes/header.php';
 <section class="ph-promise">
   <div class="container ph-promise__grid">
     <div><i class="fa-brands fa-whatsapp"></i><b>Order on WhatsApp</b><span>A real person confirms every order</span></div>
-    <div><i class="fa-solid fa-truck-fast"></i><b>The Courier Guy</b><span>Door, locker, pick-up point or kiosk · SADC depots</span></div>
-    <div><i class="fa-solid fa-tag"></i><b>Clear prices</b><span>Free delivery over <?= format_price_short((float) get_setting('free_shipping_threshold', '1000')) ?></span></div>
+    <div><i class="fa-solid fa-truck-fast"></i><b>The Courier Guy</b><span>Door, locker, point or kiosk · SADC depots · DHL</span></div>
+    <div><i class="fa-solid fa-tag"></i><b>Clear prices</b><span>Delivery cost confirmed on WhatsApp</span></div>
     <div><i class="fa-solid fa-user-shield"></i><b>Private &amp; POPIA-safe</b><span>Your health details stay yours</span></div>
   </div>
 </section>
@@ -182,7 +182,7 @@ include __DIR__ . '/includes/header.php';
     </div>
     <div class="ph-steps">
       <?php foreach ([
-        ['fa-basket-shopping', 'Pick your products', 'Add products to your basket, choose Courier Guy or SADC depot delivery, and send the order in one tap.'],
+        ['fa-basket-shopping', 'Pick your products', 'Add products to your basket, choose Courier Guy, SADC bus depot or DHL, and send the order in one tap.'],
         ['fa-brands fa-whatsapp', 'Confirm on WhatsApp', 'Your order arrives at ' . $waDisplay . ' with products and prices filled in. We send payment details.'],
         ['fa-box-open', 'Delivered to your door', 'We courier nationwide in 2–4 working days and send the tracking number on WhatsApp.'],
       ] as $i => [$icon, $title, $text]): ?>

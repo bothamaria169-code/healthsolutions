@@ -89,7 +89,7 @@ $patientFor = function (?string $phone): ?array {
           <?php if (!empty($open['delivery']) && ($d = json_decode((string) $open['delivery'], true))): ?>
           <tr><td colspan="2"><i class="fa-solid fa-truck-fast text-leaf me-1"></i><?= e($d['label']) ?>
               <div class="text-muted-3" style="font-size:.78rem"><?= e($d['address']) ?><?= $d['country'] !== 'South Africa' ? ', ' . e($d['country']) : '' ?></div></td>
-              <td class="text-end money"><?= $d['fee'] === null ? 'Quote' : ($d['fee'] > 0 ? format_price_short((float) $d['fee']) : 'Free') ?></td></tr>
+              <td class="text-end">To quote</td></tr>
           <?php endif; ?>
           <tr><td colspan="2"><b>Total quoted</b></td><td class="text-end money"><b><?= format_price_short((float) $open['total']) ?></b></td></tr>
         </tbody>

@@ -29,7 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $method = (string) ($_POST['delivery'] ?? '');
     $opts   = delivery_options();
     if (isset($opts[$method])) {
-        $country  = $opts[$method]['region'] === 'sadc' && in_array($_POST['country'] ?? '', SADC_COUNTRIES, true) ? (string) $_POST['country'] : 'South Africa';
+        $region   = $opts[$method]['region'];
+        $country  = match (true) {
+            $region === 'sadc' && in_array($_POST['country'] ?? '', SADC_COUNTRIES, true) => (string) $_POST['country'],
+            $region === 'intl' => mb_substr(trim(strip_tags((string) ($_POST['country_intl'] ?? ''))), 0, 60) ?: 'Outside South Africa',
+            default => 'South Africa',
+        };
         $delivery = [
             'method'  => $method,
             'label'   => $opts[$method]['by'] . ' — ' . $opts[$method]['label'],
@@ -77,10 +82,8 @@ $lines = array_map(fn($i) => '• ' . $i['qty'] . ' × ' . $i['name'] . ($i['pac
     . ' — ' . format_price_short($i['price'] * $i['qty']), $items);
 $message = "Hi Phola, I'd like to order:\n" . implode("\n", $lines)
     . (count($items) > 1 || $delivery ? "\n\nProducts: " . format_price_short($total) : '')
-    . ($delivery ? "\nDelivery: " . $delivery['label'] . ' — '
-        . ($delivery['fee'] === null ? 'please quote' : ($delivery['fee'] > 0 ? format_price_short($delivery['fee']) : 'free'))
-        . "\nTo: " . $delivery['address'] . ($delivery['country'] !== 'South Africa' ? ', ' . $delivery['country'] : '')
-        . "\nTotal: " . format_price_short($grand) . ($delivery['fee'] === null ? ' + transport' : '') : '')
+    . ($delivery ? "\nDelivery: " . $delivery['label'] . ' — please quote'
+        . "\nTo: " . $delivery['address'] . ($delivery['country'] !== 'South Africa' ? ', ' . $delivery['country'] : '') : '')
     . ($name !== '' ? "\n\nName: " . $name : '')
     . ($phone !== '' ? "\nCell: " . Health::displayPhone($phone) : '')
     . "\nPlease confirm stock and send payment details.";

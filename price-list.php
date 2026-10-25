@@ -73,7 +73,7 @@ include __DIR__ . '/includes/header.php';
         <i class="fa-solid fa-circle-info"></i>
         <span>
           <b>Prices are live.</b> What you see here is what you pay at checkout — nothing changes on the last step.
-          Free courier delivery on orders over <?= format_price_short((float) get_setting('free_shipping_threshold', '1500')) ?>.
+          Delivery is confirmed with you on WhatsApp — <a href="<?= SITE_URL ?>/delivery.php" class="fw-bold">see delivery options</a>.
           <a href="<?= SITE_URL ?>/shop.php" class="fw-bold">Start shopping</a>.
         </span>
       </div>

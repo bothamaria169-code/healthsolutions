@@ -187,27 +187,19 @@ include __DIR__ . '/../../includes/header.php';
             <b><?= format_price_short($margin['profit'] * (int) $product['min_reseller_qty']) ?></b> once it sells through.
           </p>
         </section>
-      <?php else:
-        $freeAt    = (float) get_setting('free_shipping_threshold', '1500');
-        $thisPrice = Pricing::effective($product, $viewer);
-        $toFree    = max(0.0, $freeAt - $thisPrice);
-      ?>
+      <?php else: ?>
         <section class="margin-panel" aria-label="Buying this product">
           <div class="margin-panel__head">
             <i class="fa-solid fa-truck-fast"></i> Getting it to you
           </div>
           <div class="margin-grid">
             <div><b>Same day</b><span>WhatsApp reply</span></div>
-            <div><b>2–4 days</b><span>Courier</span></div>
-            <div><b>Free</b><span>Dose reminders</span></div>
+            <div><b>2–4 days</b><span>Courier Guy</span></div>
+            <div><b>SADC &amp; DHL</b><span>Beyond SA</span></div>
           </div>
           <p class="margin-panel__foot">
-            <?php if ($toFree > 0): ?>
-              Free courier delivery on orders over <b><?= format_price_short($freeAt) ?></b>.
-            <?php else: ?>
-              <b>This product qualifies for free courier delivery.</b>
-            <?php endif; ?>
-            We confirm every order with you on WhatsApp before you pay.
+            Door, locker, pick-up point or kiosk in South Africa; bus or taxi depots in SADC; DHL worldwide.
+            We confirm the delivery cost with you on WhatsApp before you pay. <a class="text-leaf fw-bold" href="<?= SITE_URL ?>/delivery.php">How delivery works</a>
           </p>
         </section>
       <?php endif; ?>
@@ -354,12 +346,12 @@ include __DIR__ . '/../../includes/header.php';
       <div class="prose">
         <h3>Getting your order</h3>
         <ul>
-          <?php foreach (FULFILMENT_METHODS as $key => $m): ?>
-            <li><b><?= e($m['label']) ?></b> — <?= e($m['blurb']) ?></li>
+          <?php foreach (delivery_options() as $m): ?>
+            <li><b><?= e($m['by'] . ' — ' . $m['label']) ?></b>: <?= e($m['blurb']) ?> (<?= e($m['time']) ?>)</li>
           <?php endforeach; ?>
         </ul>
-        <p>Courier delivery is <?= format_price_short((float) get_setting('shipping_flat_rate', '120')) ?>,
-           free on orders over <?= format_price_short((float) get_setting('free_shipping_threshold', '1500')) ?>.</p>
+        <p>The delivery cost depends on where you are and is confirmed with you on WhatsApp before you pay.
+           <a href="<?= SITE_URL ?>/delivery.php" class="text-leaf fw-bold">How delivery works</a></p>
         <h3>Returns</h3>
         <p>Unopened, unused stock in its original packaging can be returned within 7 days of delivery for a refund or
            exchange. Opened consumables cannot be returned for hygiene reasons. Anything damaged in transit is replaced

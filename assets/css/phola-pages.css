@@ -94,6 +94,30 @@
 .oauth-or { display: flex; align-items: center; gap: .8rem; margin: .4rem 0 1.2rem; color: var(--text-3); font-size: .8rem; }
 .oauth-or::before, .oauth-or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 
+/* ── Delivery guide ───────────────────────────────────────────────────── */
+.dv-sec { scroll-margin-top: calc(var(--header-h) + 80px); padding-bottom: 2.5rem; margin-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+.dv-sec .lede { max-width: 70ch; margin-top: .6rem; }
+.dv-h3 { font-size: 1.25rem; margin: 2rem 0 1rem; }
+.dv-steps { counter-reset: dv; list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: .7rem; max-width: 860px; }
+.dv-steps li { counter-increment: dv; position: relative; padding: .9rem 1rem .9rem 3.4rem; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); color: var(--text-2); font-size: .93rem; }
+.dv-steps li::before { content: counter(dv); position: absolute; left: .9rem; top: .85rem; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--forest); color: var(--lime); font-weight: 800; font-size: .85rem; }
+.dv-steps b { color: var(--forest); }
+.dv-note { display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; font-size: .9rem; color: var(--text-2); max-width: 860px; margin: .8rem 0 0; }
+.dv-note > i { color: var(--leaf); }
+.depot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+.depot-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 1.2rem 1.3rem; }
+.depot-card h4 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; margin: 0 0 .7rem; }
+.depot-card ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+.depot-card li { display: grid; grid-template-columns: 1fr auto 1fr; gap: .6rem; align-items: center; font-size: .84rem; padding: .5rem .7rem; border-radius: 10px; background: var(--paper); }
+.depot-card li span { color: var(--text-2); }
+.depot-card li i { color: var(--lime-dark); font-size: .75rem; }
+.depot-card li b { color: var(--forest); }
+.dv-faq { display: grid; gap: .6rem; max-width: 860px; }
+.dv-faq details { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: .9rem 1.1rem; }
+.dv-faq summary { font-weight: 800; color: var(--forest); cursor: pointer; }
+.dv-faq p { margin: .6rem 0 0; color: var(--text-2); font-size: .92rem; }
+.deliv-opt__box em { color: var(--text-3); font-weight: 700; font-size: .75rem; }
+
 @media (max-width: 991px) {
   .news-layout { grid-template-columns: 1fr; }
   .news-side { position: static; }

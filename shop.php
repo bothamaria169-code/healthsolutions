@@ -142,10 +142,10 @@ include __DIR__ . '/includes/header.php';
       <?php if (!$isRes): ?>
       <div class="filter-block">
         <div class="card-fc card-fc--pad" style="background:var(--leaf-wash);border-color:#BFE3D5">
-          <b style="font-family:var(--font-display);display:block;margin-bottom:.3rem">Free delivery over <?= format_price_short((float) get_setting('free_shipping_threshold', '1500')) ?></b>
+          <b style="font-family:var(--font-display);display:block;margin-bottom:.3rem">Delivered anywhere</b>
           <p style="font-size:.82rem;color:var(--text-2);margin-bottom:.8rem">
-            Courier to your door in 2–4 working days, anywhere in South Africa. Every order is confirmed
-            with you on WhatsApp first.
+            The Courier Guy across South Africa, bus and taxi depots in SADC, DHL worldwide. Every order and
+            its delivery cost is confirmed with you on WhatsApp first. <a href="<?= SITE_URL ?>/delivery.php" class="fw-bold text-leaf">How it works</a>
           </p>
           <a href="<?= e(wa_link("Hi Phola, I have a question about a product.")) ?>" target="_blank" rel="noopener" class="btn-fc btn-fc--whatsapp btn-fc--sm btn-fc--block"><i class="fa-brands fa-whatsapp"></i> Ask on WhatsApp</a>
         </div>

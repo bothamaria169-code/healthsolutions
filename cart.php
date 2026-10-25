@@ -7,9 +7,7 @@ $items    = cart_items();
 $subtotal = cart_subtotal();
 $options  = delivery_options();
 
-$freeAt    = (float) get_setting('free_shipping_threshold', '1000');
-$toFree    = max(0.0, $freeAt - $subtotal);
-$freePct   = $freeAt > 0 ? min(100, (int) round($subtotal / $freeAt * 100)) : 100;
+$depots    = sadc_depot_suggestions();
 $waDisplay = Health::displayPhone(whatsapp_number());
 
 // "Add these too": best sellers that aren't in the basket yet.
@@ -18,7 +16,7 @@ $upsell   = array_slice(array_values(array_filter((new ProductRepository())->get
     fn($p) => !in_array((int) $p['id'], $inBasket, true) && $p['stock_status'] !== 'out_of_stock')), 0, 4);
 
 $page_title       = 'Your basket — ' . SITE_NAME;
-$meta_description = 'Review your basket, choose Courier Guy or SADC depot delivery and send your order to Phola on WhatsApp.';
+$meta_description = 'Review your basket, choose The Courier Guy, an SADC bus depot or DHL, and send your order to Phola on WhatsApp.';
 $meta_robots      = 'noindex';
 include __DIR__ . '/includes/header.php';
 ?>
@@ -27,7 +25,7 @@ include __DIR__ . '/includes/header.php';
   <div class="container">
     <nav class="crumbs"><a href="<?= SITE_URL ?>/index.php">Home</a><i class="fa-solid fa-chevron-right"></i><span>Basket</span></nav>
     <h1>Your basket</h1>
-    <p>Choose how you want it delivered, then send your order on WhatsApp. We confirm stock and the total before you pay.</p>
+    <p>Choose how you want it delivered, then send your order on WhatsApp. We confirm stock and the delivery cost before you pay.</p>
   </div>
 </header>
 
@@ -43,15 +41,6 @@ include __DIR__ . '/includes/header.php';
       </div>
 
     <?php else: ?>
-      <div class="free-bar card-fc mb-3">
-        <?php if ($toFree > 0): ?>
-          <span><i class="fa-solid fa-truck-fast"></i> Add <b class="money"><?= format_price_short($toFree) ?></b> more for <b>free Courier Guy delivery</b></span>
-        <?php else: ?>
-          <span><i class="fa-solid fa-gift"></i> <b>You've unlocked free delivery</b> anywhere in South Africa</span>
-        <?php endif; ?>
-        <div class="free-bar__track"><span style="width:<?= $freePct ?>%"></span></div>
-      </div>
-
       <div class="cart-layout">
         <div>
           <!-- ── Lines ───────────────────────────────────────────── -->
@@ -95,16 +84,15 @@ include __DIR__ . '/includes/header.php';
             <h2 style="font-size:1.15rem"><i class="fa-solid fa-truck-fast text-leaf me-2"></i>How should we deliver?</h2>
 
             <div class="deliv-pick">
-              <?php $first = true; foreach ($options as $key => $o):
-                $fee = delivery_fee($key, $subtotal); ?>
+              <?php $first = true; foreach ($options as $key => $o): ?>
               <label class="deliv-opt">
                 <input type="radio" name="delivery" value="<?= e($key) ?>" <?= $first ? 'checked' : '' ?>
-                       data-fee="<?= $fee === null ? '' : $fee ?>" data-field="<?= e($o['field']) ?>" data-region="<?= e($o['region']) ?>">
+                       data-field="<?= e($o['field']) ?>" data-region="<?= e($o['region']) ?>">
                 <span class="deliv-opt__box">
                   <i class="fa-solid <?= e($o['icon']) ?>"></i>
                   <b><?= e($o['label']) ?></b>
                   <small><?= e($o['by']) ?></small>
-                  <em><?= $fee === null ? 'Quoted' : ($fee > 0 ? format_price_short($fee) : 'Free') ?></em>
+                  <em><?= e($o['time']) ?></em>
                 </span>
               </label>
               <?php $first = false; endforeach; ?>
@@ -117,9 +105,17 @@ include __DIR__ . '/includes/header.php';
                   <?php foreach (SADC_COUNTRIES as $c): ?><option><?= e($c) ?></option><?php endforeach; ?>
                 </select>
               </div>
+              <div class="col-md-5 field" id="countryIntlField" hidden>
+                <label for="country_intl">Country</label>
+                <input class="input-fc" id="country_intl" name="country_intl" maxlength="60" placeholder="e.g. United Kingdom" autocomplete="country-name">
+              </div>
               <div class="col field">
                 <label for="address" id="addressLabel"><?= e(reset($options)['field']) ?></label>
-                <input class="input-fc" id="address" name="address" required maxlength="250" autocomplete="street-address">
+                <input class="input-fc" id="address" name="address" required maxlength="250" autocomplete="street-address" list="">
+                <datalist id="depotList">
+                  <?php foreach ($depots as $to => $country): ?><option value="<?= e($to) ?>" data-country="<?= e($country) ?>"></option><?php endforeach; ?>
+                </datalist>
+                <div class="field__hint" id="addressHint"></div>
               </div>
             </div>
 
@@ -142,9 +138,9 @@ include __DIR__ . '/includes/header.php';
           <div class="card-fc card-fc--pad">
             <h2 style="font-size:1.15rem">Order summary</h2>
             <div class="summary-row"><span><?= cart_count() ?> item<?= cart_count() === 1 ? '' : 's' ?></span><b><?= format_price($subtotal) ?></b></div>
-            <div class="summary-row"><span>Delivery</span><b id="sumShip">—</b></div>
-            <div class="summary-total"><span>Total</span><b class="money" id="sumTotal"><?= format_price($subtotal) ?></b></div>
-            <p class="field__hint" id="sumNote"></p>
+            <div class="summary-row"><span>Delivery</span><b id="sumShip">Confirmed on WhatsApp</b></div>
+            <div class="summary-total"><span>Products total</span><b class="money"><?= format_price($subtotal) ?></b></div>
+            <p class="field__hint">We confirm the delivery cost with your order before you pay. <a class="text-leaf fw-bold" href="<?= SITE_URL ?>/delivery.php" target="_blank">How delivery works</a></p>
 
             <button class="btn-fc btn-fc--whatsapp btn-fc--block btn-fc--lg" type="submit" form="orderForm">
               <i class="fa-brands fa-whatsapp"></i> Place order on WhatsApp
@@ -161,7 +157,7 @@ include __DIR__ . '/includes/header.php';
 
       <?php if ($upsell): ?>
       <section class="mt-5">
-        <div class="ph-head"><div><span class="eyebrow">Often added</span><h2 style="font-size:1.5rem">Add these too<?= $toFree > 0 ? ' — and get free delivery' : '' ?></h2></div></div>
+        <div class="ph-head"><div><span class="eyebrow">Often added</span><h2 style="font-size:1.5rem">Add these too</h2></div></div>
         <div class="grid-products">
           <?php foreach ($upsell as $product): include __DIR__ . '/includes/product-card.php'; endforeach; ?>
         </div>
@@ -175,19 +171,28 @@ include __DIR__ . '/includes/header.php';
 <script>
 (() => {
   const form = document.getElementById('orderForm');
-  const subtotal = <?= json_encode(round($subtotal, 2)) ?>;
-  // Same shape as format_price() in PHP: R1 250.00
-  const fmt = (n) => 'R' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  const $ = (id) => document.getElementById(id);
+  const hints = {
+    za: 'Find your nearest locker, pick-up point or kiosk on thecourierguy.co.za or the Pudo app.',
+    sadc: 'Start typing to pick a well-known depot, e.g. Harare Roadport or Gaborone main bus rank.',
+    intl: 'Include the postal code. Import VAT or duty in your country is paid to DHL by the receiver.',
+  };
   const update = () => {
     const opt = form.querySelector('input[name="delivery"]:checked');
-    const quoted = opt.dataset.fee === '';
-    const fee = quoted ? 0 : parseFloat(opt.dataset.fee);
-    document.getElementById('addressLabel').textContent = opt.dataset.field;
-    document.getElementById('countryField').hidden = opt.dataset.region !== 'sadc';
-    document.getElementById('sumShip').textContent = quoted ? 'Quoted on WhatsApp' : (fee > 0 ? fmt(fee) : 'Free');
-    document.getElementById('sumTotal').textContent = fmt(subtotal + fee) + (quoted ? ' + transport' : '');
-    document.getElementById('sumNote').textContent = quoted ? <?= json_encode((string) get_setting('sadc_fee_note', 'Quoted on WhatsApp')) ?> : '';
+    const region = opt.dataset.region;
+    $('addressLabel').textContent = opt.dataset.field;
+    $('countryField').hidden = region !== 'sadc';
+    $('countryIntlField').hidden = region !== 'intl';
+    $('country_intl').required = region === 'intl';
+    $('address').setAttribute('list', region === 'sadc' ? 'depotList' : '');
+    $('addressHint').textContent = opt.value === 'tcg_door' ? '' : hints[region];
+    $('sumShip').textContent = { za: 'The Courier Guy — confirmed on WhatsApp', sadc: 'Bus / taxi — quoted on WhatsApp', intl: 'DHL Express — quoted on WhatsApp' }[region];
   };
+  // Picking a suggested depot also picks its country.
+  $('address').addEventListener('change', () => {
+    const o = [...$('depotList').options].find((x) => x.value === $('address').value);
+    if (o) $('country').value = o.dataset.country;
+  });
   form.addEventListener('change', update);
   update();
   // The basket empties once the order is sent; refresh so this tab doesn't look unsent.

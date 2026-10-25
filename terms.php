@@ -7,8 +7,6 @@ $regNo     = (string) get_setting('company_reg_no', '');
 $email     = e((string) get_setting('contact_email', SITE_EMAIL));
 $phone     = e((string) get_setting('contact_phone', ''));
 $address   = e((string) get_setting('contact_address', ''));
-$flat      = format_price_short((float) get_setting('shipping_flat_rate', '120'));
-$free      = format_price_short((float) get_setting('free_shipping_threshold', '1500'));
 $returns   = SITE_URL . '/refund-policy.php';
 $privacy   = SITE_URL . '/privacy.php';
 $contact   = SITE_URL . '/contact.php';
@@ -22,7 +20,7 @@ $policy = [
     'summary' => [
         'Your order is <b>confirmed once we have your payment</b>. We hold the stock for 48 hours while you pay.',
         'Prices are in rand and <b>include VAT</b>. What you see at checkout is what you pay.',
-        "Courier delivery is <b>{$flat}</b>, and <b>free on orders over {$free}</b> — usually 2–4 working days.",
+        "We deliver with The Courier Guy in South Africa (usually 2–4 working days), by cross-border bus or taxi to SADC depots, and with DHL Express worldwide. The delivery cost is confirmed with you on WhatsApp before you pay.",
         'Unopened items can be returned within <b>7 days</b>; faulty items within <b>6 months</b>.',
         'Our supplements <b>complement your diet</b>. They don\'t diagnose, treat or cure any condition.',
     ],
@@ -92,7 +90,7 @@ HTML,
 <div class="policy-table-wrap"><table class="policy-table">
   <thead><tr><th>Option</th><th>Cost</th><th>Usually takes</th></tr></thead>
   <tbody>
-    <tr><td>Courier to your door</td><td>{$flat} · <b>free over {$free}</b></td><td>2–4 working days to main centres, up to 5 elsewhere</td></tr>
+    <tr><td>The Courier Guy — door, locker, pick-up point or kiosk</td><td>Confirmed on WhatsApp</td><td>2–4 working days to main centres, up to 5 elsewhere</td></tr><tr><td>SADC — bus or taxi to your nearest depot</td><td>Confirmed on WhatsApp</td><td>Usually 2–5 days</td></tr><tr><td>DHL Express — worldwide</td><td>Confirmed on WhatsApp; import duties are paid by the receiver</td><td>Usually 3–7 working days</td></tr>
     <tr><td>Collection from a pickup point</td><td>Shown at checkout</td><td>We tell you when it's ready</td></tr>
   </tbody>
 </table></div>

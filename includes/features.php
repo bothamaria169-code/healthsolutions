@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * Phola additions on top of the CureMeds codebase:
  *   - self-applying database upgrades (no SQL to import on the live server)
- *   - delivery: The Courier Guy (door, locker, pick-up point, kiosk) and SADC bus/taxi depots
+ *   - delivery: The Courier Guy (door, locker, pick-up point, kiosk), SADC bus/taxi depots and DHL worldwide
  *   - the daily wellness quote (dashboard + optional morning email)
  *   - health-news RSS import
  *   - Google and Facebook sign-in
@@ -15,7 +15,7 @@ declare(strict_types=1);
 // Each step runs once, in order; the number reached is kept in settings as
 // `schema_version`. Steps only ever add (tables, columns, rows), so running a
 // new deploy against the live database is always safe.
-const PHOLA_SCHEMA_VERSION = 1;
+const PHOLA_SCHEMA_VERSION = 2;
 
 function phola_migrate(): void
 {
@@ -96,14 +96,16 @@ function phola_migrate(): void
                                ':c' => $a['html'], ':cat' => 'Chronic conditions', ':a' => $author, ':m' => $a['mins']]);
             }
 
-            // Delivery prices start here; Admin → Settings → Delivery changes them.
-            foreach (['tcg_door_fee' => '120', 'tcg_locker_fee' => '70', 'tcg_point_fee' => '80', 'tcg_kiosk_fee' => '80',
-                      'sadc_fee_note' => 'Quoted on WhatsApp — depends on the country and depot',
-                      'announcement' => 'Courier Guy delivery nationwide: door, locker, pick-up point or kiosk · SADC via bus & taxi depots · WhatsApp +27 63 043 7385'] as $k => $v) {
+            // The top-bar message; Admin → Settings changes it.
+            foreach (['announcement' => 'Courier Guy delivery nationwide: door, locker, pick-up point or kiosk · SADC via bus & taxi depots · DHL worldwide · WhatsApp +27 63 043 7385'] as $k => $v) {
                 if (get_setting($k) === null || $k === 'announcement') {
                     set_setting($k, $v);
                 }
             }
+        }
+        if ($current < 2) {
+            $pdo->exec("DELETE FROM settings WHERE key_name IN ('tcg_door_fee','tcg_locker_fee','tcg_point_fee','tcg_kiosk_fee','sadc_fee_note')");
+            set_setting('announcement', 'Courier Guy delivery nationwide: door, locker, pick-up point or kiosk · SADC via bus & taxi depots · DHL worldwide · WhatsApp +27 63 043 7385');
         }
         set_setting('schema_version', (string) PHOLA_SCHEMA_VERSION);
     } catch (Throwable $e) {
@@ -116,40 +118,44 @@ function phola_migrate(): void
 const SADC_COUNTRIES = ['Botswana', 'Eswatini', 'Lesotho', 'Namibia', 'Zimbabwe', 'Mozambique', 'Zambia', 'Malawi', 'Angola', 'DR Congo', 'Tanzania'];
 
 /**
- * Every way an order can reach the customer.
- * key => label, icon, blurb, detail field label, fee (null = quoted), region (za|sadc)
+ * Every way an order can reach the customer. No prices here on purpose: the
+ * delivery cost is confirmed with the customer on WhatsApp with the order.
+ * key => label, by, icon, blurb, time, field (what we need to know), region (za|sadc|intl)
  */
 function delivery_options(): array
 {
-    $fee = fn(string $k, string $d) => (float) get_setting($k, $d);
     return [
-        'tcg_door'   => ['label' => 'Door-to-door', 'by' => 'The Courier Guy', 'icon' => 'fa-house-chimney', 'region' => 'za',
-                         'blurb' => 'Delivered to your home or office, 2–4 working days.',
-                         'field' => 'Street address, suburb, city and postal code', 'fee' => $fee('tcg_door_fee', '120')],
-        'tcg_locker' => ['label' => 'Locker', 'by' => 'The Courier Guy · Pudo', 'icon' => 'fa-box-archive', 'region' => 'za',
-                         'blurb' => 'Collect any time from a 24/7 smart locker near you.',
-                         'field' => 'Locker name or code (e.g. Pudo, Engen Rivonia)', 'fee' => $fee('tcg_locker_fee', '70')],
-        'tcg_point'  => ['label' => 'Pick-up point', 'by' => 'The Courier Guy', 'icon' => 'fa-store', 'region' => 'za',
-                         'blurb' => 'Collect from a partner store close to home.',
-                         'field' => 'Pick-up point name and town', 'fee' => $fee('tcg_point_fee', '80')],
-        'tcg_kiosk'  => ['label' => 'Kiosk', 'by' => 'The Courier Guy', 'icon' => 'fa-shop', 'region' => 'za',
-                         'blurb' => 'Collect from a Courier Guy kiosk in a mall or garage.',
-                         'field' => 'Kiosk name and town', 'fee' => $fee('tcg_kiosk_fee', '80')],
-        'sadc_depot' => ['label' => 'SADC bus / taxi depot', 'by' => 'Outside South Africa', 'icon' => 'fa-bus', 'region' => 'sadc',
-                         'blurb' => 'We send it with a trusted bus or taxi service to the depot nearest you.',
-                         'field' => 'Nearest depot / town', 'fee' => null],
+        'tcg_door'   => ['label' => 'Door-to-door', 'by' => 'The Courier Guy', 'icon' => 'fa-house-chimney', 'region' => 'za', 'time' => '2–4 working days',
+                         'blurb' => 'Delivered to your home or office.', 'field' => 'Street address, suburb, city and postal code'],
+        'tcg_locker' => ['label' => 'Locker', 'by' => 'The Courier Guy · Pudo', 'icon' => 'fa-box-archive', 'region' => 'za', 'time' => '2–4 working days',
+                         'blurb' => 'Collect any time from a 24/7 smart locker near you.', 'field' => 'Locker name or code (e.g. Pudo, Engen Rivonia)'],
+        'tcg_point'  => ['label' => 'Pick-up point', 'by' => 'The Courier Guy', 'icon' => 'fa-store', 'region' => 'za', 'time' => '2–4 working days',
+                         'blurb' => 'Collect from a partner store close to home.', 'field' => 'Pick-up point name and town'],
+        'tcg_kiosk'  => ['label' => 'Kiosk', 'by' => 'The Courier Guy', 'icon' => 'fa-shop', 'region' => 'za', 'time' => '2–4 working days',
+                         'blurb' => 'Collect from a Courier Guy kiosk in a mall or garage.', 'field' => 'Kiosk name and town'],
+        'sadc_depot' => ['label' => 'Bus / taxi depot', 'by' => 'SADC countries', 'icon' => 'fa-bus', 'region' => 'sadc', 'time' => '2–5 days',
+                         'blurb' => 'Sent with a trusted cross-border bus or taxi to the depot nearest you.', 'field' => 'Nearest depot / town (e.g. Harare Roadport)'],
+        'dhl_intl'   => ['label' => 'International', 'by' => 'DHL Express', 'icon' => 'fa-plane-departure', 'region' => 'intl', 'time' => '3–7 working days',
+                         'blurb' => 'Door-to-door anywhere in the world, tracked all the way.', 'field' => 'Full delivery address, city and postal code'],
     ];
 }
 
-/** The delivery fee for a basket. null = quoted on WhatsApp (SADC). */
+/** Delivery is always confirmed on WhatsApp, so there is no fee to add up on the website. */
 function delivery_fee(string $method, float $subtotal): ?float
 {
-    $opt = delivery_options()[$method] ?? null;
-    if (!$opt || $opt['fee'] === null) {
-        return null;
+    return null;
+}
+
+/** "Roodepoort → Harare" style suggestions for the basket's depot field. */
+function sadc_depot_suggestions(): array
+{
+    $out = [];
+    foreach (require __DIR__ . '/content/sadc-depots.php' as $country => [, $routes]) {
+        foreach ($routes as [, $to]) {
+            $out[$to] = $country;
+        }
     }
-    $free = (float) get_setting('free_shipping_threshold', '1000');
-    return $subtotal >= $free ? 0.0 : $opt['fee'];
+    return $out;
 }
 
 // ── Daily wellness quote ─────────────────────────────────────────────────
