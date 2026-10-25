@@ -120,7 +120,8 @@
 .deliv-logo { height: 26px; width: auto; max-width: 110px; object-fit: contain; object-position: left; margin-bottom: .35rem; }
 .dv-brand { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
 .dv-brand img { height: 42px; width: auto; max-width: 200px; object-fit: contain; }
-.ph-need span img { width: 26px; height: 26px; object-fit: contain; }
+.ph-need span:has(img) { width: auto; min-width: 64px; padding: 0 .55rem; border-radius: var(--r-pill); background: #fff; border: 1px solid var(--line); }
+.ph-need span img { height: 16px; width: auto; max-width: 80px; object-fit: contain; }
 
 @media (max-width: 991px) {
   .news-layout { grid-template-columns: 1fr; }
