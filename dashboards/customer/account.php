@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf((string) ($_POST['csrf_
                 'name'              => mb_substr(strip_tags($name), 0, 120),
                 'email'             => $email !== '' ? $email : null,
                 'reminders_enabled' => !empty($_POST['reminders_enabled']) ? 1 : 0,
+                'daily_quotes'      => !empty($_POST['daily_quotes']) ? 1 : 0,
             ]);
             flash('success', 'Your details are saved.');
             back();
@@ -112,6 +113,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf((string) ($_POST['csrf_
       <label class="opt-card mb-3">
         <input type="checkbox" name="reminders_enabled" value="1" <?= $me['reminders_enabled'] ? 'checked' : '' ?>>
         <span class="opt-card__blurb">Email me dose and refill reminders</span>
+      </label>
+      <label class="opt-card mb-3">
+        <input type="checkbox" name="daily_quotes" value="1" <?= !empty($me['daily_quotes']) ? 'checked' : '' ?>>
+        <span class="opt-card__blurb">Email me a short wellness quote every morning</span>
       </label>
       <button class="btn-fc" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save</button>
     </form>

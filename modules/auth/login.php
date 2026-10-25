@@ -71,7 +71,7 @@ $tabUrl = fn(string $m) => '?' . http_build_query(array_filter(['mode' => $m ===
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<?php foreach (['theme', 'components', 'layout', 'pages', 'responsive', 'phola'] as $css): ?>
+<?php foreach (['theme', 'components', 'layout', 'pages', 'responsive', 'phola', 'phola-store', 'phola-pages'] as $css): ?>
 <link rel="stylesheet" href="<?= asset("assets/css/$css.css") ?>">
 <?php endforeach; ?>
 </head>
@@ -107,16 +107,18 @@ $tabUrl = fn(string $m) => '?' . http_build_query(array_filter(['mode' => $m ===
       </a>
 
       <h1 style="font-size:1.9rem">Sign in</h1>
-      <p class="text-muted-2 mb-4">New patient? <a href="<?= SITE_URL ?>/modules/auth/register.php" class="text-leaf fw-bold">Create your tracker</a></p>
+      <p class="text-muted-2 mb-4">New here? <a href="<?= SITE_URL ?>/modules/auth/register.php" class="text-leaf fw-bold">Create a free account</a></p>
 
       <nav class="auth-tabs" aria-label="Sign-in type">
-        <a href="<?= e($tabUrl('patient')) ?>" class="<?= $mode === 'patient' ? 'is-on' : '' ?>"><i class="fa-solid fa-mobile-screen me-1"></i> Patient</a>
+        <a href="<?= e($tabUrl('patient')) ?>" class="<?= $mode === 'patient' ? 'is-on' : '' ?>"><i class="fa-solid fa-mobile-screen me-1"></i> Customer</a>
         <a href="<?= e($tabUrl('staff')) ?>" class="<?= $mode === 'staff' ? 'is-on' : '' ?>"><i class="fa-solid fa-user-nurse me-1"></i> Staff</a>
       </nav>
 
       <?php foreach ($errors as $err): ?>
         <div class="alert-fc alert-fc--danger"><i class="fa-solid fa-circle-exclamation"></i><span><?= e($err) ?></span></div>
       <?php endforeach; ?>
+      <?= flash_html() ?>
+      <?php if ($mode === 'patient'): ?><?= oauth_buttons_html((string) ($_GET['redirect'] ?? '')) ?><?php endif; ?>
 
       <form method="post" novalidate>
         <?= csrf_field() ?>

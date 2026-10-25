@@ -38,6 +38,17 @@ $groups = [
         'x_url'            => ['X (Twitter) URL', 'text'],
         'linkedin_url'     => ['LinkedIn URL', 'text'],
     ],
+    'Delivery (The Courier Guy & SADC)' => [
+        'tcg_door_fee'   => ['Door-to-door fee', 'number', 'The Courier Guy to the customer address.'],
+        'tcg_locker_fee' => ['Locker (Pudo) fee', 'number'],
+        'tcg_point_fee'  => ['Pick-up point fee', 'number'],
+        'tcg_kiosk_fee'  => ['Kiosk fee', 'number'],
+        'sadc_fee_note'  => ['SADC depot note', 'text', 'Shown in the basket for bus/taxi deliveries outside South Africa, which are quoted on WhatsApp.'],
+    ],
+    'Sign in with Google & Facebook' => [
+        'google_client_id'     => ['Google Client ID', 'text', 'Google Cloud Console → APIs & Services → Credentials → OAuth client ID (Web). Authorised redirect URI: ' . SITE_URL . '/modules/auth/google.php'],
+        'google_client_secret' => ['Google Client secret', 'text'],
+    ],
     'Marketing & tracking' => [
         'ga4_id'                   => ['Google Analytics 4 Measurement ID', 'text', 'Looks like G-ABC123XYZ. Leave empty to switch tracking off.'],
         'meta_pixel_id'            => ['Meta (Facebook) Pixel ID', 'text', 'Digits only, from Meta Events Manager.'],

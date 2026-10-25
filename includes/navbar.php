@@ -89,10 +89,10 @@ $announcement   = get_setting('announcement', '');
         </div>
       </div>
 
-      <a href="<?= SITE_URL ?>/price-list.php" class="<?= $active($current === 'price-list') ?>">Price list</a>
-      <a href="<?= SITE_URL ?>/dashboards/customer/index.php" class="<?= $active($inDir('customer')) ?>">Patient portal</a>
+      <a href="<?= SITE_URL ?>/diet-plans.php" class="<?= $active($current === 'diet-plans') ?>">Diet plans</a>
+      <a href="<?= SITE_URL ?>/health-news.php" class="<?= $active($current === 'health-news') ?>">Health news</a>
       <a href="<?= SITE_URL ?>/modules/blog/index.php" class="<?= $active($inDir('blog')) ?>">Learn</a>
-      <a href="<?= SITE_URL ?>/about.php"      class="<?= $active($current === 'about') ?>">About</a>
+      <a href="<?= SITE_URL ?>/delivery.php"   class="<?= $active($current === 'delivery') ?>">Delivery</a>
       <a href="<?= SITE_URL ?>/contact.php"    class="<?= $active($current === 'contact') ?>">Contact</a>
     </nav>
 
@@ -138,8 +138,8 @@ $announcement   = get_setting('announcement', '');
         <?php if ($wishlist_count > 0): ?><span class="icon-btn__badge"><?= $wishlist_count ?></span><?php endif; ?>
       </a>
 
-      <a href="<?= SITE_URL ?>/cart.php" class="icon-btn" aria-label="Enquiry list" title="Enquiry list">
-        <i class="fa-solid fa-clipboard-list"></i>
+      <a href="<?= SITE_URL ?>/cart.php" class="icon-btn" aria-label="Basket" title="Basket">
+        <i class="fa-solid fa-basket-shopping"></i>
         <span class="icon-btn__badge<?= $cart_count ? '' : ' d-none' ?>" data-cart-badge><?= $cart_count ?></span>
       </a>
 
@@ -169,8 +169,11 @@ $announcement   = get_setting('announcement', '');
     <a href="<?= SITE_URL ?>/shop.php"       class="<?= $active($current === 'shop') ?>">Shop all</a>
     <a href="<?= SITE_URL ?>/price-list.php" class="<?= $active($current === 'price-list') ?>">Price list</a>
     <a href="<?= SITE_URL ?>/dashboards/customer/index.php" class="<?= $active($inDir('customer')) ?>">Patient portal</a>
-    <a href="<?= SITE_URL ?>/cart.php"       class="<?= $active($current === 'cart') ?>">Enquiry list</a>
+    <a href="<?= SITE_URL ?>/cart.php"       class="<?= $active($current === 'cart') ?>">Basket</a>
+    <a href="<?= SITE_URL ?>/diet-plans.php" class="<?= $active($current === 'diet-plans') ?>">Diet plans</a>
+    <a href="<?= SITE_URL ?>/health-news.php" class="<?= $active($current === 'health-news') ?>">Health news</a>
     <a href="<?= SITE_URL ?>/modules/blog/index.php" class="<?= $active($inDir('blog')) ?>">Learn</a>
+    <a href="<?= SITE_URL ?>/delivery.php"   class="<?= $active($current === 'delivery') ?>">Delivery</a>
     <a href="<?= SITE_URL ?>/about.php"      class="<?= $active($current === 'about') ?>">About</a>
     <a href="<?= SITE_URL ?>/faq.php"        class="<?= $active($current === 'faq') ?>">FAQ</a>
     <a href="<?= SITE_URL ?>/contact.php"    class="<?= $active($current === 'contact') ?>">Contact</a>
@@ -201,7 +204,7 @@ $announcement   = get_setting('announcement', '');
   <a href="<?= SITE_URL ?>/shop.php"  class="<?= $active($current === 'shop') ?>"><i class="fa-solid fa-grid-2"></i><i class="fa-solid fa-shop d-none"></i>Shop</a>
   <a href="<?= e(wa_link()) ?>" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" style="color:var(--wa)"></i>WhatsApp</a>
   <a href="<?= SITE_URL ?>/cart.php"  class="<?= $active($current === 'cart') ?>">
-    <i class="fa-solid fa-clipboard-list"></i>List
+    <i class="fa-solid fa-basket-shopping"></i>Basket
     <span class="tab-badge<?= $cart_count ? '' : ' d-none' ?>" data-cart-badge><?= $cart_count ?></span>
   </a>
   <a href="<?= $current_user ? SITE_URL . '/dashboards/customer/index.php' : SITE_URL . '/modules/auth/login.php' ?>"

@@ -40,5 +40,21 @@ try {
     echo 'social: error ' . $e->getMessage() . "\n";
 }
 
+try {
+    echo 'quotes: ' . json_encode(send_daily_quotes()) . "\n";
+} catch (Throwable $e) {
+    echo 'quotes: error ' . $e->getMessage() . "\n";
+}
+
+// Health news every 3 hours.
+$lastNews = strtotime((string) get_setting('rss_last_run', '2000-01-01'));
+if ($lastNews < time() - 3 * 3600) {
+    try {
+        echo 'news: ' . json_encode(import_health_news()) . "\n";
+    } catch (Throwable $e) {
+        echo 'news: error ' . $e->getMessage() . "\n";
+    }
+}
+
 printf("done in %.1fs\n", microtime(true) - $started);
 flock($lock, LOCK_UN);

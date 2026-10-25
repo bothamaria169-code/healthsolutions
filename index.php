@@ -105,7 +105,7 @@ include __DIR__ . '/includes/header.php';
 <section class="ph-promise">
   <div class="container ph-promise__grid">
     <div><i class="fa-brands fa-whatsapp"></i><b>Order on WhatsApp</b><span>A real person confirms every order</span></div>
-    <div><i class="fa-solid fa-truck-fast"></i><b>Nationwide courier</b><span>2–4 working days, tracking on WhatsApp</span></div>
+    <div><i class="fa-solid fa-truck-fast"></i><b>The Courier Guy</b><span>Door, locker, pick-up point or kiosk · SADC depots</span></div>
     <div><i class="fa-solid fa-tag"></i><b>Clear prices</b><span>Free delivery over <?= format_price_short((float) get_setting('free_shipping_threshold', '1000')) ?></span></div>
     <div><i class="fa-solid fa-user-shield"></i><b>Private &amp; POPIA-safe</b><span>Your health details stay yours</span></div>
   </div>
@@ -182,7 +182,7 @@ include __DIR__ . '/includes/header.php';
     </div>
     <div class="ph-steps">
       <?php foreach ([
-        ['fa-basket-shopping', 'Pick your products', 'Tap Enquire on a product, or add several to your list and send them together.'],
+        ['fa-basket-shopping', 'Pick your products', 'Add products to your basket, choose Courier Guy or SADC depot delivery, and send the order in one tap.'],
         ['fa-brands fa-whatsapp', 'Confirm on WhatsApp', 'Your order arrives at ' . $waDisplay . ' with products and prices filled in. We send payment details.'],
         ['fa-box-open', 'Delivered to your door', 'We courier nationwide in 2–4 working days and send the tracking number on WhatsApp.'],
       ] as $i => [$icon, $title, $text]): ?>
@@ -236,6 +236,19 @@ include __DIR__ . '/includes/header.php';
   </div>
 </section>
 <?php endif; ?>
+
+<!-- ── Health hub ───────────────────────────────────────────────────── -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="ph-head"><div><span class="eyebrow">Free health hub</span><h2>Live well with a chronic condition</h2></div></div>
+    <div class="hub-grid">
+      <a class="hub-tile" href="<?= SITE_URL ?>/diet-plans.php" data-reveal><i class="fa-solid fa-carrot"></i><b>Diet plans</b><span>Diabetes, blood pressure, HIV, TB, kidneys and more — with a sample day of SA meals.</span></a>
+      <a class="hub-tile" href="<?= SITE_URL ?>/modules/blog/index.php" data-reveal><i class="fa-solid fa-book-medical"></i><b>Condition guides</b><span>Plain-language articles on managing chronic conditions every day.</span></a>
+      <a class="hub-tile" href="<?= SITE_URL ?>/health-news.php" data-reveal><i class="fa-solid fa-newspaper"></i><b>Health news</b><span>Fresh headlines from South Africa and the world, updated through the day.</span></a>
+      <a class="hub-tile" href="<?= SITE_URL ?>/modules/auth/register.php" data-reveal><i class="fa-solid fa-calendar-check"></i><b>Free tracker</b><span>Sign up with Google or Facebook: daily quote, dose reminders and refill dates.</span></a>
+    </div>
+  </div>
+</section>
 
 <!-- ── Learn ────────────────────────────────────────────────────────── -->
 <?php if ($posts): ?>

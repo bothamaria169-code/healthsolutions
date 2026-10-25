@@ -46,7 +46,7 @@
     if (res.success) {
       btn.innerHTML = '<i class="fa-solid fa-check"></i> Added';
       paintBadges(res.count);
-      fcToast(res.message || 'Added to your enquiry list.');
+      fcToast(res.message || 'Added to your basket.');
       setTimeout(() => { btn.innerHTML = original; }, 1400);
     } else {
       btn.innerHTML = original;

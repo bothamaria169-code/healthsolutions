@@ -251,8 +251,8 @@ include __DIR__ . '/../../includes/header.php';
                   data-product-id="<?= (int) $product['id'] ?>"
                   data-qty-from="#pdpQty"
                   data-requires-variant="<?= $product['type'] === 'variable' ? '1' : '0' ?>"
-                  title="Add to your enquiry list to send several products at once">
-            <i class="fa-solid fa-plus"></i> Add to list
+                  title="Add to your basket">
+            <i class="fa-solid fa-basket-shopping"></i> Add to basket
           </button>
           <script>
             // Carry the chosen quantity into the WhatsApp message.

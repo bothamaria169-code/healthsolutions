@@ -73,7 +73,7 @@ $patientFor = function (?string $phone): ?array {
   <div class="d-flex justify-content-between flex-wrap gap-2 mb-3">
     <div>
       <h2 style="font-size:1.2rem;margin:0">Enquiry E<?= (int) $open['id'] ?></h2>
-      <span class="text-muted-3" style="font-size:.82rem"><?= date('j M Y, H:i', strtotime($open['created_at'])) ?> · from the <?= $open['source'] === 'list' ? 'enquiry list' : 'product page' ?></span>
+      <span class="text-muted-3" style="font-size:.82rem"><?= date('j M Y, H:i', strtotime($open['created_at'])) ?> · from the <?= $open['source'] === 'list' ? 'basket' : 'product page' ?></span>
     </div>
     <a href="enquiries.php" class="btn-fc btn-fc--ghost btn-fc--sm"><i class="fa-solid fa-xmark"></i> Close</a>
   </div>
@@ -86,6 +86,11 @@ $patientFor = function (?string $phone): ?array {
           <tr><td><?= e($i['name']) ?><?= !empty($i['pack']) ? '<div class="text-muted-3" style="font-size:.75rem">' . e($i['pack']) . '</div>' : '' ?></td>
               <td><?= (int) $i['qty'] ?></td><td class="text-end money"><?= format_price_short((float) $i['price'] * (int) $i['qty']) ?></td></tr>
         <?php endforeach; ?>
+          <?php if (!empty($open['delivery']) && ($d = json_decode((string) $open['delivery'], true))): ?>
+          <tr><td colspan="2"><i class="fa-solid fa-truck-fast text-leaf me-1"></i><?= e($d['label']) ?>
+              <div class="text-muted-3" style="font-size:.78rem"><?= e($d['address']) ?><?= $d['country'] !== 'South Africa' ? ', ' . e($d['country']) : '' ?></div></td>
+              <td class="text-end money"><?= $d['fee'] === null ? 'Quote' : ($d['fee'] > 0 ? format_price_short((float) $d['fee']) : 'Free') ?></td></tr>
+          <?php endif; ?>
           <tr><td colspan="2"><b>Total quoted</b></td><td class="text-end money"><b><?= format_price_short((float) $open['total']) ?></b></td></tr>
         </tbody>
       </table>

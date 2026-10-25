@@ -58,7 +58,8 @@ $margin      = $is_res ? Pricing::margin($product, $card_user) : null;
     <h3 class="p-card__name"><a href="<?= e($url) ?>"><?= e($product['name']) ?></a></h3>
 
     <?php if (!empty($product['pack_size'])): ?>
-      <div class="p-card__meta"><?= e($product['pack_size']) ?></div>
+      <div class="p-card__meta"><?= e($product['pack_size']) ?><?php if ((int) ($product['sold_count'] ?? 0) >= 20): ?>
+        <span class="p-card__sold"><i class="fa-solid fa-fire"></i> <?= (int) $product['sold_count'] ?> sold</span><?php endif; ?></div>
     <?php endif; ?>
 
     <div class="p-card__price">
@@ -94,7 +95,7 @@ $margin      = $is_res ? Pricing::margin($product, $card_user) : null;
           <i class="fa-brands fa-whatsapp"></i> Enquire
         </a>
         <button class="icon-square add-to-cart" type="button" data-product-id="<?= (int) $product['id'] ?>" data-qty="1"
-                title="Add to enquiry list" aria-label="Add <?= e($product['name']) ?> to enquiry list">
+                title="Add to basket" aria-label="Add <?= e($product['name']) ?> to basket">
           <i class="fa-solid fa-plus"></i>
         </button>
       </div>

@@ -1,0 +1,106 @@
+/* ============================================================================
+   Phola Health Solutions — basket, delivery, health news, diet plans, the home
+   health hub, the dashboard quote and social sign-in. Loaded after
+   phola-store.css; tokens from theme.css.
+   ============================================================================ */
+
+/* ── Basket: free-delivery bar, delivery picker, trust list ───────────── */
+.free-bar { padding: 1rem 1.3rem; }
+.free-bar > span { display: flex; align-items: center; gap: .5rem; font-size: .92rem; color: var(--forest); flex-wrap: wrap; }
+.free-bar > span i { color: var(--leaf); }
+.free-bar__track { height: 8px; border-radius: 99px; background: var(--leaf-wash); margin-top: .7rem; overflow: hidden; }
+.free-bar__track span { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--leaf), var(--lime)); transition: width .6s ease; }
+.deliv-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .6rem; margin: 1rem 0; }
+.deliv-opt { position: relative; }
+.deliv-opt input { position: absolute; opacity: 0; pointer-events: none; }
+.deliv-opt__box { display: flex; flex-direction: column; gap: .15rem; height: 100%; padding: .9rem; border: 2px solid var(--line); border-radius: var(--r); cursor: pointer; transition: var(--t-fast); background: var(--card); }
+.deliv-opt__box i { color: var(--leaf); font-size: 1.2rem; margin-bottom: .3rem; }
+.deliv-opt__box b { color: var(--forest); font-size: .9rem; }
+.deliv-opt__box small { color: var(--text-3); font-size: .72rem; }
+.deliv-opt__box em { font-style: normal; font-weight: 800; color: var(--leaf-dark); margin-top: auto; padding-top: .3rem; font-size: .88rem; }
+.deliv-opt input:checked + .deliv-opt__box { border-color: var(--leaf); background: var(--leaf-wash); box-shadow: 0 0 0 3px rgba(46,139,62,.12); }
+.deliv-opt input:focus-visible + .deliv-opt__box { outline: 3px solid var(--lime); }
+.trust-mini { list-style: none; padding: 0; margin: 1rem 0 0; font-size: .8rem; color: var(--text-2); display: grid; gap: .35rem; }
+.trust-mini i { color: var(--leaf); width: 1.2em; }
+.p-card__sold { display: inline-flex; align-items: center; gap: .25rem; margin-left: .5rem; color: var(--coral); font-weight: 700; font-size: .72rem; }
+
+/* ── Delivery page ────────────────────────────────────────────────────── */
+.deliv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.deliv-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 1.4rem; display: flex; flex-direction: column; gap: .3rem; }
+.deliv-card > i { width: 50px; height: 50px; border-radius: 16px; display: grid; place-items: center; background: var(--leaf-wash); color: var(--leaf); font-size: 1.25rem; margin-bottom: .6rem; }
+.deliv-card h3 { font-size: 1.15rem; margin: 0; }
+.deliv-card p { color: var(--text-2); font-size: .88rem; margin: 0 0 .4rem; }
+.deliv-card .money { font-size: 1.4rem; color: var(--forest); margin-top: auto; }
+.deliv-card small { color: var(--text-3); }
+
+/* ── Health news ──────────────────────────────────────────────────────── */
+.ph-need.is-on { border-color: var(--leaf); background: var(--leaf-wash); }
+.news-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 1.5rem; align-items: start; }
+.news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+.news-card { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; transition: var(--t); }
+.news-card:hover { box-shadow: var(--e-3); transform: translateY(-3px); }
+.news-card__img { aspect-ratio: 16 / 9; background: var(--paper-2); overflow: hidden; }
+.news-card__img img { width: 100%; height: 100%; object-fit: cover; }
+.news-card__body { padding: 1.1rem 1.2rem 1.3rem; display: flex; flex-direction: column; gap: .4rem; flex: 1; }
+.news-card__src { font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--leaf); }
+.news-card h3 { font-family: var(--font-sans); font-size: 1rem; font-weight: 800; line-height: 1.35; margin: 0; }
+.news-card p { font-size: .85rem; color: var(--text-2); margin: 0; }
+.news-card .ph-link { margin-top: auto; padding-top: .5rem; font-size: .8rem; }
+.news-side { position: sticky; top: calc(var(--header-h) + 1rem); }
+.news-guide { display: flex; gap: .7rem; align-items: center; padding: .6rem 0; border-top: 1px solid var(--line); }
+.news-guide img { width: 64px; height: 46px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
+.news-guide b { display: block; font-size: .85rem; line-height: 1.3; color: var(--forest); }
+.news-guide small { color: var(--text-3); font-size: .72rem; }
+
+/* ── Diet plans ───────────────────────────────────────────────────────── */
+.diet { scroll-margin-top: calc(var(--header-h) + 80px); background: var(--card); border: 1px solid var(--line); border-top: 5px solid var(--c); border-radius: var(--r-xl); padding: clamp(1.3rem, 3vw, 2rem); margin-bottom: 1.5rem; }
+.diet__head { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.2rem; }
+.diet__icon { flex: 0 0 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 14%, #fff); color: var(--c); font-size: 1.4rem; }
+.diet__head h2 { margin: 0 0 .3rem; font-weight: 600; }
+.diet__head p { margin: 0; color: var(--text-2); max-width: 70ch; }
+.diet__grid { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 1rem; }
+.diet__box { border-radius: var(--r-lg); padding: 1.1rem 1.2rem; background: var(--paper); }
+.diet__box h3 { font-family: var(--font-sans); font-size: .95rem; font-weight: 800; display: flex; gap: .45rem; align-items: center; }
+.diet__box ul { margin: 0; padding-left: 1.1rem; font-size: .88rem; color: var(--text-2); display: grid; gap: .3rem; }
+.diet__box--more h3 { color: var(--leaf-dark); }
+.diet__box--less h3 { color: var(--coral); }
+.diet__box--day { background: var(--leaf-wash); }
+.diet__box dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: .35rem .8rem; font-size: .86rem; }
+.diet__box dt { font-weight: 800; color: var(--forest); }
+.diet__box dd { margin: 0; color: var(--text-2); }
+.diet__tip { margin: 1rem 0 0; font-size: .9rem; color: var(--text-2); }
+.diet__tip i { color: var(--amber); }
+.diet__shop { margin-top: 1.4rem; }
+
+/* ── Home: health hub ─────────────────────────────────────────────────── */
+.hub-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.hub-tile { display: flex; flex-direction: column; gap: .4rem; padding: 1.4rem; border-radius: var(--r-lg); background: var(--card); border: 1px solid var(--line); transition: var(--t); }
+.hub-tile:hover { border-color: var(--leaf); box-shadow: var(--e-2); transform: translateY(-3px); }
+.hub-tile i { width: 48px; height: 48px; border-radius: 15px; display: grid; place-items: center; background: var(--forest); color: var(--lime); font-size: 1.2rem; margin-bottom: .4rem; }
+.hub-tile b { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; color: var(--forest); }
+.hub-tile span { font-size: .86rem; color: var(--text-2); }
+
+/* ── Customer dashboard quote + social sign-in ────────────────────────── */
+.quote-day { display: flex; gap: 1rem; align-items: flex-start; background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--lime); border-radius: var(--r-lg); padding: 1.1rem 1.3rem; }
+.quote-day > i { color: var(--lime); font-size: 1.6rem; }
+.quote-day p { margin: 0; font-family: var(--font-display); font-size: 1.15rem; color: var(--forest); }
+.quote-day .eyebrow { margin-bottom: .2rem; }
+.oauth-row { display: grid; gap: .6rem; margin-bottom: 1rem; }
+.oauth-btn { display: flex; align-items: center; justify-content: center; gap: .6rem; padding: .8rem 1rem; border-radius: var(--r-pill); font-weight: 800; border: 1px solid var(--line-strong); background: #fff; color: var(--text); transition: var(--t-fast); }
+.oauth-btn:hover { box-shadow: var(--e-2); }
+.oauth-btn--google i { color: #EA4335; }
+.oauth-btn--facebook { background: #1877F2; border-color: #1877F2; color: #fff; }
+.oauth-btn--facebook:hover { background: #0F65D8; color: #fff; }
+.oauth-or { display: flex; align-items: center; gap: .8rem; margin: .4rem 0 1.2rem; color: var(--text-3); font-size: .8rem; }
+.oauth-or::before, .oauth-or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+@media (max-width: 991px) {
+  .news-layout { grid-template-columns: 1fr; }
+  .news-side { position: static; }
+  .diet__grid { grid-template-columns: 1fr; }
+  .deliv-grid, .hub-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 575px) {
+  .deliv-grid, .hub-grid { grid-template-columns: 1fr; }
+  .deliv-pick { grid-template-columns: 1fr 1fr; }
+}

@@ -57,6 +57,7 @@ if ($nl_gate === 'locked') {
 <link rel="stylesheet" href="<?= asset('assets/css/responsive.css') ?>">
 <link rel="stylesheet" href="<?= asset('assets/css/phola.css') ?>">
 <link rel="stylesheet" href="<?= asset('assets/css/phola-store.css') ?>">
+<link rel="stylesheet" href="<?= asset('assets/css/phola-pages.css') ?>">
 <?php foreach ($extra_css as $href): ?>
 <link rel="stylesheet" href="<?= e($href) ?>">
 <?php endforeach; ?>

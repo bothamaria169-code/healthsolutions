@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$page_title = 'Create your health tracker — ' . SITE_NAME;
+$page_title = 'Create your free account — ' . SITE_NAME;
 ?>
 <!doctype html>
 <html lang="en-ZA">
@@ -80,7 +80,7 @@ $page_title = 'Create your health tracker — ' . SITE_NAME;
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<?php foreach (['theme', 'components', 'layout', 'pages', 'responsive', 'phola'] as $css): ?>
+<?php foreach (['theme', 'components', 'layout', 'pages', 'responsive', 'phola', 'phola-store', 'phola-pages'] as $css): ?>
 <link rel="stylesheet" href="<?= asset("assets/css/$css.css") ?>">
 <?php endforeach; ?>
 </head>
@@ -116,12 +116,15 @@ $page_title = 'Create your health tracker — ' . SITE_NAME;
         <span class="brand__word">Phola<em> Health</em></span>
       </a>
 
-      <h1 style="font-size:1.9rem">Create your health tracker</h1>
+      <h1 style="font-size:1.9rem">Create your free account</h1>
+      <p class="text-muted-2 mb-2">Free daily wellness quote, a medication tracker with dose reminders, and faster checkout.</p>
       <p class="text-muted-2 mb-4">Already have one? <a href="<?= SITE_URL ?>/modules/auth/login.php" class="text-leaf fw-bold">Sign in</a></p>
 
       <?php foreach ($errors as $err): ?>
         <div class="alert-fc alert-fc--danger"><i class="fa-solid fa-circle-exclamation"></i><span><?= $err ?></span></div>
       <?php endforeach; ?>
+      <?= flash_html() ?>
+      <?= oauth_buttons_html() ?>
 
       <form method="post" novalidate>
         <?= csrf_field() ?>

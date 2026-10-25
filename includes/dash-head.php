@@ -45,6 +45,8 @@ $nav = match ($dash_role) {
             ['social',     'social.php',     'fa-wand-magic-sparkles', 'AI & social media', null],
             ['banners',    'banners.php',    'fa-images',       'Banners',     null],
             ['blog',       'blog.php',       'fa-newspaper',    'Articles',    null],
+            ['news',       'news.php',       'fa-rss',          'Health news', null],
+            ['testimonials', 'testimonials.php', 'fa-comment-dots', 'Testimonials', null],
             ['newsletter', 'newsletter.php', 'fa-paper-plane',  'Newsletter',  null],
         ],
         'Admin' => [
@@ -89,6 +91,7 @@ $page_title = $page_title ?? ucfirst($dash_role) . ' dashboard — ' . SITE_NAME
 <link rel="stylesheet" href="<?= asset('assets/css/responsive.css') ?>">
 <link rel="stylesheet" href="<?= asset('assets/css/phola.css') ?>">
 <link rel="stylesheet" href="<?= asset('assets/css/phola-store.css') ?>">
+<link rel="stylesheet" href="<?= asset('assets/css/phola-pages.css') ?>">
 </head>
 <body>
 <div class="scrim" id="scrim"></div>

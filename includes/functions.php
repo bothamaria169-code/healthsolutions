@@ -104,6 +104,14 @@ function setup_tasks(): array
         ['social-autopost', 'AI & social', 'Switch on the daily product post', 'you',
             '<b>AI &amp; social media</b> → once Facebook is connected, turn on the daily post. The cron job picks a product, writes the caption with AI and posts it with the product photo.', null],
 
+        ['login-google', 'AI & social', 'Switch on "Continue with Google"', 'you',
+            '<code>console.cloud.google.com</code> → new project → <b>APIs &amp; Services → OAuth consent screen</b> (External, app name Phola Health Solutions) → <b>Credentials → Create OAuth client ID</b> (Web application). Authorised redirect URI: <code>' . e(SITE_URL) . '/modules/auth/google.php</code>. Paste the Client ID and secret in <b>Settings → Sign in with Google &amp; Facebook</b>.', oauth_enabled('google') ? true : null],
+        ['login-facebook', 'AI & social', 'Switch on "Continue with Facebook"', 'you',
+            'Uses the same Meta app as posting. In the app add the <b>Facebook Login</b> product → Settings → Valid OAuth Redirect URIs: <code>' . e(SITE_URL) . '/modules/auth/facebook.php</code>, and switch the app to <b>Live</b>. The button appears once the App ID and secret are saved in <b>AI &amp; social media</b>.', oauth_enabled('facebook') ? true : null],
+        ['tcg', 'Store', 'Open a The Courier Guy business account', 'you',
+            '<code>thecourierguy.co.za</code> → open an account (or use Pudo for lockers). Then set your real prices in <b>Settings → Delivery</b> — door, locker, pick-up point and kiosk. SADC bus/taxi transport is quoted per order on WhatsApp.', null],
+        ['testimonials', 'Store', 'Add real customer testimonials', 'you',
+            '<b>Testimonials</b> → add what customers have said (with their permission), with an optional photo. Replace the four sample ones.', null],
         ['mk-ga4', 'Marketing', 'Add Google Analytics 4', 'you',
             '<code>analytics.google.com</code> → Admin → Create property → Web stream for <code>pholahealthsolutions.co.za</code>. Paste the <b>Measurement ID</b> (G-XXXX) in <b>Settings → Marketing &amp; tracking</b>. Every page then reports visits, and WhatsApp enquiries are counted as <code>generate_lead</code> events.', $has('ga4_id') ? true : null],
         ['mk-pixel', 'Marketing', 'Add the Meta (Facebook) Pixel', 'you',
@@ -736,3 +744,4 @@ function mask_email(string $email): string
         : mb_substr($local, 0, 1) . '***' . mb_substr($local, -1);
     return $domain !== '' ? $masked . '@' . $domain : $masked;
 }
+require_once __DIR__ . '/features.php';

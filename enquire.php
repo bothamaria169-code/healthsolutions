@@ -7,7 +7,7 @@ declare(strict_types=1);
  * message already typed — so a lead is never lost even if they don't press Send.
  *
  *   GET  ?product=ID[&qty=N]      one product (product cards and pages)
- *   POST from cart.php            the whole enquiry list, with name and phone
+ *   POST from cart.php            the whole basket, with name, phone and delivery choice
  */
 require_once __DIR__ . '/includes/functions.php';
 
@@ -17,6 +17,7 @@ $items = [];
 $name  = '';
 $phone = '';
 $source = 'product';
+$delivery = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_csrf((string) ($_POST['csrf_token'] ?? ''))) {
@@ -25,6 +26,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $source = 'list';
     $name   = mb_substr(trim(strip_tags((string) ($_POST['name'] ?? ''))), 0, 120);
     $phone  = Health::normalizePhone((string) ($_POST['phone'] ?? '')) ?? '';
+    $method = (string) ($_POST['delivery'] ?? '');
+    $opts   = delivery_options();
+    if (isset($opts[$method])) {
+        $country  = $opts[$method]['region'] === 'sadc' && in_array($_POST['country'] ?? '', SADC_COUNTRIES, true) ? (string) $_POST['country'] : 'South Africa';
+        $delivery = [
+            'method'  => $method,
+            'label'   => $opts[$method]['by'] . ' — ' . $opts[$method]['label'],
+            'country' => $country,
+            'address' => mb_substr(trim(strip_tags((string) ($_POST['address'] ?? ''))), 0, 250),
+            'fee'     => delivery_fee($method, cart_subtotal()),
+        ];
+    }
     foreach (cart_items() as $line) {
         $items[] = [
             'product_id' => (int) $line['product']['id'],
@@ -57,14 +70,20 @@ if ($user) {
 }
 
 $total = array_sum(array_map(fn($i) => $i['price'] * $i['qty'], $items));
+$grand = $total + (float) ($delivery['fee'] ?? 0);
 
 // The message the customer sends. Prices are for reference: staff confirm the final total.
 $lines = array_map(fn($i) => '• ' . $i['qty'] . ' × ' . $i['name'] . ($i['pack'] ? ' (' . $i['pack'] . ')' : '')
     . ' — ' . format_price_short($i['price'] * $i['qty']), $items);
 $message = "Hi Phola, I'd like to order:\n" . implode("\n", $lines)
-    . (count($items) > 1 ? "\n\nTotal: " . format_price_short($total) : '')
+    . (count($items) > 1 || $delivery ? "\n\nProducts: " . format_price_short($total) : '')
+    . ($delivery ? "\nDelivery: " . $delivery['label'] . ' — '
+        . ($delivery['fee'] === null ? 'please quote' : ($delivery['fee'] > 0 ? format_price_short($delivery['fee']) : 'free'))
+        . "\nTo: " . $delivery['address'] . ($delivery['country'] !== 'South Africa' ? ', ' . $delivery['country'] : '')
+        . "\nTotal: " . format_price_short($grand) . ($delivery['fee'] === null ? ' + transport' : '') : '')
     . ($name !== '' ? "\n\nName: " . $name : '')
-    . "\nPlease confirm stock, delivery and payment details.";
+    . ($phone !== '' ? "\nCell: " . Health::displayPhone($phone) : '')
+    . "\nPlease confirm stock and send payment details.";
 
 // Don't let a reload or a bot fill the enquiries table: one save per list per 10 minutes.
 $fingerprint = md5(json_encode($items) . $phone);
@@ -75,7 +94,8 @@ if (rate_limit('enquiry', 20, 3600) && ($_SESSION['last_enquiry'] ?? '') !== $fi
             'name'    => $name ?: null,
             'phone'   => $phone ?: null,
             'items'   => json_encode($items, JSON_UNESCAPED_UNICODE),
-            'total'   => $total,
+            'total'   => $grand,
+            'delivery'=> $delivery ? json_encode($delivery, JSON_UNESCAPED_UNICODE) : null,
             'source'  => $source,
         ]);
         $_SESSION['last_enquiry'] = $fingerprint;

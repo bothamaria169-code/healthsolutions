@@ -123,7 +123,7 @@ $times    = Health::parseTimes((string) ($form['dose_times'] ?? '')) ?: ['08:00'
         <select class="input-fc" id="product_id" name="product_id">
           <option value="">No — I'll type the name</option>
           <?php foreach ($products as $p): ?>
-            <option value="<?= (int) $p['id'] ?>" <?= (int) ($form['product_id'] ?? 0) === (int) $p['id'] ? 'selected' : '' ?>><?= e($p['name'] . ($p['pack_size'] ? ' (' . $p['pack_size'] . ')' : '')) ?></option>
+            <option value="<?= (int) $p['id'] ?>" data-units="<?= preg_match('/\d+/', (string) $p['pack_size'], $mm) ? (int) $mm[0] : '' ?>" data-name="<?= e($p['name']) ?>" <?= (int) ($form['product_id'] ?? 0) === (int) $p['id'] ? 'selected' : '' ?>><?= e($p['name'] . ($p['pack_size'] ? ' (' . $p['pack_size'] . ')' : '')) ?></option>
           <?php endforeach; ?>
         </select>
       </div>
@@ -164,6 +164,7 @@ $times    = Health::parseTimes((string) ($form['dose_times'] ?? '')) ?: ['08:00'
           <label for="end_date">End <span class="text-muted-3 fw-normal">(optional)</span></label>
           <input class="input-fc" type="date" id="end_date" name="end_date" value="<?= e((string) ($form['end_date'] ?? '')) ?>">
         </div>
+        <div class="col-12"><div class="field__hint" id="courseHint" style="margin-top:-.4rem"></div></div>
         <div class="col-6 field">
           <label for="units_left">How many left?</label>
           <input class="input-fc" type="number" min="0" id="units_left" name="units_left" value="<?= e((string) ($form['units_left'] ?? '')) ?>" placeholder="e.g. 60">
@@ -203,6 +204,33 @@ $times    = Health::parseTimes((string) ($form['dose_times'] ?? '')) ?: ['08:00'
     if (b && rows.children.length > 1) { b.parentElement.remove(); sync(); }
   });
   rows.addEventListener('input', sync);
+})();
+
+// Set the dates for the pack: pick a Phola product and the end date and
+// "how many left" fill in from the pack size, dose and times per day.
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const prod = $('product_id'), start = $('start_date'), end = $('end_date'), left = $('units_left'), per = $('units_per_dose');
+  let endTouched = end.value !== '';
+  end.addEventListener('input', () => { endTouched = true; });
+  const calc = () => {
+    const opt = prod.options[prod.selectedIndex];
+    if (opt && opt.dataset.units && !left.value) left.value = opt.dataset.units;
+    if (opt && opt.value && !$('name').value) $('name').value = opt.dataset.name;
+    const perDay = ($('doseTimes').value.split(',').filter(Boolean).length || 1) * (parseFloat(per.value) || 1);
+    const units = parseFloat(left.value);
+    if (!units || !start.value) { $('courseHint').textContent = ''; return; }
+    const days = Math.max(1, Math.floor(units / perDay));
+    const d = new Date(start.value + 'T00:00:00'); d.setDate(d.getDate() + days - 1);
+    const iso = d.toISOString().slice(0, 10);
+    if (!endTouched) end.value = iso;
+    $('courseHint').innerHTML = '<i class="fa-solid fa-calendar-check text-leaf me-1"></i>' + units + ' units at ' + perDay + ' a day last <b>' + days + ' days</b> — until <b>'
+      + d.toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' }) + '</b>. We email a refill reminder before you run out.';
+  };
+  ['change', 'input'].forEach((ev) => [prod, start, left, per].forEach((el) => el.addEventListener(ev, calc)));
+  document.getElementById('timeRows').addEventListener('input', calc);
+  document.getElementById('addTime').addEventListener('click', () => setTimeout(calc));
+  calc();
 })();
 </script>
 

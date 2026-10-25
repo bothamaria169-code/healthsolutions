@@ -59,6 +59,11 @@ $hello = $hour < 12 ? 'Good morning' : ($hour < 17 ? 'Good afternoon' : 'Good ev
   </div>
 </section>
 
+<div class="quote-day mb-3">
+  <i class="fa-solid fa-quote-left"></i>
+  <div><span class="eyebrow">Your quote for <?= date('l') ?></span><p><?= e(daily_quote()) ?></p></div>
+</div>
+
 <div class="row g-3">
   <div class="col-xl-7">
     <div class="card-fc card-fc--pad" id="today">

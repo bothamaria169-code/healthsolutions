@@ -131,7 +131,7 @@ final class ShopAssistant
     {
         return [
             'reply' => "Ordering happens on WhatsApp:<br>"
-                     . "1. Tap <b>Enquire</b> on a product (or add a few to your " . self::link('/cart.php', 'enquiry list') . ").<br>"
+                     . "1. Tap <b>Enquire</b> on a product (or add a few to your " . self::link('/cart.php', 'basket') . ").<br>"
                      . "2. WhatsApp opens with your order typed in — press send.<br>"
                      . "3. We confirm stock, the total and delivery, and send payment details.<br><br>"
                      . "Or just " . self::wa('message us now') . '.',
