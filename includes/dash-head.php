@@ -48,6 +48,7 @@ $nav = match ($dash_role) {
             ['blog',       'blog.php',       'fa-newspaper',    'Articles',    null],
             ['news',       'news.php',       'fa-rss',          'Health news', null],
             ['testimonials', 'testimonials.php', 'fa-comment-dots', 'Testimonials & stories', null],
+            ['gallery',    'gallery.php',    'fa-camera-retro', 'Customer gallery', null],
             ['questions',  'questions.php',  'fa-user-doctor',  'Ask a pharmacist', $stats['questions_new'] ?? 0],
             ['events',     'events.php',     'fa-calendar-days', 'Health talks', null],
             ['rewards',    'rewards.php',    'fa-gift',         'Rewards', null],

@@ -167,11 +167,12 @@ INSERT INTO `product_gallery` (`product_id`,`image`,`caption`,`sort_order`) VALU
 ;
 
 -- ── Testimonials ─────────────────────────────────────────────────────────
-INSERT INTO `testimonials` (`name`,`role`,`location`,`quote`,`rating`,`is_reseller`,`sort_order`) VALUES
-('Thandi M.','Patient','Soweto, Gauteng','The email at eight every morning is the reason I have not missed a dose in two months. I tap the button and it is logged.',5,0,1),
-('Sipho K.','Patient','Durban, KZN','I asked on WhatsApp which vitamins were safe with my treatment. They answered the same afternoon and my order came two days later.',5,0,2),
-('Lerato D.','Caregiver','Centurion','I look after my mother\'s medication. Having her pill times and side effects written down in one place makes the clinic visits much easier.',5,0,3),
-('Johan P.','Patient','Bloemfontein','Bought the blood pressure monitor and now log my readings every morning. My doctor liked seeing the chart.',4,0,4);
+-- Placeholder quotes, kept as drafts: only real customers show on the site.
+INSERT INTO `testimonials` (`name`,`role`,`location`,`quote`,`rating`,`is_reseller`,`sort_order`,`status`) VALUES
+('Thandi M.','Patient','Soweto, Gauteng','The email at eight every morning is the reason I have not missed a dose in two months. I tap the button and it is logged.',5,0,1,'draft'),
+('Sipho K.','Patient','Durban, KZN','I asked on WhatsApp which vitamins were safe with my treatment. They answered the same afternoon and my order came two days later.',5,0,2,'draft'),
+('Lerato D.','Caregiver','Centurion','I look after my mother\'s medication. Having her pill times and side effects written down in one place makes the clinic visits much easier.',5,0,3,'draft'),
+('Johan P.','Patient','Bloemfontein','Bought the blood pressure monitor and now log my readings every morning. My doctor liked seeing the chart.',4,0,4,'draft');
 
 -- ── FAQs ─────────────────────────────────────────────────────────────────
 INSERT INTO `faqs` (`question`,`answer`,`topic`,`sort_order`) VALUES

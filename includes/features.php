@@ -15,7 +15,7 @@ declare(strict_types=1);
 // Each step runs once, in order; the number reached is kept in settings as
 // `schema_version`. Steps only ever add (tables, columns, rows), so running a
 // new deploy against the live database is always safe.
-const PHOLA_SCHEMA_VERSION = 6;
+const PHOLA_SCHEMA_VERSION = 7;
 
 function phola_migrate(): void
 {
@@ -201,6 +201,23 @@ function phola_migrate(): void
             $pdo->exec("UPDATE products SET featured_image = REPLACE(header_image, '.jpg', 'b.jpg')
                         WHERE header_image REGEXP '^assets/img/products/(2[5-9]|3[0-3])\\\\.jpg$'
                           AND (featured_image IS NULL OR featured_image = '')");
+        }
+        if ($current < 7) {
+            // Testimonials can be a screenshot of the customer's own message, shown as-is.
+            $addCol('testimonials', 'screenshot', 'VARCHAR(500) DEFAULT NULL');
+            // "From our customers" photo gallery, managed in Admin -> Customer gallery.
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `customer_gallery` (
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `image` VARCHAR(500) NOT NULL,
+                `caption` VARCHAR(200) DEFAULT NULL,
+                `status` ENUM('published','draft') NOT NULL DEFAULT 'published',
+                `sort_order` INT NOT NULL DEFAULT 0,
+                `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+            // The four starter quotes were placeholders: hide them so only real customers show.
+            $pdo->exec("UPDATE testimonials SET status = 'draft'
+                        WHERE name IN ('Thandi M.','Sipho K.','Lerato D.','Johan P.') AND avatar IS NULL");
         }
         set_setting('schema_version', (string) PHOLA_SCHEMA_VERSION);
     } catch (Throwable $e) {

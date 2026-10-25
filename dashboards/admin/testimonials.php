@@ -38,8 +38,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf((string) ($_POST['csrf_
         } elseif (!empty($_POST['remove_avatar'])) {
             $data['avatar'] = null;
         }
-        if ($data['name'] === '' || $data['quote'] === '') {
-            $flash = ['danger', 'Add a name and what they said.'];
+        // Screenshot of the customer's own WhatsApp / Facebook message, shown on the home page as-is.
+        if (!empty($_FILES['screenshot']['name'])) {
+            if ($shot = save_public_image($_FILES['screenshot'], 'testimonials')) {
+                $data['screenshot'] = $shot;
+            }
+        } elseif (!empty($_POST['remove_screenshot'])) {
+            $data['screenshot'] = null;
+        }
+        $hasShot = !empty($data['screenshot']) || ($tid && !array_key_exists('screenshot', $data)
+            && db()->query('SELECT screenshot FROM testimonials WHERE id = ' . $tid)->fetchColumn());
+        if ($data['name'] === '' || ($data['quote'] === '' && !$hasShot)) {
+            $flash = ['danger', 'Add a name, and what they said or a screenshot of their message.'];
         } elseif ($tid) {
             db_update('testimonials', $tid, $data);
             $flash = ['ok', 'Testimonial updated.'];
@@ -63,7 +73,7 @@ if (!empty($_GET['edit'])) {
 ?>
 
 <div class="dash-head">
-  <div><h1>Testimonials &amp; patient stories</h1><p>Short quotes show on the home page (first four by order number). Add a longer story or a video link and it also appears on the <a class="text-leaf" href="<?= SITE_URL ?>/stories.php" target="_blank">Patient stories</a> page.</p></div>
+  <div><h1>Testimonials &amp; patient stories</h1><p>Screenshots of customers' messages show on the home page as-is, and short quotes show below them (first four by order number). Add a longer story or a video link and it also appears on the <a class="text-leaf" href="<?= SITE_URL ?>/stories.php" target="_blank">Patient stories</a> page.</p></div>
 </div>
 
 <?php if ($flash): ?>
@@ -83,7 +93,8 @@ if (!empty($_GET['edit'])) {
             <span class="pill pill--<?= $t['status'] === 'published' ? 'ok' : 'muted' ?> ms-auto"><?= $t['status'] === 'published' ? 'Live' : 'Draft' ?></span>
           </div>
           <?= stars_html((float) $t['rating']) ?>
-          <p style="font-size:.88rem;color:var(--text-2)" class="mt-2">&ldquo;<?= e(excerpt($t['quote'], 180)) ?>&rdquo;</p>
+          <?php if (!empty($t['screenshot'])): ?><img src="<?= e(product_image($t['screenshot'])) ?>" alt="" class="mt-2" style="max-height:220px;width:auto;max-width:100%;border-radius:10px;border:1px solid var(--line);align-self:flex-start"><?php endif; ?>
+          <?php if ($t['quote'] !== ''): ?><p style="font-size:.88rem;color:var(--text-2)" class="mt-2">&ldquo;<?= e(excerpt($t['quote'], 180)) ?>&rdquo;</p><?php endif; ?>
           <div class="d-flex gap-1 mt-auto">
             <a class="btn-fc btn-fc--sm btn-fc--light" href="?edit=<?= (int) $t['id'] ?>"><i class="fa-solid fa-pen"></i> Edit</a>
             <form method="post" onsubmit="return confirm('Delete this testimonial?')">
@@ -112,9 +123,16 @@ if (!empty($_GET['edit'])) {
         <div class="col-6 field"><label for="location">Town</label>
           <input class="input-fc" id="location" name="location" value="<?= e((string) ($edit['location'] ?? '')) ?>" placeholder="Soweto"></div>
       </div>
-      <div class="field"><label for="quote">What they said</label>
-        <textarea class="textarea-fc" id="quote" name="quote" rows="5" required><?= e((string) ($edit['quote'] ?? '')) ?></textarea>
-        <div class="field__hint">Only publish with the customer's permission. Use first name and initial.</div></div>
+      <div class="field"><label for="screenshot">Screenshot of their message <span class="text-muted-3 fw-normal">(WhatsApp, Facebook…)</span></label>
+        <input class="input-fc" type="file" id="screenshot" name="screenshot" accept="image/jpeg,image/png,image/webp">
+        <?php if (!empty($edit['screenshot'])): ?>
+          <img src="<?= e(product_image($edit['screenshot'])) ?>" alt="" class="mt-2" style="max-height:160px;border-radius:8px;border:1px solid var(--line)">
+          <label class="mt-1 d-block" style="font-size:.82rem"><input type="checkbox" name="remove_screenshot" value="1"> Remove screenshot</label>
+        <?php endif; ?>
+        <div class="field__hint">Shown on the home page exactly as uploaded. Hide phone numbers and surnames first.</div></div>
+      <div class="field"><label for="quote">What they said <span class="text-muted-3 fw-normal">(optional with a screenshot)</span></label>
+        <textarea class="textarea-fc" id="quote" name="quote" rows="5"><?= e((string) ($edit['quote'] ?? '')) ?></textarea>
+        <div class="field__hint">Only publish real messages, with the customer's permission. Use first name and initial.</div></div>
       <div class="field"><label for="story">Their story <span class="text-muted-3 fw-normal">(optional, longer)</span></label>
         <textarea class="textarea-fc" id="story" name="story" rows="6" placeholder="How they found Phola, what changed, in their words."><?= e((string) ($edit['story'] ?? '')) ?></textarea></div>
       <div class="row g-2">

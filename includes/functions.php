@@ -249,6 +249,24 @@ function product_image(?string $url): string
 }
 
 /**
+ * Saves an uploaded photo under uploads/$folder/ exactly as it was sent and
+ * returns its site path, or null. The extension comes from the real file
+ * type, never from the uploaded name.
+ */
+function save_public_image(array $file, string $folder): ?string
+{
+    $exts  = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+    $check = validate_upload($file, array_keys($exts));
+    if (!$check['ok']) {
+        return null;
+    }
+    $dir = UPLOAD_PATH . $folder . '/';
+    if (!is_dir($dir)) { @mkdir($dir, 0775, true); }
+    $name = bin2hex(random_bytes(16)) . '.' . $exts[$check['mime']];
+    return move_uploaded_file($file['tmp_name'], $dir . $name) ? 'uploads/' . $folder . '/' . $name : null;
+}
+
+/**
  * Staff-written HTML (product descriptions) with only formatting tags kept and
  * every attribute except a link's href removed. Plain text gets paragraphs.
  */

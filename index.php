@@ -10,7 +10,9 @@ $featured    = $repo->getFeatured(8);
 $bestsellers = $repo->getBestsellers(8);
 $categories  = get_categories();
 
-$testimonials = db()->query("SELECT * FROM testimonials WHERE status='published' ORDER BY sort_order, id LIMIT 4")->fetchAll();
+$testimonials = db()->query("SELECT * FROM testimonials WHERE status='published' AND quote <> '' ORDER BY sort_order, id LIMIT 4")->fetchAll();
+$screenshots  = db()->query("SELECT * FROM testimonials WHERE status='published' AND screenshot IS NOT NULL AND screenshot <> '' ORDER BY sort_order, id LIMIT 12")->fetchAll();
+$gallery      = db()->query("SELECT * FROM customer_gallery WHERE status='published' ORDER BY sort_order, id DESC LIMIT 12")->fetchAll();
 $posts        = get_blogs([], 1, 3)['items'];
 $productCount = (int) db()->query("SELECT COUNT(*) FROM products WHERE status='published'")->fetchColumn();
 $waDisplay    = Health::displayPhone(whatsapp_number());
@@ -214,12 +216,22 @@ include __DIR__ . '/includes/header.php';
   </div>
 </section>
 
-<!-- ── Testimonials ─────────────────────────────────────────────────── -->
-<?php if ($testimonials): ?>
+<!-- ── Testimonials (screenshots + quotes, from Admin -> Testimonials) ── -->
+<?php if ($testimonials || $screenshots): ?>
 <section class="section">
   <div class="container">
     <div class="ph-head ph-head--center"><div><span class="eyebrow">Reviews</span><h2>What customers say</h2></div></div>
-    <div class="row g-3">
+    <?php if ($screenshots): ?>
+    <div class="ph-shots<?= $testimonials ? ' mb-4' : '' ?>">
+      <?php foreach ($screenshots as $t): ?>
+      <a class="ph-shot" href="<?= e(product_image($t['screenshot'])) ?>" data-lightbox data-caption="<?= e(trim($t['name'] . ' · ' . ($t['location'] ?? ''), ' ·')) ?>" data-reveal>
+        <img src="<?= e(product_image($t['screenshot'])) ?>" alt="Message from <?= e($t['name']) ?>" loading="lazy">
+        <span><?= e($t['name']) ?><?= $t['location'] ? ' · ' . e($t['location']) : '' ?></span>
+      </a>
+      <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+    <div class="row g-3 justify-content-center">
       <?php foreach ($testimonials as $t): ?>
       <div class="col-lg-3 col-md-6" data-reveal>
         <div class="quote-card">
@@ -235,6 +247,44 @@ include __DIR__ . '/includes/header.php';
     </div>
   </div>
 </section>
+<?php endif; ?>
+
+<!-- ── From our customers (photos from Admin -> Customer gallery) ───── -->
+<?php if ($gallery): ?>
+<section class="section ph-tint">
+  <div class="container">
+    <div class="ph-head ph-head--center"><div><span class="eyebrow">Gallery</span><h2>From our customers</h2></div></div>
+    <div class="ph-gallery">
+      <?php foreach ($gallery as $g): ?>
+      <a class="ph-gallery__item" href="<?= e(product_image($g['image'])) ?>" data-lightbox data-caption="<?= e((string) $g['caption']) ?>" data-reveal>
+        <img src="<?= e(product_image($g['image'])) ?>" alt="<?= e($g['caption'] ?: 'Photo from a Phola customer') ?>" loading="lazy">
+        <?php if ($g['caption']): ?><span><?= e($g['caption']) ?></span><?php endif; ?>
+      </a>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
+
+<?php if ($screenshots || $gallery): ?>
+<dialog class="ph-lightbox" id="phLightbox" aria-label="Photo">
+  <button type="button" class="ph-lightbox__close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+  <img src="" alt="">
+  <p></p>
+</dialog>
+<script>
+(() => {
+  const box = document.getElementById('phLightbox');
+  if (!box || !box.showModal) return;
+  const img = box.querySelector('img'), cap = box.querySelector('p');
+  document.querySelectorAll('[data-lightbox]').forEach(a => a.addEventListener('click', ev => {
+    ev.preventDefault();
+    img.src = a.href; img.alt = a.querySelector('img').alt; cap.textContent = a.dataset.caption || '';
+    box.showModal();
+  }));
+  box.addEventListener('click', ev => { if (ev.target === box || ev.target.closest('.ph-lightbox__close')) box.close(); });
+})();
+</script>
 <?php endif; ?>
 
 <!-- ── Health hub ───────────────────────────────────────────────────── -->
