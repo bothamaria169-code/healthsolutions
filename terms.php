@@ -117,13 +117,6 @@ HTML,
         [
             'id' => 'health-products', 'icon' => 'fa-heart-pulse', 'title' => 'Health and wellness products',
             'html' => <<<HTML
-<div class="policy-callout">
-  <i class="fa-solid fa-circle-info"></i>
-  <p>The supplements we sell are <b>Category D complementary medicines</b>. They have not been evaluated by the
-  South African Health Products Regulatory Authority (SAHPRA) for their quality, safety or intended use. They are
-  meant to complement your diet — <b>they do not diagnose, treat, cure or prevent any disease</b>, and nothing on
-  this site says otherwise.</p>
-</div>
 <ul>
   <li>They are not a substitute for medical care.</li>
   <li>Speak to a doctor or pharmacist first if you are pregnant, breastfeeding, under 18, or taking chronic medication.</li>

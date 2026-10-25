@@ -15,7 +15,7 @@ declare(strict_types=1);
 // Each step runs once, in order; the number reached is kept in settings as
 // `schema_version`. Steps only ever add (tables, columns, rows), so running a
 // new deploy against the live database is always safe.
-const PHOLA_SCHEMA_VERSION = 4;
+const PHOLA_SCHEMA_VERSION = 5;
 
 function phola_migrate(): void
 {
@@ -191,6 +191,10 @@ function phola_migrate(): void
                        'simple', 420.00, '60 capsules', 'PHL-34', 'in_stock', 50, 'assets/img/products/34b.jpg', 1, 'published', 'lungs,respiratory,herbal,breathing'
                 FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM products WHERE slug = 'purely-lung-assistance')
                   AND EXISTS (SELECT 1 FROM categories WHERE id = 8) AND EXISTS (SELECT 1 FROM brands WHERE id = 3)");
+        }
+        if ($current < 5) {
+            // The SAHPRA disclaimer FAQ was taken off the site.
+            $pdo->exec("DELETE FROM faqs WHERE answer LIKE '%SAHPRA%'");
         }
         set_setting('schema_version', (string) PHOLA_SCHEMA_VERSION);
     } catch (Throwable $e) {

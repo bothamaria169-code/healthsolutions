@@ -78,15 +78,6 @@ $wa       = get_setting('contact_whatsapp', '');
       </div>
     </div>
 
-    <div style="border-top:1px solid var(--line-dark);padding:1.2rem 0;font-size:.78rem;color:var(--on-dark-2);line-height:1.6;">
-      <b style="color:var(--on-dark)">Health products notice.</b>
-      Supplements sold here are complementary medicines. Unless stated otherwise they have not been evaluated by the South
-      African Health Products Regulatory Authority (SAHPRA) for quality, safety or intended use, and are not intended to
-      diagnose, treat, cure or prevent any disease. They never replace prescribed medication, including ARVs. Speak to a
-      healthcare professional before starting if you are pregnant, breastfeeding, under 18 or on chronic medication.
-      In an emergency call <b style="color:var(--on-dark)">10177</b>.
-    </div>
-
     <div class="footer-bottom">
       <span>&copy; <?= date('Y') ?> Phola. All rights reserved.</span>
       <div class="d-flex gap-3 flex-wrap">

@@ -178,8 +178,6 @@ include __DIR__ . '/includes/header.php';
       <b>Notes.</b>
       Prices include VAT where applicable and are valid while stock lasts. Recommended selling prices are exactly
       that — a recommendation. You set your own prices.
-      Supplements listed here are Category D complementary medicines; they have not been evaluated by SAHPRA for
-      quality, safety or intended use, and must not be sold with claims that they treat or cure any condition.
       <span class="no-print">Generated <?= date('j F Y \a\t H:i') ?> from the live catalogue.</span>
     </div>
   </div>

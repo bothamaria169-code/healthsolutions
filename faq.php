@@ -70,22 +70,6 @@ include __DIR__ . '/includes/header.php';
           </section>
         <?php endforeach; ?>
 
-        <div class="card-fc card-fc--pad" style="background:var(--amber-wash);border-color:#F0DFB6">
-          <div class="d-flex gap-3 align-items-start">
-            <span style="width:44px;height:44px;display:grid;place-items:center;background:#fff;color:var(--amber-dark);border-radius:var(--r);flex-shrink:0">
-              <i class="fa-solid fa-triangle-exclamation"></i>
-            </span>
-            <div>
-              <b style="font-family:var(--font-display);display:block;margin-bottom:.3rem">One thing worth repeating</b>
-              <p style="font-size:.9rem;color:var(--text-2);margin:0">
-                The supplements sold here are Category D complementary medicines. They have not been evaluated by the
-                South African Health Products Regulatory Authority for quality, safety or intended use, and they are
-                intended to complement a diet — not to diagnose, treat or cure any condition. If you are pregnant,
-                breastfeeding, under 18 or on chronic medication, speak to a pharmacist or doctor before starting.
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
