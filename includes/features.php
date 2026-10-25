@@ -15,7 +15,7 @@ declare(strict_types=1);
 // Each step runs once, in order; the number reached is kept in settings as
 // `schema_version`. Steps only ever add (tables, columns, rows), so running a
 // new deploy against the live database is always safe.
-const PHOLA_SCHEMA_VERSION = 5;
+const PHOLA_SCHEMA_VERSION = 6;
 
 function phola_migrate(): void
 {
@@ -195,6 +195,12 @@ function phola_migrate(): void
         if ($current < 5) {
             // The SAHPRA disclaimer FAQ was taken off the site.
             $pdo->exec("DELETE FROM faqs WHERE answer LIKE '%SAHPRA%'");
+        }
+        if ($current < 6) {
+            // Products 25-33 got their pack shots (NNb.jpg next to the NN.jpg header).
+            $pdo->exec("UPDATE products SET featured_image = REPLACE(header_image, '.jpg', 'b.jpg')
+                        WHERE header_image REGEXP '^assets/img/products/(2[5-9]|3[0-3])\\\\.jpg$'
+                          AND (featured_image IS NULL OR featured_image = '')");
         }
         set_setting('schema_version', (string) PHOLA_SCHEMA_VERSION);
     } catch (Throwable $e) {
