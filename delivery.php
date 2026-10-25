@@ -50,7 +50,10 @@ include __DIR__ . '/includes/header.php';
       <div class="deliv-grid">
         <?php foreach ($options as $k => $o): if ($o['region'] !== 'za') continue; ?>
         <div class="deliv-card">
-          <i class="fa-solid <?= e($o['icon']) ?>"></i>
+          <div class="deliv-card__top">
+            <i class="fa-solid <?= e($o['icon']) ?>"></i>
+            <?php if ($logo = delivery_logo($k)): ?><img class="deliv-logo" src="<?= e($logo) ?>" alt="The Courier Guy"><?php endif; ?>
+          </div>
           <h3><?= e($o['label']) ?></h3>
           <p><?= e($o['blurb']) ?></p>
           <small><i class="fa-regular fa-clock me-1"></i><?= e($o['time']) ?></small>

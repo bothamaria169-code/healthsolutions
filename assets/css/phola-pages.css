@@ -27,6 +27,9 @@
 /* ── Delivery page ────────────────────────────────────────────────────── */
 .deliv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
 .deliv-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 1.4rem; display: flex; flex-direction: column; gap: .3rem; }
+.deliv-card__top { display: flex; justify-content: space-between; align-items: flex-start; gap: .6rem; margin-bottom: .6rem; }
+.deliv-card__top .deliv-logo { height: 30px; margin: 0; }
+.deliv-card__top > i,
 .deliv-card > i { width: 50px; height: 50px; border-radius: 16px; display: grid; place-items: center; background: var(--leaf-wash); color: var(--leaf); font-size: 1.25rem; margin-bottom: .6rem; }
 .deliv-card h3 { font-size: 1.15rem; margin: 0; }
 .deliv-card p { color: var(--text-2); font-size: .88rem; margin: 0 0 .4rem; }
