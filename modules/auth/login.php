@@ -140,7 +140,8 @@ $tabUrl = fn(string $m) => '?' . http_build_query(array_filter(['mode' => $m ===
             <input class="input-fc input-pin" type="password" id="pin" name="pin" inputmode="numeric" pattern="\d{4}"
                    maxlength="4" placeholder="••••" required autocomplete="current-password">
             <div class="field__hint">
-              Forgot it? <a href="<?= e(wa_link('Hi Phola, I forgot my patient portal PIN. Please reset it for this number.')) ?>" target="_blank" rel="noopener">WhatsApp us from your registered number</a> and we'll reset it.
+              Forgot it? <a href="<?= SITE_URL ?>/modules/auth/forgot.php?pin=1">Reset it by email</a>, or
+              <a href="<?= e(wa_link('Hi Phola, I forgot my patient portal PIN. Please reset it for this number.')) ?>" target="_blank" rel="noopener">WhatsApp us from your registered number</a> and we'll reset it.
             </div>
           </div>
         <?php else: ?>

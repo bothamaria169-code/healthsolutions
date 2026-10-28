@@ -6,7 +6,8 @@ $repo        = new ProductRepository();
 $viewer      = current_user();
 $wish        = $viewer ? wishlist_ids((int) $viewer['id']) : [];
 
-$featured    = $repo->getFeatured(8);
+// Every product ticked "Featured on the homepage" shows, not just the first 8.
+$featured    = $repo->getFeatured(48);
 $bestsellers = $repo->getBestsellers(8);
 $categories  = get_categories();
 
