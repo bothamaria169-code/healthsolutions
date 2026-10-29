@@ -5,32 +5,63 @@ $dash_active = 'categories';
 $page_title  = 'Categories — Phola admin';
 require_once __DIR__ . '/../../includes/dash-head.php';
 
-$flash = null;
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf((string) ($_POST['csrf_token'] ?? ''))) {
+$flash = $_SESSION['categories_flash'] ?? null;
+unset($_SESSION['categories_flash']);
+$error = null;
+
+/** A slug no other category uses, so a repeated name can't hit the UNIQUE key. */
+function category_unique_slug(string $name, int $exceptId = 0): string
+{
+    $base = slugify($name);
+    $slug = $base;
+    $stmt = db()->prepare('SELECT COUNT(*) FROM categories WHERE slug = :s AND id <> :id');
+    for ($i = 2; ; $i++) {
+        $stmt->execute([':s' => $slug, ':id' => $exceptId]);
+        if (!(int) $stmt->fetchColumn()) {
+            return $slug;
+        }
+        $slug = $base . '-' . $i;
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string) ($_POST['action'] ?? '');
     $cid    = (int) ($_POST['id'] ?? 0);
 
-    if ($action === 'save') {
+    if (!verify_csrf((string) ($_POST['csrf_token'] ?? ''))) {
+        $error = 'Your session expired before the form was sent. Please try again.';
+    } elseif ($action === 'save') {
         $data = [
-            'name'       => sanitize((string) $_POST['name']),
-            'icon'       => sanitize((string) ($_POST['icon'] ?? '')) ?: null,
-            'blurb'      => sanitize((string) ($_POST['blurb'] ?? '')) ?: null,
+            'name'       => mb_substr(clean_text($_POST['name'] ?? ''), 0, 120),
+            'icon'       => mb_substr(clean_text($_POST['icon'] ?? ''), 0, 60) ?: null,
+            'blurb'      => mb_substr(clean_text($_POST['blurb'] ?? ''), 0, 255) ?: null,
             'sort_order' => (int) ($_POST['sort_order'] ?? 0),
-            'status'     => (string) ($_POST['status'] ?? 'active'),
+            'status'     => ($_POST['status'] ?? '') === 'inactive' ? 'inactive' : 'active',
         ];
-        if ($cid) {
-            db_update('categories', $cid, $data);
-            $flash = 'Category updated.';
+        if ($data['name'] === '') {
+            $error = 'Give the category a name.';
         } else {
-            $data['slug'] = slugify($data['name']);
-            db_insert('categories', $data);
-            $flash = 'Category added.';
+            try {
+                if ($cid) {
+                    db_update('categories', $cid, $data);
+                    $_SESSION['categories_flash'] = 'Category updated.';
+                } else {
+                    $data['slug'] = category_unique_slug($data['name']);
+                    db_insert('categories', $data);
+                    $_SESSION['categories_flash'] = 'Category added.';
+                }
+                redirect('dashboards/admin/categories.php');
+            } catch (PDOException $e) {
+                error_log('Category save failed: ' . $e->getMessage());
+                $error = 'The category could not be saved: ' . $e->getMessage();
+            }
         }
     } elseif ($action === 'delete' && $cid) {
         // Products keep existing; they just fall out of the category.
         db()->prepare('UPDATE products SET category_id = NULL WHERE category_id = :id')->execute([':id' => $cid]);
         db()->prepare('DELETE FROM categories WHERE id = :id')->execute([':id' => $cid]);
-        $flash = 'Category deleted. Its products are now uncategorised.';
+        $_SESSION['categories_flash'] = 'Category deleted. Its products are now uncategorised.';
+        redirect('dashboards/admin/categories.php');
     }
 }
 
@@ -48,6 +79,7 @@ if (!empty($_GET['edit'])) {
 <div class="dash-head"><div><h1>Categories</h1><p>The aisles the shop is organised into.</p></div></div>
 
 <?php if ($flash): ?><div class="alert-fc alert-fc--ok"><i class="fa-solid fa-circle-check"></i><span><?= e($flash) ?></span></div><?php endif; ?>
+<?php if ($error): ?><div class="alert-fc alert-fc--danger"><i class="fa-solid fa-circle-exclamation"></i><span><?= e($error) ?></span></div><?php endif; ?>
 
 <div class="row g-3">
   <div class="col-lg-8">
