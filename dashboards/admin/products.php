@@ -55,11 +55,11 @@ $result = $repo->getAll($filters, $page, 30);
 
 <div class="card-fc card-fc--pad mb-3">
   <form method="get" class="row g-2 align-items-end">
-    <div class="col-lg-4 field mb-0">
+    <div class="col-12 col-lg-3 field mb-0">
       <label for="q">Search</label>
       <input class="input-fc" type="search" id="q" name="q" value="<?= e($filters['search']) ?>" placeholder="Name, tag or SKU">
     </div>
-    <div class="col-lg-3 field mb-0">
+    <div class="col-6 col-lg-2 field mb-0">
       <label for="category">Category</label>
       <select class="select-fc" id="category" name="category">
         <option value="">All categories</option>
@@ -68,7 +68,7 @@ $result = $repo->getAll($filters, $page, 30);
         <?php endforeach; ?>
       </select>
     </div>
-    <div class="col-lg-3 field mb-0">
+    <div class="col-6 col-lg-2 field mb-0">
       <label for="brand">Brand</label>
       <select class="select-fc" id="brand" name="brand">
         <option value="">All brands</option>
@@ -77,13 +77,56 @@ $result = $repo->getAll($filters, $page, 30);
         <?php endforeach; ?>
       </select>
     </div>
-    <div class="col-lg-2">
+    <div class="col-6 col-lg-3 field mb-0">
+      <label for="status">Status</label>
+      <select class="select-fc" id="status" name="status">
+        <?php foreach (['all' => 'Any status', 'published' => 'Published', 'draft' => 'Draft', 'archived' => 'Archived'] as $k => $label): ?>
+          <option value="<?= $k ?>" <?= $filters['status'] === $k ? 'selected' : '' ?>><?= $label ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="col-6 col-lg-2">
       <button class="btn-fc btn-fc--block" type="submit"><i class="fa-solid fa-filter"></i> Filter</button>
     </div>
   </form>
 </div>
 
-<div class="table-wrap">
+<!-- Phones: one card per product, photo first. The table below takes over from tablet up. -->
+<div class="adm-plist">
+  <?php foreach ($result['items'] as $p): ?>
+    <div class="adm-pcard">
+      <a href="product-form.php?id=<?= (int) $p['id'] ?>" class="adm-pcard__img">
+        <img src="<?= e(product_image($p['featured_image'])) ?>" alt="" loading="lazy">
+      </a>
+      <div class="adm-pcard__body">
+        <a href="product-form.php?id=<?= (int) $p['id'] ?>" class="adm-pcard__name"><?= e($p['name']) ?></a>
+        <div class="adm-pcard__meta">
+          <?= e((string) $p['category_name']) ?><?= $p['pack_size'] ? ' · ' . e($p['pack_size']) : '' ?>
+        </div>
+        <div class="adm-pcard__price">
+          <b class="money"><?= format_price_short((float) $p['retail_price']) ?></b>
+          <?php if ($p['stock_status'] === 'out_of_stock'): ?><span class="pill pill--danger">Out of stock</span>
+          <?php elseif ($p['stock_status'] === 'low_stock'): ?><span class="pill pill--warn"><?= (int) $p['stock_qty'] ?> left</span><?php endif; ?>
+        </div>
+        <div class="adm-pcard__actions">
+          <form method="post">
+            <?= csrf_field() ?>
+            <input type="hidden" name="product_id" value="<?= (int) $p['id'] ?>">
+            <input type="hidden" name="action" value="toggle">
+            <button class="pill <?= $p['status'] === 'published' ? 'pill--ok' : 'pill--muted' ?>" style="border:0;cursor:pointer" type="submit">
+              <?= e(ucfirst($p['status'])) ?>
+            </button>
+          </form>
+          <a class="btn-fc btn-fc--sm btn-fc--light" href="product-form.php?id=<?= (int) $p['id'] ?>"><i class="fa-solid fa-pen"></i> Edit</a>
+          <a class="btn-fc btn-fc--sm btn-fc--light" href="<?= SITE_URL ?>/modules/shop/product.php?slug=<?= e($p['slug']) ?>" target="_blank" aria-label="View"><i class="fa-solid fa-eye"></i></a>
+        </div>
+      </div>
+    </div>
+  <?php endforeach; ?>
+  <?php if (!$result['items']): ?><p class="text-muted-2">No products match.</p><?php endif; ?>
+</div>
+
+<div class="table-wrap adm-ptable">
   <table class="table-fc">
     <thead>
       <tr>

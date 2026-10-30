@@ -101,12 +101,14 @@ $page_title = $page_title ?? ucfirst($dash_role) . ' dashboard — ' . SITE_NAME
 <link rel="stylesheet" href="<?= asset('assets/css/phola-store.css') ?>">
 <link rel="stylesheet" href="<?= asset('assets/css/phola-pages.css') ?>">
 <link rel="stylesheet" href="<?= asset('assets/css/phola-engage.css') ?>">
+<link rel="stylesheet" href="<?= asset('assets/css/dash-mobile.css') ?>">
 </head>
-<body>
+<body class="dash-body<?= $dash_role === 'admin' ? ' has-dash-tabs' : '' ?>">
 <div class="scrim" id="scrim"></div>
 <div class="dash">
 
   <aside class="dash-side" id="dashSide">
+    <button class="dash-side__close" type="button" id="dashClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
     <a href="<?= SITE_URL ?>/index.php" class="brand">
       <img src="<?= SITE_URL ?>/assets/img/logo/phola-mark.png" alt="" class="brand__mark">
       <span class="brand__word">Phola<em style="color:var(--leaf-light)"> Health</em></span>
@@ -143,6 +145,16 @@ $page_title = $page_title ?? ucfirst($dash_role) . ' dashboard — ' . SITE_NAME
   </aside>
 
   <div class="dash-main">
-    <button class="btn-fc btn-fc--ghost btn-fc--sm dash-burger mb-3" type="button" id="dashBurger">
-      <i class="fa-solid fa-bars"></i> Menu
-    </button>
+    <?php
+    $dash_label = '';
+    foreach ($nav as $links) {
+        foreach ($links as [$slug, , , $label]) { if ($slug === $dash_active) { $dash_label = $label; } }
+    }
+    ?>
+    <div class="dash-top">
+      <button class="dash-top__btn dash-burger" type="button" id="dashBurger" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+      <span class="dash-top__title"><?= e($dash_label ?: 'Dashboard') ?></span>
+      <?php if ($dash_role === 'admin'): ?>
+        <a class="dash-top__btn dash-top__btn--add" href="product-form.php" aria-label="Add a product"><i class="fa-solid fa-plus"></i></a>
+      <?php endif; ?>
+    </div>

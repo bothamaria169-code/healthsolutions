@@ -57,6 +57,7 @@
     openDrawer(false);
     $('#shopFilters')?.classList.remove('is-open');
     $('#dashSide')?.classList.remove('is-open');
+    document.body.style.overflow = '';
   });
 
   /* Filter + dashboard slide-overs share the scrim. */
@@ -68,10 +69,14 @@
     $('#shopFilters')?.classList.remove('is-open');
     scrim?.classList.remove('is-on');
   });
-  $('#dashBurger')?.addEventListener('click', () => {
-    $('#dashSide')?.classList.add('is-open');
-    scrim?.classList.add('is-on');
-  });
+  const openDash = (on) => {
+    $('#dashSide')?.classList.toggle('is-open', on);
+    scrim?.classList.toggle('is-on', on);
+    document.body.style.overflow = on ? 'hidden' : '';
+  };
+  $('#dashBurger')?.addEventListener('click', () => openDash(true));
+  $('#dashTabMenu')?.addEventListener('click', () => openDash(true));
+  $('#dashClose')?.addEventListener('click', () => openDash(false));
 
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;

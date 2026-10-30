@@ -23,7 +23,7 @@ $storeImage = function (string $field): ?string {
     return move_uploaded_file($_FILES[$field]['tmp_name'], $dir . $name) ? 'uploads/products/' . $name : null;
 };
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST['gallery_action'])) {
     if (!verify_csrf((string) ($_POST['csrf_token'] ?? ''))) {
         $errors[] = 'Your session expired. Please save again.';
     }
@@ -160,7 +160,7 @@ $preview    = $product ? Pricing::margin($product, null) : null;
 <?php if ($flash): ?><div class="alert-fc alert-fc--ok"><i class="fa-solid fa-circle-check"></i><span><?= e($flash) ?></span></div><?php endif; ?>
 <?php foreach ($errors as $err): ?><div class="alert-fc alert-fc--danger"><i class="fa-solid fa-circle-exclamation"></i><span><?= e($err) ?></span></div><?php endforeach; ?>
 
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" id="productForm">
   <?= csrf_field() ?>
   <div class="row g-3">
 
@@ -272,15 +272,11 @@ $preview    = $product ? Pricing::margin($product, null) : null;
             <div class="col-6 col-md-3">
               <div style="position:relative;border-radius:var(--r-sm);overflow:hidden;border:1px solid var(--line)">
                 <img src="<?= e(product_image($g['image'])) ?>" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--paper-2)">
-                <form method="post" onsubmit="return confirm('Remove this photo from the gallery?')"
-                      style="position:absolute;top:6px;right:6px">
-                  <?= csrf_field() ?>
-                  <input type="hidden" name="gallery_action" value="delete">
-                  <input type="hidden" name="gallery_id" value="<?= (int) $g['id'] ?>">
-                  <button class="btn-fc btn-fc--sm" style="background:rgba(14,23,38,.72);color:#fff;padding:.3rem .5rem" type="submit" title="Remove">
-                    <i class="fa-solid fa-trash-can"></i>
-                  </button>
-                </form>
+                <button class="btn-fc btn-fc--sm" style="position:absolute;top:6px;right:6px;background:rgba(14,23,38,.72);color:#fff;padding:.45rem .6rem"
+                        type="submit" form="galleryDelete" name="gallery_id" value="<?= (int) $g['id'] ?>" title="Remove"
+                        onclick="return confirm('Remove this photo from the gallery?')">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
               </div>
             </div>
           <?php endforeach; ?>
@@ -289,16 +285,14 @@ $preview    = $product ? Pricing::margin($product, null) : null;
         <p class="text-muted-3" style="font-size:.83rem">No gallery photos yet — the product page will just show the one card image above.</p>
         <?php endif; ?>
 
-        <form method="post" enctype="multipart/form-data" class="d-flex gap-2 align-items-end flex-wrap">
-          <?= csrf_field() ?>
-          <input type="hidden" name="gallery_action" value="add">
-          <div class="field mb-0" style="flex:1;min-width:240px">
+        <div class="d-flex gap-2 align-items-end flex-wrap">
+          <div class="field mb-0" style="flex:1;min-width:min(240px,100%)">
             <label for="gallery_images">Add photos</label>
-            <input class="input-fc" type="file" id="gallery_images" name="gallery_images[]" accept="image/jpeg,image/png,image/webp,image/svg+xml" multiple>
+            <input class="input-fc" type="file" id="gallery_images" name="gallery_images[]" form="galleryAdd" accept="image/jpeg,image/png,image/webp,image/svg+xml" multiple required>
             <div class="field__hint">Select several at once — JPG, PNG, WebP or SVG, up to 8MB each.</div>
           </div>
-          <button class="btn-fc btn-fc--sm" type="submit"><i class="fa-solid fa-upload"></i> Upload to gallery</button>
-        </form>
+          <button class="btn-fc btn-fc--sm" type="submit" form="galleryAdd"><i class="fa-solid fa-upload"></i> Upload to gallery</button>
+        </div>
       </div>
       <?php endif; ?>
     </div>
@@ -333,12 +327,11 @@ $preview    = $product ? Pricing::margin($product, null) : null;
 
       <div class="card-fc card-fc--pad mb-3">
         <h2 style="font-size:1.05rem">Image</h2>
-        <?php if (!empty($product['featured_image'])): ?>
-          <img src="<?= e(product_image($product['featured_image'])) ?>" alt="" style="width:100%;border-radius:var(--r);margin-bottom:.8rem;background:var(--paper-2)">
-        <?php endif; ?>
+        <img src="<?= !empty($product['featured_image']) ? e(product_image($product['featured_image'])) : '' ?>" alt="" class="adm-img-preview"
+             id="featuredPreview" <?= empty($product['featured_image']) ? 'hidden' : '' ?>>
         <div class="field">
           <label for="featured_image">Upload a new image</label>
-          <input class="input-fc" type="file" id="featured_image" name="featured_image" accept="image/jpeg,image/png,image/webp,image/svg+xml">
+          <input class="input-fc" type="file" id="featured_image" name="featured_image" accept="image/jpeg,image/png,image/webp,image/svg+xml" data-preview="featuredPreview">
           <div class="field__hint">JPG, PNG, WebP or SVG, up to 8MB.</div>
         </div>
         <div class="field mb-0">
@@ -351,12 +344,11 @@ $preview    = $product ? Pricing::margin($product, null) : null;
 
       <div class="card-fc card-fc--pad mb-3">
         <h2 style="font-size:1.05rem">Header image</h2>
-        <?php if (!empty($product['header_image'])): ?>
-          <img src="<?= e(product_image($product['header_image'])) ?>" alt="" style="width:100%;border-radius:var(--r);margin-bottom:.8rem;background:var(--paper-2)">
-        <?php endif; ?>
+        <img src="<?= !empty($product['header_image']) ? e(product_image($product['header_image'])) : '' ?>" alt="" class="adm-img-preview"
+             id="headerPreview" <?= empty($product['header_image']) ? 'hidden' : '' ?>>
         <div class="field">
           <label for="header_image">Upload a wide image</label>
-          <input class="input-fc" type="file" id="header_image" name="header_image" accept="image/jpeg,image/png,image/webp">
+          <input class="input-fc" type="file" id="header_image" name="header_image" accept="image/jpeg,image/png,image/webp" data-preview="headerPreview">
           <div class="field__hint">Landscape, about 1600 × 870. Shown across the top of the product page, on the home page and in Facebook / WhatsApp link previews.</div>
         </div>
         <div class="field mb-0">
@@ -416,9 +408,31 @@ $preview    = $product ? Pricing::margin($product, null) : null;
       </div>
     </div>
   </div>
+
+  <div class="adm-savebar">
+    <a href="products.php" class="btn-fc btn-fc--ghost btn-fc--sm">Cancel</a>
+    <button class="btn-fc" type="submit"><i class="fa-solid fa-floppy-disk"></i> <?= $isNew ? 'Create product' : 'Save changes' ?></button>
+  </div>
 </form>
 
+<?php if (!$isNew): ?>
+<!-- Gallery forms live outside the product form (forms cannot nest); their
+     inputs and buttons above join them through the form="" attribute. -->
+<form method="post" id="galleryDelete"><?= csrf_field() ?><input type="hidden" name="gallery_action" value="delete"></form>
+<form method="post" enctype="multipart/form-data" id="galleryAdd"><?= csrf_field() ?><input type="hidden" name="gallery_action" value="add"></form>
+<?php endif; ?>
+
 <script>
+// Show a picked photo straight away, before it is uploaded.
+document.querySelectorAll('input[type=file][data-preview]').forEach((input) => {
+  input.addEventListener('change', () => {
+    const img = document.getElementById(input.dataset.preview);
+    if (!img || !input.files[0]) return;
+    img.src = URL.createObjectURL(input.files[0]);
+    img.hidden = false;
+  });
+});
+
 document.getElementById('aiWrite')?.addEventListener('click', async function () {
   const val = (id) => (document.getElementById(id) || {}).value || '';
   const cat = document.getElementById('category_id');
