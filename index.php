@@ -13,6 +13,11 @@ $categories  = get_categories();
 
 $testimonials = db()->query("SELECT * FROM testimonials WHERE status='published' AND quote <> '' ORDER BY sort_order, id LIMIT 4")->fetchAll();
 $screenshots  = db()->query("SELECT * FROM testimonials WHERE status='published' AND screenshot IS NOT NULL AND screenshot <> '' ORDER BY sort_order, id LIMIT 12")->fetchAll();
+$testimonialVideos = db()->query("SELECT * FROM testimonials WHERE status='published' AND video_url LIKE 'uploads/testimonials/%.mp4' ORDER BY sort_order, id LIMIT 2")->fetchAll();
+$reviewImages = glob(__DIR__ . '/assets/img/testimonials/*.{jpg,jpeg,png,webp}', GLOB_BRACE) ?: [];
+$newsVideos   = glob(__DIR__ . '/assets/video/news/*.mp4') ?: [];
+sort($reviewImages, SORT_NATURAL | SORT_FLAG_CASE);
+sort($newsVideos, SORT_NATURAL | SORT_FLAG_CASE);
 $gallery      = db()->query("SELECT * FROM customer_gallery WHERE status='published' ORDER BY sort_order, id DESC LIMIT 12")->fetchAll();
 $posts        = get_blogs([], 1, 3)['items'];
 $productCount = (int) db()->query("SELECT COUNT(*) FROM products WHERE status='published'")->fetchColumn();
@@ -227,11 +232,23 @@ include __DIR__ . '/includes/header.php';
   </div>
 </section>
 
-<!-- ── Testimonials (screenshots + quotes, from Admin -> Testimonials) ── -->
-<?php if ($testimonials || $screenshots): ?>
+<!-- ── Customer reviews ─────────────────────────────────────────────── -->
+<?php if ($reviewImages || $testimonials || $screenshots || $testimonialVideos): ?>
 <section class="section">
   <div class="container">
-    <div class="ph-head ph-head--center"><div><span class="eyebrow">Reviews</span><h2>What customers say</h2></div></div>
+    <div class="ph-head">
+      <div><span class="eyebrow">Reviews from our website</span><h2>Real words from our customers</h2></div>
+      <a href="<?= SITE_URL ?>/testimonials.php" class="ph-link">See all testimonials <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <?php if ($reviewImages): ?>
+    <div class="review-media-grid review-media-grid--home">
+      <?php foreach (array_slice($reviewImages, 0, 3) as $i => $image): ?>
+      <a class="review-media-card" href="<?= SITE_URL ?>/testimonials.php">
+        <img src="<?= e(SITE_URL . '/assets/img/testimonials/' . rawurlencode(basename($image))) ?>" alt="Customer testimonial <?= $i + 1 ?>" loading="lazy">
+      </a>
+      <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
     <?php if ($screenshots): ?>
     <div class="ph-shots<?= $testimonials ? ' mb-4' : '' ?>">
       <?php foreach ($screenshots as $t): ?>
@@ -239,6 +256,21 @@ include __DIR__ . '/includes/header.php';
         <img src="<?= e(product_image($t['screenshot'])) ?>" alt="Message from <?= e($t['name']) ?>" loading="lazy">
         <span><?= e($t['name']) ?><?= $t['location'] ? ' · ' . e($t['location']) : '' ?></span>
       </a>
+      <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+    <?php if ($testimonialVideos): ?>
+    <div class="row g-3 mb-4">
+      <?php foreach ($testimonialVideos as $t): ?>
+      <div class="col-lg-6" data-reveal>
+        <article class="card-fc card-fc--pad">
+          <video class="news-video-player" controls preload="none" playsinline>
+            <source src="<?= e(product_image($t['video_url'])) ?>" type="video/mp4">
+            Your browser does not support video playback.
+          </video>
+          <h3 class="news-video-title"><?= e($t['name']) ?>’s testimonial</h3>
+        </article>
+      </div>
       <?php endforeach; ?>
     </div>
     <?php endif; ?>
@@ -254,6 +286,32 @@ include __DIR__ . '/includes/header.php';
           </div>
         </div>
       </div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
+
+<!-- ── Video news ───────────────────────────────────────────────────── -->
+<?php if ($newsVideos): ?>
+<section class="section ph-tint">
+  <div class="container">
+    <div class="ph-head">
+      <div><span class="eyebrow">News &amp; updates</span><h2>Watch what’s happening</h2></div>
+      <a href="<?= SITE_URL ?>/news.php" class="ph-link">All news videos <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="news-video-grid">
+      <?php foreach (array_slice($newsVideos, 0, 2) as $video):
+        $videoName = pathinfo($video, PATHINFO_FILENAME);
+        $videoUrl = SITE_URL . '/assets/video/news/' . rawurlencode(basename($video));
+      ?>
+      <article class="card-fc card-fc--pad">
+        <video class="news-video-player" controls preload="none" playsinline>
+          <source src="<?= e($videoUrl) ?>" type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+        <h3 class="news-video-title"><?= e(ucwords(str_replace(['-', '_'], ' ', $videoName))) ?></h3>
+      </article>
       <?php endforeach; ?>
     </div>
   </div>

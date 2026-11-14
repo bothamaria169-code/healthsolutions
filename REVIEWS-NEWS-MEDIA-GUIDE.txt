@@ -1,0 +1,14 @@
+REVIEWS AND NEWS MEDIA UPLOAD GUIDE
+
+Testimonials
+1. Upload review image files to: assets/img/testimonials/
+2. Supported formats: .jpg, .jpeg, .png and .webp
+3. The homepage shows up to three images. The Testimonials page shows all images.
+
+News videos
+1. Upload video files to: assets/video/news/
+2. Supported format: .mp4
+3. The homepage links to the video-news section. The News & Updates page lists and plays all videos.
+4. The displayed title is based on the filename. Use clear filenames such as community-health-event.mp4.
+
+No database entry is needed. The pages read the media files directly from these folders.

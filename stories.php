@@ -31,9 +31,14 @@ include __DIR__ . '/includes/header.php';
       <div class="empty card-fc"><div class="empty__icon"><i class="fa-solid fa-comment-dots"></i></div><h2>Stories coming soon</h2><p>Would you share yours? WhatsApp us.</p></div>
     <?php endif; ?>
 
-    <?php foreach ($stories as $s): $embed = $s['video_url'] ? $youtube((string) $s['video_url']) : null; ?>
+    <?php foreach ($stories as $s):
+      $uploadedVideo = str_starts_with((string) ($s['video_url'] ?? ''), 'uploads/testimonials/');
+      $embed = $s['video_url'] && !$uploadedVideo ? $youtube((string) $s['video_url']) : null;
+    ?>
     <article class="story">
-      <?php if ($embed): ?>
+      <?php if ($uploadedVideo): ?>
+        <div class="story__media"><video controls preload="metadata" playsinline><source src="<?= e(product_image($s['video_url'])) ?>" type="video/mp4">Your browser does not support video playback.</video></div>
+      <?php elseif ($embed): ?>
         <div class="story__media"><iframe src="<?= e($embed) ?>" title="<?= e($s['name']) ?>'s story" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
       <?php elseif ($s['avatar']): ?>
         <div class="story__media story__media--photo"><img src="<?= e(product_image($s['avatar'])) ?>" alt="<?= e($s['name']) ?>" loading="lazy"></div>
@@ -42,7 +47,7 @@ include __DIR__ . '/includes/header.php';
         <?php if ($s['condition_tag'] && isset($hubs[$s['condition_tag']])): ?><a class="pdp-hero__chip" href="<?= SITE_URL ?>/condition.php?c=<?= e($s['condition_tag']) ?>"><i class="fa-solid <?= e($hubs[$s['condition_tag']]['icon']) ?>"></i> <?= e($hubs[$s['condition_tag']]['name']) ?></a><?php endif; ?>
         <h2>&ldquo;<?= e($s['quote']) ?>&rdquo;</h2>
         <?php if ($s['story']): ?><div class="prose"><?= nl2br(e((string) $s['story'])) ?></div><?php endif; ?>
-        <?php if ($s['video_url'] && !$embed): ?><a class="ph-link" href="<?= e($s['video_url']) ?>" target="_blank" rel="noopener">Watch the video <i class="fa-solid fa-play"></i></a><?php endif; ?>
+        <?php if ($s['video_url'] && !$uploadedVideo && !$embed): ?><a class="ph-link" href="<?= e($s['video_url']) ?>" target="_blank" rel="noopener">Watch the video <i class="fa-solid fa-play"></i></a><?php endif; ?>
         <p class="story__who"><b><?= e($s['name']) ?></b> · <?= e(trim(($s['role'] ?? '') . ' · ' . ($s['location'] ?? ''), ' ·')) ?> <?= stars_html((float) $s['rating']) ?></p>
       </div>
     </article>

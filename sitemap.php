@@ -23,8 +23,10 @@ $statics = [
     ['/exercise-plans.php', '0.8', 'monthly'],
     ['/ask.php', '0.8', 'daily'],
     ['/health-news.php', '0.7', 'daily'],
+    ['/news.php', '0.6', 'weekly'],
     ['/events.php', '0.6', 'weekly'],
     ['/stories.php', '0.6', 'weekly'],
+    ['/testimonials.php', '0.6', 'weekly'],
     ['/clinic-finder.php', '0.6', 'monthly'],
     ['/delivery.php', '0.6', 'monthly'],
     ['/send-home.php', '0.7', 'monthly'],
@@ -85,6 +87,8 @@ include __DIR__ . '/includes/header.php';
           <a href="<?= SITE_URL ?>/price-list.php">Price list</a>
           <a href="<?= SITE_URL ?>/modules/auth/login.php">Patient portal</a>
           <a href="<?= SITE_URL ?>/modules/blog/index.php">Learn</a>
+          <a href="<?= SITE_URL ?>/testimonials.php">Testimonials</a>
+          <a href="<?= SITE_URL ?>/news.php">News &amp; updates</a>
           <a href="<?= SITE_URL ?>/about.php">About</a>
           <a href="<?= SITE_URL ?>/faq.php">FAQ</a>
           <a href="<?= SITE_URL ?>/contact.php">Contact</a>

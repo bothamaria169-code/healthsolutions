@@ -90,7 +90,7 @@ $announcement   = get_setting('announcement', '');
       </div>
 
       <div class="nav-dd">
-        <a href="<?= SITE_URL ?>/condition.php" class="<?= $active(in_array($current, ['condition', 'diet-plans', 'exercise-plans', 'health-tools', 'ask', 'events', 'stories', 'clinic-finder', 'health-news'], true)) ?>">Health hub <i class="fa-solid fa-chevron-down ms-1" style="font-size:.6rem"></i></a>
+        <a href="<?= SITE_URL ?>/condition.php" class="<?= $active(in_array($current, ['condition', 'diet-plans', 'exercise-plans', 'health-tools', 'ask', 'events', 'stories', 'testimonials', 'news', 'clinic-finder', 'health-news'], true)) ?>">Health hub <i class="fa-solid fa-chevron-down ms-1" style="font-size:.6rem"></i></a>
         <div class="nav-dd__menu">
             <a href="<?= SITE_URL ?>/condition.php"><i class="fa-solid fa-book-medical"></i><span><b>Conditions</b><small>Diabetes, BP, HIV, TB and more</small></span></a>
             <a href="<?= SITE_URL ?>/diet-plans.php"><i class="fa-solid fa-carrot"></i><span><b>Diet plans</b><small>Meal plans for chronic conditions</small></span></a>
@@ -99,6 +99,8 @@ $announcement   = get_setting('announcement', '');
             <a href="<?= SITE_URL ?>/ask.php"><i class="fa-solid fa-user-doctor"></i><span><b>Ask a pharmacist</b><small>Free questions, answered</small></span></a>
             <a href="<?= SITE_URL ?>/events.php"><i class="fa-solid fa-calendar-days"></i><span><b>Health talks</b><small>Free WhatsApp & online talks</small></span></a>
             <a href="<?= SITE_URL ?>/stories.php"><i class="fa-solid fa-comment-dots"></i><span><b>Patient stories</b><small>Real people, real routines</small></span></a>
+            <a href="<?= SITE_URL ?>/testimonials.php"><i class="fa-solid fa-star"></i><span><b>Testimonials</b><small>Reviews from our customers</small></span></a>
+            <a href="<?= SITE_URL ?>/news.php"><i class="fa-solid fa-circle-play"></i><span><b>News &amp; updates</b><small>Watch our latest videos</small></span></a>
             <a href="<?= SITE_URL ?>/clinic-finder.php"><i class="fa-solid fa-location-dot"></i><span><b>Clinic finder</b><small>Clinics & pharmacies near you</small></span></a>
             <a href="<?= SITE_URL ?>/health-news.php"><i class="fa-solid fa-newspaper"></i><span><b>Health news</b><small>Updated through the day</small></span></a>
         </div>
